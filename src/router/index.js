@@ -15,6 +15,7 @@ import PainelView          from '../views/admin/PainelView.vue'
 import DetalheView         from '../views/admin/DetalheView.vue'
 import UsuariosView        from '../views/admin/UsuariosView.vue'
 import EquipeView          from '../views/admin/EquipeView.vue'
+import GeralView           from '../views/admin/GeralView.vue'
 
 const routes = [
   { path: '/',                    component: HomeView },
@@ -28,6 +29,7 @@ const routes = [
   { path: '/aluno/nova-mensagem', component: NovaMensagemView,    meta: { auth: true } },
   { path: '/aluno/enviada',       component: MensagemEnviadaView, meta: { auth: true } },
   { path: '/aluno/mensagem/:id',  component: AlunoDetalheView,    meta: { auth: true } },
+  { path: '/admin/geral',         component: GeralView,           meta: { auth: true, admin: true } },
   { path: '/admin/painel',        component: PainelView,          meta: { auth: true, admin: true } },
   { path: '/admin/mensagem/:id',  component: DetalheView,         meta: { auth: true, admin: true } },
   { path: '/admin/usuarios',      component: UsuariosView,         meta: { auth: true, admin: true } },
