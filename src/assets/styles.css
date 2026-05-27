@@ -1314,7 +1314,7 @@ h1, h2, h3, .display { font-family: 'Syne', sans-serif; }
   display: flex;
   flex-direction: column;
   gap: 6px;
-  min-width: 130px;
+  width: 160px;
   flex-shrink: 0;
 }
 
