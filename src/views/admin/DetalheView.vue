@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
 import Badge from '../../components/Badge.vue'
 import Tag from '../../components/Tag.vue'
-import { mensagens, updateStatus, updateNota, deleteMensagem } from '../../stores/mensagens.js'
+import { mensagens, updateStatus, updateNota, updateResposta, deleteMensagem } from '../../stores/mensagens.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -14,9 +14,11 @@ const mensagem = computed(() => mensagens.value.find(m => m.id === id))
 
 if (!mensagem.value) router.replace('/admin/painel')
 
-const status = ref(mensagem.value?.status ?? 'pendente')
-const nota = ref(mensagem.value?.nota ?? '')
-const notaSalva = ref(false)
+const status   = ref(mensagem.value?.status ?? 'pendente')
+const nota     = ref(mensagem.value?.nota ?? '')
+const resposta = ref(mensagem.value?.resposta ?? '')
+const notaSalva     = ref(false)
+const respostaSalva = ref(false)
 
 const atendida = computed(() => status.value === 'atendida')
 
@@ -34,6 +36,12 @@ function salvarNota() {
   updateNota(id, nota.value)
   notaSalva.value = true
   setTimeout(() => { notaSalva.value = false }, 2000)
+}
+
+function salvarResposta() {
+  updateResposta(id, resposta.value)
+  respostaSalva.value = true
+  setTimeout(() => { respostaSalva.value = false }, 2000)
 }
 
 function confirmarExcluir() {
@@ -105,6 +113,36 @@ function confirmarExcluir() {
             :style="notaSalva ? 'background:var(--verde);color:white;border-color:var(--verde);' : ''"
             @click="salvarNota"
           >{{ notaSalva ? '✓ Salvo' : 'Salvar anotação' }}</button>
+        </div>
+      </div>
+
+      <!-- Resposta ao aluno -->
+      <div class="paper" style="margin-bottom:1.2rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;">
+              💬 Resposta ao aluno
+            </div>
+            <div style="font-size:0.76rem;color:var(--cinza);margin-top:2px;">
+              Visível para o aluno no painel dele
+              <template v-if="mensagem.anonimo"> · <em>anônimo — só vê se enviou enquanto logado</em></template>
+            </div>
+          </div>
+        </div>
+        <textarea
+          v-model="resposta"
+          placeholder="Escreva uma resposta para o aluno…"
+          rows="4"
+          style="width:100%;padding:10px 12px;background:var(--branco);border:2px solid var(--creme-escuro);border-radius:2px;font-family:'Inter',sans-serif;font-size:0.9rem;color:var(--preto);resize:vertical;outline:none;transition:border-color 0.2s;"
+          @focus="$event.target.style.borderColor='var(--roxo)'"
+          @blur="$event.target.style.borderColor='var(--creme-escuro)'"
+        ></textarea>
+        <div style="margin-top:10px;text-align:right;">
+          <button
+            class="btn btn-outline btn-sm"
+            :style="respostaSalva ? 'background:var(--verde);color:white;border-color:var(--verde);' : ''"
+            @click="salvarResposta"
+          >{{ respostaSalva ? '✓ Salvo' : 'Salvar resposta' }}</button>
         </div>
       </div>
 

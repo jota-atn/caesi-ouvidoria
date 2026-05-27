@@ -44,6 +44,12 @@ export function updateNota(id, nota) {
   if (m) { m.nota = nota; persist(all) }
 }
 
+export function updateResposta(id, resposta) {
+  const all = load()
+  const m = all.find(m => m.id === id)
+  if (m) { m.resposta = resposta; persist(all) }
+}
+
 export function deleteMensagem(id) {
   persist(load().filter(m => m.id !== id))
 }

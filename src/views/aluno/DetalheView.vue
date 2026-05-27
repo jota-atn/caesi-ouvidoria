@@ -54,8 +54,21 @@ if (!mensagem.value) router.replace('/aluno/mensagens')
         </p>
         <div class="msg-body">{{ mensagem.corpo }}</div>
 
-        <div v-if="mensagem.status === 'atendida'" style="
+        <div v-if="mensagem.resposta" style="
           margin-top:1.5rem;
+          background:rgba(80,64,160,0.07);
+          border:2px solid var(--roxo);
+          border-radius:2px;
+          padding:1rem 1.2rem;
+        ">
+          <p style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">
+            💬 Resposta do CAESI
+          </p>
+          <div class="msg-body">{{ mensagem.resposta }}</div>
+        </div>
+
+        <div v-if="mensagem.status === 'atendida'" style="
+          margin-top:1rem;
           background:rgba(78,170,119,0.12);
           border:2px solid var(--verde);
           border-radius:2px;
