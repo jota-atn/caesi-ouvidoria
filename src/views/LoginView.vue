@@ -19,7 +19,7 @@ function submit() {
     const found = findUser(email.value, senha.value)
     if (!found) { authError.value = true; return }
     login(found)
-    router.push(found.role === 'admin' ? '/' : '/aluno/mensagens')
+    router.push('/')
   }
 }
 </script>

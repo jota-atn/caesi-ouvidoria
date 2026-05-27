@@ -48,7 +48,7 @@ router.beforeEach((to) => {
   if (to.meta.auth && !user) return '/login'
   if (to.meta.admin && user?.role !== 'admin') return '/aluno/mensagens'
   if ((to.path === '/login' || to.path === '/cadastro') && user) {
-    return user.role === 'admin' ? '/' : '/aluno/mensagens'
+    return '/'
   }
 })
 
