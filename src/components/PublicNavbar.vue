@@ -1,15 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { isLoggedIn, isAdmin, user, logout } from '../stores/auth.js'
+import { isLoggedIn, isAdmin } from '../stores/auth.js'
+import UserDropdown from './UserDropdown.vue'
 
 const menuOpen = ref(false)
-const router = useRouter()
-
-function handleLogout() {
-  logout()
-  router.push('/')
-}
 </script>
 
 <template>
@@ -26,21 +20,12 @@ function handleLogout() {
     </button>
 
     <div class="navbar-actions" :class="{ open: menuOpen }">
-      <RouterLink to="/sobre" class="nav-link">Sobre</RouterLink>
+      <RouterLink to="/sobre"    class="nav-link">Sobre</RouterLink>
       <RouterLink to="/estatuto" class="nav-link">Estatuto</RouterLink>
-      <RouterLink to="/contato" class="nav-link">Contato</RouterLink>
+      <RouterLink to="/contato"  class="nav-link">Contato</RouterLink>
 
       <template v-if="isLoggedIn">
-        <RouterLink
-          :to="isAdmin ? '/admin/painel' : '/aluno/mensagens'"
-          class="navbar-user"
-        >
-          {{ user.nome }} ▾
-        </RouterLink>
-        <button @click="handleLogout"
-          style="background:none;border:1px solid rgba(255,255,255,0.2);color:var(--creme);font-family:'Syne',sans-serif;font-weight:600;font-size:0.85rem;padding:6px 12px;border-radius:2px;cursor:pointer;">
-          Sair
-        </button>
+        <UserDropdown :admin="isAdmin" />
       </template>
       <template v-else>
         <RouterLink to="/login" class="btn btn-amarelo btn-sm">Fazer login</RouterLink>
