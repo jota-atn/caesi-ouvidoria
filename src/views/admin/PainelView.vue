@@ -30,6 +30,31 @@ const mensagensFiltradas = computed(() => {
 const totalPendente = computed(() => mensagens.value.filter(m => m.status === 'pendente').length)
 const totalAtendida = computed(() => mensagens.value.filter(m => m.status === 'atendida').length)
 
+function exportarCSV() {
+  const cols = ['Protocolo', 'Data', 'Categoria', 'Assunto', 'Autor', 'Matrícula', 'Status', 'Anotação interna', 'Resposta']
+  const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`
+  const linhas = mensagens.value.map(m => [
+    m.protocolo,
+    m.data,
+    m.categoria,
+    m.assunto,
+    m.anonimo ? 'Anônimo' : m.autor,
+    m.anonimo ? '' : (m.matricula ?? ''),
+    m.status,
+    m.nota ?? '',
+    m.resposta ?? '',
+  ].map(esc).join(','))
+
+  const csv = [cols.map(esc).join(','), ...linhas].join('\r\n')
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `mensagens-caesi-${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 const CATEGORIA_LABEL = {
   matricula: 'Matrícula',
   infra:     'Infraestrutura',
@@ -126,6 +151,9 @@ const barOptions = {
     <div class="page-content" style="padding-top:2rem;">
       <div class="page-heading">
         <h2>Painel de <span>Mensagens</span></h2>
+        <button class="btn btn-outline btn-sm" :disabled="mensagens.length === 0" @click="exportarCSV">
+          ↓ Exportar CSV
+        </button>
       </div>
 
       <div class="stats-row">
