@@ -1382,7 +1382,8 @@ h1, h2, h3, .display { font-family: 'Syne', sans-serif; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  flex: 1;
+  width: 460px;
+  flex-shrink: 0;
 }
 
 .geral-equipe-chip {
