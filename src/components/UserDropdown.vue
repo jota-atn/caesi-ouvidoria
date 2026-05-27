@@ -1,8 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { user, logout, isAdmin } from '../stores/auth.js'
-import { mensagens } from '../stores/mensagens.js'
+import { user, logout } from '../stores/auth.js'
 import { notificacoes } from '../stores/notificacoes.js'
 
 const props = defineProps({
@@ -16,10 +15,7 @@ const dropdownRef  = ref(null)
 const avatar = computed(() => (user.value?.nome ?? 'U').charAt(0).toUpperCase())
 
 const badgeCount = computed(() => {
-  if (!user.value) return 0
-  if (props.admin) {
-    return mensagens.value.filter(m => m.status === 'pendente').length
-  }
+  if (!user.value || props.admin) return 0
   return notificacoes.value.filter(n => n.userEmail === user.value?.email && !n.lida).length
 })
 
@@ -75,7 +71,6 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown))
           </RouterLink>
           <RouterLink to="/admin/mensagens" class="user-dropdown-item">
             Painel de mensagens
-            <span v-if="badgeCount > 0" class="dropdown-notif">{{ badgeCount }}</span>
           </RouterLink>
           <RouterLink to="/admin/usuarios" class="user-dropdown-item">
             Gerenciar usuários
