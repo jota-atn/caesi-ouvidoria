@@ -5,6 +5,7 @@ import Navbar from '../../components/Navbar.vue'
 import Badge from '../../components/Badge.vue'
 import Tag from '../../components/Tag.vue'
 import { mensagens, marcarRespostaVista } from '../../stores/mensagens.js'
+import { notificacoes, marcarLida } from '../../stores/notificacoes.js'
 import { user } from '../../stores/auth.js'
 
 const route = useRoute()
@@ -19,6 +20,10 @@ onMounted(() => {
   if (mensagem.value?.resposta && !mensagem.value.respostaVista) {
     marcarRespostaVista(id)
   }
+  // Marca notificações dessa mensagem como lidas
+  notificacoes.value
+    .filter(n => n.mensagemId === id && n.userEmail === user.value?.email && !n.lida)
+    .forEach(n => marcarLida(n.id))
 })
 </script>
 

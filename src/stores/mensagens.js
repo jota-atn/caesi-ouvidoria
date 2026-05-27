@@ -1,4 +1,5 @@
 import { ref, computed } from 'vue'
+import { addNotificacao } from './notificacoes.js'
 
 const KEY = 'caesi_mensagens'
 
@@ -35,7 +36,19 @@ export function addMensagem(msg) {
 export function updateStatus(id, status) {
   const all = load()
   const m = all.find(m => m.id === id)
-  if (m) { m.status = status; persist(all) }
+  if (m) {
+    m.status = status
+    persist(all)
+    if (status === 'atendida' && m.email) {
+      addNotificacao({
+        userEmail: m.email,
+        tipo: 'atendida',
+        mensagemId: m.id,
+        mensagemProtocolo: m.protocolo,
+        mensagemAssunto: m.assunto,
+      })
+    }
+  }
 }
 
 export function updateNota(id, nota) {
@@ -47,7 +60,19 @@ export function updateNota(id, nota) {
 export function updateResposta(id, resposta) {
   const all = load()
   const m = all.find(m => m.id === id)
-  if (m) { m.resposta = resposta; persist(all) }
+  if (m) {
+    m.resposta = resposta
+    persist(all)
+    if (resposta.trim() && m.email) {
+      addNotificacao({
+        userEmail: m.email,
+        tipo: 'resposta',
+        mensagemId: m.id,
+        mensagemProtocolo: m.protocolo,
+        mensagemAssunto: m.assunto,
+      })
+    }
+  }
 }
 
 export function deleteMensagem(id) {

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import UserDropdown from './UserDropdown.vue'
+import NotifBell from './NotifBell.vue'
 
 const props = defineProps({
   admin: { type: Boolean, default: false },
@@ -36,6 +37,7 @@ const menuOpen = ref(false)
         <RouterLink to="/admin/equipe"    class="nav-link">Equipe</RouterLink>
       </template>
 
+      <NotifBell v-if="!admin" />
       <UserDropdown :admin="admin" />
     </div>
   </nav>

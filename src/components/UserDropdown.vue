@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { user, logout, isAdmin } from '../stores/auth.js'
 import { mensagens } from '../stores/mensagens.js'
+import { notificacoes } from '../stores/notificacoes.js'
 
 const props = defineProps({
   admin: { type: Boolean, default: false },
@@ -19,11 +20,7 @@ const badgeCount = computed(() => {
   if (props.admin) {
     return mensagens.value.filter(m => m.status === 'pendente').length
   }
-  return mensagens.value.filter(m =>
-    (m.email === user.value?.email || m.matricula === user.value?.matricula) &&
-    m.resposta &&
-    !m.respostaVista
-  ).length
+  return notificacoes.value.filter(n => n.userEmail === user.value?.email && !n.lida).length
 })
 
 function handleLogout() {

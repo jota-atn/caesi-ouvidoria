@@ -23,12 +23,21 @@ const emailAberto   = ref(false)
 const emailAssunto  = ref('')
 const emailCorpo    = ref('')
 const emailEnviado  = ref(false)
+const notifEmailMsg = ref('')
 
 const atendida = computed(() => status.value === 'atendida')
+
+function mostrarNotifEmail(texto) {
+  notifEmailMsg.value = texto
+  setTimeout(() => { notifEmailMsg.value = '' }, 3500)
+}
 
 function marcarAtendida() {
   status.value = 'atendida'
   updateStatus(id, 'atendida')
+  if (!mensagem.value?.anonimo && mensagem.value?.email) {
+    mostrarNotifEmail(`📧 E-mail de notificação enviado para ${mensagem.value.email}`)
+  }
 }
 
 function desfazer() {
@@ -46,6 +55,9 @@ function salvarResposta() {
   updateResposta(id, resposta.value)
   respostaSalva.value = true
   setTimeout(() => { respostaSalva.value = false }, 2000)
+  if (resposta.value.trim() && !mensagem.value?.anonimo && mensagem.value?.email) {
+    mostrarNotifEmail(`📧 E-mail de notificação enviado para ${mensagem.value.email}`)
+  }
 }
 
 function enviarEmail() {
@@ -194,6 +206,13 @@ function confirmarExcluir() {
           >{{ respostaSalva ? '✓ Salvo' : 'Salvar resposta' }}</button>
         </div>
       </div>
+
+      <!-- Toast de e-mail mock -->
+      <Transition name="toast">
+        <div v-if="notifEmailMsg" class="notif-email-toast">
+          {{ notifEmailMsg }}
+        </div>
+      </Transition>
 
       <div class="paper">
         <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--roxo-escuro);margin-bottom:1rem;">

@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { isLoggedIn, isAdmin } from '../stores/auth.js'
 import UserDropdown from './UserDropdown.vue'
+import NotifBell from './NotifBell.vue'
 
 const menuOpen = ref(false)
 </script>
@@ -25,6 +26,7 @@ const menuOpen = ref(false)
       <RouterLink to="/contato"  class="nav-link">Contato</RouterLink>
 
       <template v-if="isLoggedIn">
+        <NotifBell v-if="!isAdmin" />
         <UserDropdown :admin="isAdmin" />
       </template>
       <template v-else>
