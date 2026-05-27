@@ -30,9 +30,10 @@ const menuOpen = ref(false)
         <RouterLink to="/estatuto" class="nav-link nav-link-sec">Estatuto</RouterLink>
         <RouterLink to="/contato"  class="nav-link nav-link-sec">Contato</RouterLink>
         <span class="nav-separator" />
-        <RouterLink to="/admin/painel"   class="nav-link">Mensagens</RouterLink>
-        <RouterLink to="/admin/usuarios" class="nav-link">Usuários</RouterLink>
-        <RouterLink to="/admin/equipe"   class="nav-link">Equipe</RouterLink>
+        <RouterLink to="/admin/painel"    class="nav-link">Painel</RouterLink>
+        <RouterLink to="/admin/mensagens" class="nav-link">Mensagens</RouterLink>
+        <RouterLink to="/admin/usuarios"  class="nav-link">Usuários</RouterLink>
+        <RouterLink to="/admin/equipe"    class="nav-link">Equipe</RouterLink>
       </template>
 
       <UserDropdown :admin="admin" />

@@ -12,7 +12,7 @@ const router = useRouter()
 const id = Number(route.params.id)
 const mensagem = computed(() => mensagens.value.find(m => m.id === id))
 
-if (!mensagem.value) router.replace('/admin/painel')
+if (!mensagem.value) router.replace('/admin/mensagens')
 
 const status   = ref(mensagem.value?.status ?? 'pendente')
 const nota     = ref(mensagem.value?.nota ?? '')
@@ -59,7 +59,7 @@ function enviarEmail() {
 function confirmarExcluir() {
   if (confirm('Tem certeza que deseja excluir esta mensagem? Esta ação não pode ser desfeita.')) {
     deleteMensagem(id)
-    router.push('/admin/painel')
+    router.push('/admin/mensagens')
   }
 }
 </script>
@@ -72,7 +72,7 @@ function confirmarExcluir() {
     <Navbar :admin="true" />
 
     <div class="page-content" style="padding-top:2rem;">
-      <RouterLink to="/admin/painel" class="back-link">← Voltar ao painel</RouterLink>
+      <RouterLink to="/admin/mensagens" class="back-link">← Voltar ao painel</RouterLink>
 
       <div class="paper" style="margin-bottom:1.2rem;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">

@@ -11,29 +11,29 @@ import MensagensView       from '../views/aluno/MensagensView.vue'
 import NovaMensagemView    from '../views/aluno/NovaMensagemView.vue'
 import MensagemEnviadaView from '../views/aluno/MensagemEnviadaView.vue'
 import AlunoDetalheView    from '../views/aluno/DetalheView.vue'
+import GeralView           from '../views/admin/GeralView.vue'
 import PainelView          from '../views/admin/PainelView.vue'
 import DetalheView         from '../views/admin/DetalheView.vue'
 import UsuariosView        from '../views/admin/UsuariosView.vue'
 import EquipeView          from '../views/admin/EquipeView.vue'
-import GeralView           from '../views/admin/GeralView.vue'
 
 const routes = [
-  { path: '/',                    component: HomeView },
-  { path: '/sobre',               component: SobreView },
-  { path: '/estatuto',            component: EstatutoView },
-  { path: '/contato',             component: ContatoView },
-  { path: '/login',               component: LoginView },
-  { path: '/cadastro',            component: CadastroView },
-  { path: '/perfil',              component: PerfilView,          meta: { auth: true } },
-  { path: '/aluno/mensagens',     component: MensagensView,       meta: { auth: true } },
-  { path: '/aluno/nova-mensagem', component: NovaMensagemView,    meta: { auth: true } },
-  { path: '/aluno/enviada',       component: MensagemEnviadaView, meta: { auth: true } },
-  { path: '/aluno/mensagem/:id',  component: AlunoDetalheView,    meta: { auth: true } },
-  { path: '/admin/geral',         component: GeralView,           meta: { auth: true, admin: true } },
-  { path: '/admin/painel',        component: PainelView,          meta: { auth: true, admin: true } },
-  { path: '/admin/mensagem/:id',  component: DetalheView,         meta: { auth: true, admin: true } },
-  { path: '/admin/usuarios',      component: UsuariosView,         meta: { auth: true, admin: true } },
-  { path: '/admin/equipe',        component: EquipeView,           meta: { auth: true, admin: true } },
+  { path: '/',                       component: HomeView },
+  { path: '/sobre',                  component: SobreView },
+  { path: '/estatuto',               component: EstatutoView },
+  { path: '/contato',                component: ContatoView },
+  { path: '/login',                  component: LoginView },
+  { path: '/cadastro',               component: CadastroView },
+  { path: '/perfil',                 component: PerfilView,          meta: { auth: true } },
+  { path: '/aluno/mensagens',        component: MensagensView,       meta: { auth: true } },
+  { path: '/aluno/nova-mensagem',    component: NovaMensagemView,    meta: { auth: true } },
+  { path: '/aluno/enviada',          component: MensagemEnviadaView, meta: { auth: true } },
+  { path: '/aluno/mensagem/:id',     component: AlunoDetalheView,    meta: { auth: true } },
+  { path: '/admin/painel',           component: GeralView,           meta: { auth: true, admin: true } },
+  { path: '/admin/mensagens',        component: PainelView,          meta: { auth: true, admin: true } },
+  { path: '/admin/mensagens/:id',    component: DetalheView,         meta: { auth: true, admin: true } },
+  { path: '/admin/usuarios',         component: UsuariosView,        meta: { auth: true, admin: true } },
+  { path: '/admin/equipe',           component: EquipeView,          meta: { auth: true, admin: true } },
 ]
 
 const router = createRouter({
@@ -48,7 +48,7 @@ router.beforeEach((to) => {
   if (to.meta.auth && !user) return '/login'
   if (to.meta.admin && user?.role !== 'admin') return '/aluno/mensagens'
   if ((to.path === '/login' || to.path === '/cadastro') && user) {
-    return user.role === 'admin' ? '/admin/painel' : '/aluno/mensagens'
+    return user.role === 'admin' ? '/' : '/aluno/mensagens'
   }
 })
 

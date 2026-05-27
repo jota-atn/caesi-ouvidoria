@@ -50,7 +50,7 @@ const inativos       = computed(() => usuarios.value.filter(u => u.role !== 'adm
               <span class="geral-mini-label">Atendidas</span>
             </div>
           </div>
-          <RouterLink to="/admin/painel" class="geral-row-link">Ver painel →</RouterLink>
+          <RouterLink to="/admin/mensagens" class="geral-row-link">Ver painel →</RouterLink>
         </div>
 
         <div class="geral-divider" />

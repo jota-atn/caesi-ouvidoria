@@ -73,10 +73,10 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown))
         </RouterLink>
 
         <template v-if="admin">
-          <RouterLink to="/admin/geral" class="user-dropdown-item">
+          <RouterLink to="/admin/painel" class="user-dropdown-item">
             Painel geral
           </RouterLink>
-          <RouterLink to="/admin/painel" class="user-dropdown-item">
+          <RouterLink to="/admin/mensagens" class="user-dropdown-item">
             Painel de mensagens
             <span v-if="badgeCount > 0" class="dropdown-notif">{{ badgeCount }}</span>
           </RouterLink>

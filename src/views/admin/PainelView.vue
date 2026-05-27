@@ -201,7 +201,7 @@ const barOptions = {
         v-for="m in mensagensFiltradas"
         :key="m.id"
         :mensagem="m"
-        :to="`/admin/mensagem/${m.id}`"
+        :to="`/admin/mensagens/${m.id}`"
       />
 
       <div v-if="mensagensFiltradas.length === 0" class="empty-state">
