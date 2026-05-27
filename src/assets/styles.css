@@ -1300,7 +1300,7 @@ h1, h2, h3, .display { font-family: 'Syne', sans-serif; }
 .geral-row {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  justify-content: space-between;
   padding: 1.6rem 2rem;
 }
 
@@ -1314,8 +1314,6 @@ h1, h2, h3, .display { font-family: 'Syne', sans-serif; }
   display: flex;
   flex-direction: column;
   gap: 6px;
-  width: 160px;
-  flex-shrink: 0;
 }
 
 .geral-row-title {
@@ -1340,7 +1338,6 @@ h1, h2, h3, .display { font-family: 'Syne', sans-serif; }
 .geral-row-stats {
   display: flex;
   gap: 2rem;
-  flex: 1;
 }
 
 .geral-mini-stat {
