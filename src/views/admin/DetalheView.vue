@@ -19,6 +19,10 @@ const nota     = ref(mensagem.value?.nota ?? '')
 const resposta = ref(mensagem.value?.resposta ?? '')
 const notaSalva     = ref(false)
 const respostaSalva = ref(false)
+const emailAberto   = ref(false)
+const emailAssunto  = ref('')
+const emailCorpo    = ref('')
+const emailEnviado  = ref(false)
 
 const atendida = computed(() => status.value === 'atendida')
 
@@ -42,6 +46,14 @@ function salvarResposta() {
   updateResposta(id, resposta.value)
   respostaSalva.value = true
   setTimeout(() => { respostaSalva.value = false }, 2000)
+}
+
+function enviarEmail() {
+  emailEnviado.value = true
+  emailAberto.value = false
+  emailAssunto.value = ''
+  emailCorpo.value = ''
+  setTimeout(() => { emailEnviado.value = false }, 3000)
 }
 
 function confirmarExcluir() {
@@ -114,6 +126,43 @@ function confirmarExcluir() {
             @click="salvarNota"
           >{{ notaSalva ? '✓ Salvo' : 'Salvar anotação' }}</button>
         </div>
+      </div>
+
+      <!-- Contato direto por e-mail -->
+      <div v-if="!mensagem.anonimo && mensagem.autor" class="paper" style="margin-bottom:1.2rem;">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">
+          📧 Contato direto
+        </div>
+        <div style="font-size:0.76rem;color:var(--cinza);margin-bottom:1rem;">
+          Enviar e-mail para <strong style="color:var(--preto);">{{ mensagem.autor }}</strong>
+          <template v-if="mensagem.email"> — {{ mensagem.email }}</template>
+        </div>
+
+        <div v-if="emailEnviado" style="display:flex;align-items:center;gap:10px;background:rgba(78,170,119,0.12);border:2px solid var(--verde);border-radius:2px;padding:12px 16px;">
+          <span style="font-size:1.3rem;">✓</span>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--verde);font-size:0.9rem;">E-mail enviado!</div>
+        </div>
+
+        <template v-else>
+          <button v-if="!emailAberto" class="btn btn-outline btn-sm" @click="emailAberto = true">
+            Enviar e-mail
+          </button>
+
+          <div v-else>
+            <div class="field" style="margin-bottom:0.8rem;">
+              <label style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;">Assunto</label>
+              <input v-model="emailAssunto" type="text" placeholder="Ex.: Retorno sobre sua mensagem — {{ mensagem.protocolo }}" style="width:100%;padding:9px 12px;border:2px solid var(--creme-escuro);border-radius:2px;font-family:'Inter',sans-serif;font-size:0.9rem;color:var(--preto);outline:none;background:var(--branco);">
+            </div>
+            <div class="field" style="margin-bottom:0.8rem;">
+              <label style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.72rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;">Mensagem</label>
+              <textarea v-model="emailCorpo" rows="4" placeholder="Escreva o conteúdo do e-mail…" style="width:100%;padding:10px 12px;background:var(--branco);border:2px solid var(--creme-escuro);border-radius:2px;font-family:'Inter',sans-serif;font-size:0.9rem;color:var(--preto);resize:vertical;outline:none;"></textarea>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-amarelo btn-sm" @click="enviarEmail">Enviar</button>
+              <button class="btn btn-outline btn-sm" @click="emailAberto = false; emailAssunto = ''; emailCorpo = ''">Cancelar</button>
+            </div>
+          </div>
+        </template>
       </div>
 
       <!-- Resposta ao aluno -->
