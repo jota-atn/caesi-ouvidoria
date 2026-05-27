@@ -1,0 +1,47 @@
+import { createRouter, createWebHistory } from 'vue-router'
+
+import HomeView            from '../views/HomeView.vue'
+import SobreView           from '../views/SobreView.vue'
+import EstatutoView        from '../views/EstatutoView.vue'
+import ContatoView         from '../views/ContatoView.vue'
+import LoginView           from '../views/LoginView.vue'
+import CadastroView        from '../views/CadastroView.vue'
+import MensagensView       from '../views/aluno/MensagensView.vue'
+import NovaMensagemView    from '../views/aluno/NovaMensagemView.vue'
+import MensagemEnviadaView from '../views/aluno/MensagemEnviadaView.vue'
+import AlunoDetalheView    from '../views/aluno/DetalheView.vue'
+import PainelView          from '../views/admin/PainelView.vue'
+import DetalheView         from '../views/admin/DetalheView.vue'
+
+const routes = [
+  { path: '/',                    component: HomeView },
+  { path: '/sobre',               component: SobreView },
+  { path: '/estatuto',            component: EstatutoView },
+  { path: '/contato',             component: ContatoView },
+  { path: '/login',               component: LoginView },
+  { path: '/cadastro',            component: CadastroView },
+  { path: '/aluno/mensagens',     component: MensagensView,       meta: { auth: true } },
+  { path: '/aluno/nova-mensagem', component: NovaMensagemView,    meta: { auth: true } },
+  { path: '/aluno/enviada',       component: MensagemEnviadaView, meta: { auth: true } },
+  { path: '/aluno/mensagem/:id',  component: AlunoDetalheView,    meta: { auth: true } },
+  { path: '/admin/painel',        component: PainelView,          meta: { auth: true, admin: true } },
+  { path: '/admin/mensagem/:id',  component: DetalheView,         meta: { auth: true, admin: true } },
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+})
+
+router.beforeEach((to) => {
+  const stored = localStorage.getItem('caesi_user')
+  const user = stored ? JSON.parse(stored) : null
+
+  if (to.meta.auth && !user) return '/login'
+  if (to.meta.admin && user?.role !== 'admin') return '/aluno/mensagens'
+  if ((to.path === '/login' || to.path === '/cadastro') && user) {
+    return user.role === 'admin' ? '/admin/painel' : '/aluno/mensagens'
+  }
+})
+
+export default router
