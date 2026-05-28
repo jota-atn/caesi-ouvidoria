@@ -99,19 +99,33 @@ const posts = [
       <div class="steps-grid">
         <div class="step-card">
           <span class="step-number">1</span>
-          <span class="step-icon">✏️</span>
+          <span class="step-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+            </svg>
+          </span>
           <div class="step-title">Escreva sua mensagem</div>
           <p class="step-desc">Preencha o formulário abaixo com o assunto, categoria e detalhes do que aconteceu.</p>
         </div>
         <div class="step-card">
           <span class="step-number">2</span>
-          <span class="step-icon">📬</span>
+          <span class="step-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
+              <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+            </svg>
+          </span>
           <div class="step-title">O CAESI recebe</div>
           <p class="step-desc">Nossa equipe lê e analisa cada mensagem com atenção. Você recebe um número de protocolo.</p>
         </div>
         <div class="step-card">
           <span class="step-number">3</span>
-          <span class="step-icon">✅</span>
+          <span class="step-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </span>
           <div class="step-title">Acompanhe o status</div>
           <p class="step-desc">Faça login a qualquer momento para ver se sua mensagem foi atendida ou está em andamento.</p>
         </div>
