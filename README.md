@@ -69,6 +69,7 @@ src/
 | `/contato`               | Todos  | Formulário de contato         |
 | `/login`                 | Todos  | Login                         |
 | `/cadastro`              | Todos  | Cadastro de aluno             |
+| `/esqueci-senha`         | Todos  | Recuperação de senha          |
 | `/perfil`                | Aluno  | Dados e senha do perfil       |
 | `/aluno/mensagens`       | Aluno  | Lista de mensagens            |
 | `/aluno/nova-mensagem`   | Aluno  | Enviar nova mensagem          |

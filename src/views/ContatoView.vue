@@ -39,7 +39,7 @@ function submit() {
           <p style="font-size:0.9rem;color:var(--cinza);line-height:1.6;margin-bottom:1.2rem;">
             Recebemos sua mensagem e responderemos pelo e-mail informado em breve.
           </p>
-          <button class="btn btn-outline btn-sm" @click="enviado = false; form = { nome: '', email: '', assunto: '', mensagem: '' }">
+          <button class="btn btn-outline btn-sm" @click="enviado = false; form.value = { nome: '', email: '', assunto: '', mensagem: '' }">
             Enviar outra mensagem
           </button>
         </div>
