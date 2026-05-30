@@ -61,19 +61,19 @@ function submit() {
           <div class="field">
             <label>Nome completo *</label>
             <input v-model="form.nome" type="text" placeholder="Ex: João da Silva" :class="{ invalid: errors.nome }">
-            <span class="error-msg">Preencha seu nome completo.</span>
+            <span class="error-msg" role="alert">Preencha seu nome completo.</span>
           </div>
           <div class="field">
             <label>Matrícula *</label>
             <input v-model="form.matricula" type="text" placeholder="Ex: 123456789"
               :class="{ invalid: errors.matricula }"
               @input="form.matricula = form.matricula.replace(/\D/g, '')">
-            <span class="error-msg">Preencha sua matrícula.</span>
+            <span class="error-msg" role="alert">Preencha sua matrícula.</span>
           </div>
           <div class="field">
             <label>E-mail institucional *</label>
             <input v-model="form.email" type="email" placeholder="nome@ccc.ufcg.edu.br" :class="{ invalid: errors.email }">
-            <span class="error-msg">Preencha um e-mail válido.</span>
+            <span class="error-msg" role="alert">Preencha um e-mail válido.</span>
           </div>
           <div class="field-grid">
             <div class="field" style="position:relative;">
@@ -81,14 +81,14 @@ function submit() {
               <input v-model="form.senha" :type="senhaVisivel ? 'text' : 'password'"
                 placeholder="••••••••" :class="{ invalid: errors.senha }">
               <button type="button" @click="senhaVisivel = !senhaVisivel" class="toggle-vis">👁</button>
-              <span class="error-msg">Mínimo 6 caracteres.</span>
+              <span class="error-msg" role="alert">Mínimo 6 caracteres.</span>
             </div>
             <div class="field" style="position:relative;">
               <label>Confirmar *</label>
               <input v-model="form.confirma" :type="confirmaVisivel ? 'text' : 'password'"
                 placeholder="••••••••" :class="{ invalid: errors.confirma }">
               <button type="button" @click="confirmaVisivel = !confirmaVisivel" class="toggle-vis">👁</button>
-              <span class="error-msg">As senhas não coincidem.</span>
+              <span class="error-msg" role="alert">As senhas não coincidem.</span>
             </div>
           </div>
 

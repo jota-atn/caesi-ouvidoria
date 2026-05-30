@@ -60,7 +60,7 @@ function submit() {
               placeholder="Ex: 123456789 ou nome@ccc.ufcg.edu.br"
               :class="{ invalid: errors.email }"
             >
-            <span class="error-msg">Preencha sua matrícula ou e-mail.</span>
+            <span class="error-msg" role="alert">Preencha sua matrícula ou e-mail.</span>
           </div>
 
           <div class="field" style="position:relative;">
@@ -73,7 +73,7 @@ function submit() {
               :class="{ invalid: errors.senha }"
             >
             <button type="button" @click="senhaVisivel = !senhaVisivel" class="toggle-vis">👁</button>
-            <span class="error-msg">Preencha sua senha.</span>
+            <span class="error-msg" role="alert">Preencha sua senha.</span>
           </div>
 
           <div v-if="authError" class="alert-erro">

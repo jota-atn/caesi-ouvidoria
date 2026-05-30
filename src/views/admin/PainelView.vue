@@ -188,9 +188,9 @@ const barOptions = {
 
       <div class="filter-bar">
         <input v-model="busca" type="search" placeholder="Buscar por assunto, autor ou categoria…">
-        <button class="filter-btn" :class="{ active: filtro === 'todas' }"    @click="filtro = 'todas'">Todas</button>
-        <button class="filter-btn" :class="{ active: filtro === 'pendente' }" @click="filtro = 'pendente'">Pendentes</button>
-        <button class="filter-btn" :class="{ active: filtro === 'atendida' }" @click="filtro = 'atendida'">Atendidas</button>
+        <button class="filter-btn" :class="{ active: filtro === 'todas' }"    :aria-pressed="filtro === 'todas'"    @click="filtro = 'todas'">Todas</button>
+        <button class="filter-btn" :class="{ active: filtro === 'pendente' }" :aria-pressed="filtro === 'pendente'" @click="filtro = 'pendente'">Pendentes</button>
+        <button class="filter-btn" :class="{ active: filtro === 'atendida' }" :aria-pressed="filtro === 'atendida'" @click="filtro = 'atendida'">Atendidas</button>
       </div>
 
       <MsgCard

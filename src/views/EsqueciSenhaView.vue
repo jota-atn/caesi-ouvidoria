@@ -88,8 +88,8 @@ function redefinir() {
               placeholder="Ex: 123456789 ou nome@ccc.ufcg.edu.br"
               :class="{ invalid: identificadorErr || naoEncontrado }"
             >
-            <span class="error-msg" v-if="identificadorErr">Preencha seu e-mail ou matrícula.</span>
-            <span class="error-msg" v-else-if="naoEncontrado">Nenhuma conta encontrada com esse identificador.</span>
+            <span class="error-msg" role="alert" v-if="identificadorErr">Preencha seu e-mail ou matrícula.</span>
+            <span class="error-msg" role="alert" v-else-if="naoEncontrado">Nenhuma conta encontrada com esse identificador.</span>
           </div>
 
           <button type="submit" class="btn btn-primary btn-full" style="margin-top:0.5rem;">
@@ -119,7 +119,7 @@ function redefinir() {
               :class="{ invalid: novaSenhaErr }"
             >
             <button type="button" @click="novaSenhaVis = !novaSenhaVis" class="toggle-vis">👁</button>
-            <span class="error-msg">A senha deve ter pelo menos 6 caracteres.</span>
+            <span class="error-msg" role="alert">A senha deve ter pelo menos 6 caracteres.</span>
           </div>
 
           <div class="field" style="position:relative;">
@@ -132,7 +132,7 @@ function redefinir() {
               :class="{ invalid: confirmarErr }"
             >
             <button type="button" @click="confirmarVis = !confirmarVis" class="toggle-vis">👁</button>
-            <span class="error-msg">As senhas não coincidem.</span>
+            <span class="error-msg" role="alert">As senhas não coincidem.</span>
           </div>
 
           <div v-if="apiErr" class="alert-erro">{{ apiErr }}</div>

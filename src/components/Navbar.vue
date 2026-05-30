@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 import UserDropdown from './UserDropdown.vue'
 import NotifBell from './NotifBell.vue'
 
@@ -8,6 +9,11 @@ const props = defineProps({
 })
 
 const menuOpen = ref(false)
+const route = useRoute()
+
+function ariaCurrent(path) {
+  return route.path === path || route.path.startsWith(path + '/') ? 'page' : undefined
+}
 </script>
 
 <template>
@@ -21,20 +27,21 @@ const menuOpen = ref(false)
       </span>
     </RouterLink>
 
-    <button class="hamburger" @click="menuOpen = !menuOpen" aria-label="Menu">
+    <button class="hamburger" @click="menuOpen = !menuOpen"
+      aria-label="Menu" :aria-expanded="menuOpen" aria-controls="navbar-menu">
       <span /><span /><span />
     </button>
 
-    <div class="navbar-actions" :class="{ open: menuOpen }">
+    <div class="navbar-actions" id="navbar-menu" :class="{ open: menuOpen }">
       <template v-if="admin">
-        <RouterLink to="/sobre"    class="nav-link nav-link-sec">Sobre</RouterLink>
-        <RouterLink to="/estatuto" class="nav-link nav-link-sec">Estatuto</RouterLink>
-        <RouterLink to="/contato"  class="nav-link nav-link-sec">Contato</RouterLink>
+        <RouterLink to="/sobre"    class="nav-link nav-link-sec" :aria-current="ariaCurrent('/sobre')">Sobre</RouterLink>
+        <RouterLink to="/estatuto" class="nav-link nav-link-sec" :aria-current="ariaCurrent('/estatuto')">Estatuto</RouterLink>
+        <RouterLink to="/contato"  class="nav-link nav-link-sec" :aria-current="ariaCurrent('/contato')">Contato</RouterLink>
         <span class="nav-separator" />
-        <RouterLink to="/admin/painel"    class="nav-link">Painel</RouterLink>
-        <RouterLink to="/admin/mensagens" class="nav-link">Mensagens</RouterLink>
-        <RouterLink to="/admin/usuarios"  class="nav-link">Usuários</RouterLink>
-        <RouterLink to="/admin/equipe"    class="nav-link">Equipe</RouterLink>
+        <RouterLink to="/admin/painel"    class="nav-link" :aria-current="ariaCurrent('/admin/painel')">Painel</RouterLink>
+        <RouterLink to="/admin/mensagens" class="nav-link" :aria-current="ariaCurrent('/admin/mensagens')">Mensagens</RouterLink>
+        <RouterLink to="/admin/usuarios"  class="nav-link" :aria-current="ariaCurrent('/admin/usuarios')">Usuários</RouterLink>
+        <RouterLink to="/admin/equipe"    class="nav-link" :aria-current="ariaCurrent('/admin/equipe')">Equipe</RouterLink>
       </template>
 
       <NotifBell v-if="!admin" />

@@ -55,12 +55,12 @@ function submit() {
               <div class="field">
                 <label>Nome *</label>
                 <input v-model="form.nome" type="text" placeholder="Seu nome" :class="{ invalid: errors.nome }">
-                <span class="error-msg">Preencha seu nome.</span>
+                <span class="error-msg" role="alert">Preencha seu nome.</span>
               </div>
               <div class="field">
                 <label>E-mail *</label>
                 <input v-model="form.email" type="email" placeholder="nome@ccc.ufcg.edu.br" :class="{ invalid: errors.email }">
-                <span class="error-msg">E-mail inválido.</span>
+                <span class="error-msg" role="alert">E-mail inválido.</span>
               </div>
             </div>
 
@@ -68,14 +68,14 @@ function submit() {
               <label>Assunto *</label>
               <input v-model="form.assunto" type="text" placeholder="Sobre o que você quer falar?" maxlength="100"
                 :class="{ invalid: errors.assunto }">
-              <span class="error-msg">Preencha o assunto.</span>
+              <span class="error-msg" role="alert">Preencha o assunto.</span>
             </div>
 
             <div class="field">
               <label>Mensagem *</label>
               <textarea v-model="form.mensagem" placeholder="Escreva aqui…" rows="5" maxlength="2000"
                 :class="{ invalid: errors.mensagem }"></textarea>
-              <span class="error-msg">A mensagem é muito curta.</span>
+              <span class="error-msg" role="alert">A mensagem é muito curta.</span>
             </div>
 
             <div class="form-actions">

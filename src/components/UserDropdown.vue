@@ -40,7 +40,13 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown))
 
 <template>
   <div class="user-menu" ref="dropdownRef">
-    <button class="user-menu-trigger" @click.stop="toggleDropdown">
+    <button
+      class="user-menu-trigger"
+      @click.stop="toggleDropdown"
+      aria-haspopup="menu"
+      :aria-expanded="dropdownOpen"
+      aria-label="Menu do usuário"
+    >
       <div class="user-avatar-wrap">
         <div class="nav-avatar">{{ avatar }}</div>
         <span v-if="badgeCount > 0" class="user-badge">{{ badgeCount > 9 ? '9+' : badgeCount }}</span>

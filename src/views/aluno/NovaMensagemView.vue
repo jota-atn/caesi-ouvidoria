@@ -62,7 +62,7 @@ function submit() {
             <label>Assunto *</label>
             <input v-model="form.assunto" type="text" placeholder="Descreva brevemente o tema" maxlength="100"
               :class="{ invalid: errors.assunto }">
-            <span class="error-msg">Preencha o assunto da mensagem.</span>
+            <span class="error-msg" role="alert">Preencha o assunto da mensagem.</span>
           </div>
 
           <div class="field">
@@ -77,7 +77,7 @@ function submit() {
               <option value="sugestao">Sugestão de Melhoria</option>
               <option value="outro">Outro</option>
             </select>
-            <span class="error-msg">Selecione uma categoria.</span>
+            <span class="error-msg" role="alert">Selecione uma categoria.</span>
           </div>
 
           <div class="field">
@@ -93,7 +93,7 @@ function submit() {
               :class="{ invalid: errors.mensagem }"
               @input="onMensagemInput"
             ></textarea>
-            <span class="error-msg">
+            <span class="error-msg" role="alert">
               {{ form.mensagem.trim().length === 0 ? 'A mensagem não pode estar vazia.' : 'A mensagem deve ter pelo menos 20 caracteres.' }}
             </span>
             <div class="char-counter" :class="{ warn: charCount > 1800 }">{{ charCount }} / 2000</div>
