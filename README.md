@@ -1,13 +1,12 @@
 # CAESI Ouvidoria
 
 Frontend da ouvidoria do CAESI — Centro Acadêmico de Ciência da Computação da UFCG.
-
-Protótipo desenvolvido para a disciplina de Engenharia de Software.
+Desenvolvido para a disciplina de Engenharia de Software.
 
 ## Stack
 
 - **Vue 3** com `<script setup>` (Composition API)
-- **Vue Router 4** — SPA com guards de navegação
+- **Vue Router 4** com lazy loading e guards de navegação
 - **Vite 6**
 - **CSS vanilla** — sistema de design próprio, sem framework externo
 
@@ -27,62 +26,45 @@ Acesse `http://localhost:5173`.
 | Admin  | `admin`       | `admin` |
 | Aluno  | cadastre-se   | —       |
 
-> Os dados são persistidos no `localStorage` do navegador. Para limpar, abra o DevTools → Application → Local Storage → limpar chaves `caesi_*`.
+> Os dados são persistidos no `localStorage`. Para limpar, abra DevTools → Application → Local Storage → remover chaves `caesi_*`.
 
-## Estrutura do projeto
+## Estrutura
 
 ```
 src/
 ├── assets/
-│   └── styles.css          # CSS global e sistema de design
-├── components/
-│   ├── Badge.vue            # Badge de status (pendente/atendida)
-│   ├── MsgCard.vue          # Card de mensagem reutilizável
-│   ├── Navbar.vue           # Navbar interna (aluno/admin)
-│   ├── PublicNavbar.vue     # Navbar pública (home, sobre, contato)
-│   ├── SiteFooter.vue       # Rodapé do site
-│   └── Tag.vue              # Tag de categoria
-├── router/
-│   └── index.js             # Rotas + guards de navegação
-├── stores/
-│   ├── auth.js              # Estado de autenticação + localStorage
-│   ├── mensagens.js         # CRUD de mensagens + localStorage
-│   └── usuarios.js          # Cadastro e validação de usuários
+│   ├── styles.css          # ponto de entrada (imports)
+│   ├── base.css            # variáveis, reset, tipografia
+│   ├── layout.css          # wrappers, paper, headings
+│   ├── buttons.css
+│   ├── forms.css
+│   ├── components/         # navbar, badges, cards, footer...
+│   └── views/              # estilos por view (home, login, perfil...)
+├── components/             # Badge, MsgCard, Navbar, NotifBell, SiteFooter, Tag...
+├── router/index.js         # rotas + guards
+├── stores/                 # auth, mensagens, notificacoes, usuarios, equipe
 └── views/
-    ├── admin/
-    │   ├── DetalheView.vue  # Detalhe da mensagem (ações admin)
-    │   └── PainelView.vue   # Painel de gestão
-    ├── aluno/
-    │   ├── DetalheView.vue      # Detalhe read-only
-    │   ├── MensagemEnviadaView.vue
-    │   ├── MensagensView.vue
-    │   └── NovaMensagemView.vue
-    ├── CadastroView.vue
-    ├── ContatoView.vue
-    ├── EstatutoView.vue
-    ├── HomeView.vue         # Landing page + envio direto
-    ├── LoginView.vue
-    └── SobreView.vue
+    ├── admin/              # GeralView, PainelView, DetalheView, UsuariosView, EquipeView
+    ├── aluno/              # MensagensView, NovaMensagemView, DetalheView, MensagemEnviadaView
+    └── *.vue               # Home, Sobre, Estatuto, Contato, Login, Cadastro, Perfil
 ```
 
 ## Rotas
 
-| Rota                    | Acesso | Descrição                           |
-|-------------------------|--------|-------------------------------------|
-| `/`                     | Todos  | Landing page + envio direto/anônimo |
-| `/sobre`                | Todos  | Sobre o CAESI                       |
-| `/estatuto`             | Todos  | Estatuto (WIP)                      |
-| `/contato`              | Todos  | Formulário de contato               |
-| `/login`                | Todos  | Login                               |
-| `/cadastro`             | Todos  | Cadastro de aluno                   |
-| `/aluno/mensagens`      | Aluno  | Lista de mensagens do aluno         |
-| `/aluno/nova-mensagem`  | Aluno  | Enviar nova mensagem                |
-| `/aluno/mensagem/:id`   | Aluno  | Detalhe e status da mensagem        |
-| `/admin/painel`         | Admin  | Painel de todas as mensagens        |
-| `/admin/mensagem/:id`   | Admin  | Detalhe + ações (status, nota)      |
-
-## Docs
-
-A pasta `docs/` contém o documento de especificação do projeto para a disciplina.
-
-A pasta `prototype/` contém os protótipos HTML estáticos produzidos antes da implementação em Vue.
+| Rota                     | Acesso | Descrição                      |
+|--------------------------|--------|-------------------------------|
+| `/`                      | Todos  | Landing page + envio anônimo  |
+| `/sobre`                 | Todos  | Sobre o CAESI                 |
+| `/estatuto`              | Todos  | Estatuto                      |
+| `/contato`               | Todos  | Formulário de contato         |
+| `/login`                 | Todos  | Login                         |
+| `/cadastro`              | Todos  | Cadastro de aluno             |
+| `/perfil`                | Aluno  | Dados e senha do perfil       |
+| `/aluno/mensagens`       | Aluno  | Lista de mensagens            |
+| `/aluno/nova-mensagem`   | Aluno  | Enviar nova mensagem          |
+| `/aluno/mensagem/:id`    | Aluno  | Detalhe e status              |
+| `/admin/painel`          | Admin  | Visão geral (dashboard)       |
+| `/admin/mensagens`       | Admin  | Gestão de mensagens           |
+| `/admin/mensagens/:id`   | Admin  | Detalhe + ações               |
+| `/admin/usuarios`        | Admin  | Gestão de usuários            |
+| `/admin/equipe`          | Admin  | Edição da equipe CAESI        |
