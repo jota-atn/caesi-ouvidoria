@@ -177,7 +177,7 @@ const posts = [
             margin-bottom:1.4rem;
             line-height:1.55;
           ">
-            💡 Quer enviar identificado e acompanhar o status depois?
+            Quer enviar identificado e acompanhar o status depois?
             <RouterLink to="/login" style="color:var(--roxo-escuro);font-weight:700;">Faça login</RouterLink>
             antes de enviar. Ou continue abaixo para envio anônimo.
           </div>
@@ -250,7 +250,7 @@ const posts = [
               margin-bottom:1.4rem;
               line-height:1.5;
             ">
-              🔒 Esta mensagem será enviada de forma <strong style="color:var(--roxo-escuro);">anônima</strong> para o CAESI.
+              Esta mensagem será enviada de forma <strong style="color:var(--roxo-escuro);">anônima</strong> para o CAESI.
               <template v-if="isLoggedIn"> Ela ainda aparecerá no seu painel para acompanhamento.</template>
             </div>
 

@@ -2,6 +2,9 @@
 import PublicNavbar from '../components/PublicNavbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import { equipe } from '../stores/equipe.js'
+import mapPinIcon from '../assets/icons/map-pin.svg?raw'
+import mailIcon from '../assets/icons/mail.svg?raw'
+import instagramIcon from '../assets/icons/instagram.svg?raw'
 </script>
 
 <template>
@@ -52,17 +55,22 @@ import { equipe } from '../stores/equipe.js'
         <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--roxo-escuro);margin-bottom:1rem;">
           Onde nos encontrar
         </h2>
-        <p style="font-size:0.92rem;color:var(--preto);line-height:1.7;margin-bottom:0.6rem;">
-          📍 Sala do CAESI — Bloco CP, UFCG, Campina Grande – PB
-        </p>
-        <p style="font-size:0.92rem;color:var(--preto);line-height:1.7;margin-bottom:0.6rem;">
-          📧 <a href="mailto:caesi@ccc.ufcg.edu.br"
-            style="color:var(--roxo-escuro);font-weight:600;text-decoration:none;">caesi@ccc.ufcg.edu.br</a>
-        </p>
-        <p style="font-size:0.92rem;color:var(--preto);line-height:1.7;">
-          📷 <a href="https://instagram.com/caesiufcg" target="_blank" rel="noopener"
-            style="color:var(--roxo-escuro);font-weight:600;text-decoration:none;">@caesiufcg</a> no Instagram
-        </p>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.92rem;color:var(--preto);">
+            <span v-html="mapPinIcon" style="display:flex;flex-shrink:0;color:var(--roxo-escuro);width:17px;height:17px;"></span>
+            Sala do CAESI — Bloco CP, UFCG, Campina Grande – PB
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.92rem;">
+            <span v-html="mailIcon" style="display:flex;flex-shrink:0;color:var(--roxo-escuro);width:17px;height:17px;"></span>
+            <a href="mailto:caesi@ccc.ufcg.edu.br"
+              style="color:var(--roxo-escuro);font-weight:600;text-decoration:none;">caesi@ccc.ufcg.edu.br</a>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:0.92rem;color:var(--preto);">
+            <span v-html="instagramIcon" style="display:flex;flex-shrink:0;color:var(--roxo-escuro);width:17px;height:17px;"></span>
+            <a href="https://instagram.com/caesiufcg" target="_blank" rel="noopener"
+              style="color:var(--roxo-escuro);font-weight:600;text-decoration:none;">@caesiufcg</a>&nbsp;no Instagram
+          </div>
+        </div>
       </div>
     </div>
 
