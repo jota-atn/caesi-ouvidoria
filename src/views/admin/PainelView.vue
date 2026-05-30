@@ -191,7 +191,7 @@ const barOptions = {
       </div>
 
       <div class="filter-bar">
-        <input v-model="busca" type="search" placeholder="🔍  Buscar por assunto, autor ou categoria…">
+        <input v-model="busca" type="search" placeholder="Buscar por assunto, autor ou categoria…">
         <button class="filter-btn" :class="{ active: filtro === 'todas' }"    @click="filtro = 'todas'">Todas</button>
         <button class="filter-btn" :class="{ active: filtro === 'pendente' }" @click="filtro = 'pendente'">Pendentes</button>
         <button class="filter-btn" :class="{ active: filtro === 'atendida' }" @click="filtro = 'atendida'">Atendidas</button>

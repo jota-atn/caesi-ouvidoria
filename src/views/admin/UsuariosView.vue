@@ -144,7 +144,7 @@ function submitNewAdmin() {
 
       <!-- Busca + filtros -->
       <div class="filter-bar">
-        <input v-model="busca" type="search" placeholder="🔍  Buscar por nome, e-mail ou matrícula…">
+        <input v-model="busca" type="search" placeholder="Buscar por nome, e-mail ou matrícula…">
         <button class="filter-btn" :class="{ active: filtro === 'todos' }"   @click="filtro = 'todos'">Todos</button>
         <button class="filter-btn" :class="{ active: filtro === 'alunos' }"  @click="filtro = 'alunos'">Alunos</button>
         <button class="filter-btn" :class="{ active: filtro === 'admins' }"  @click="filtro = 'admins'">Admins</button>

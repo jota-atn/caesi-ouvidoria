@@ -36,7 +36,7 @@ function marcarAtendida() {
   status.value = 'atendida'
   updateStatus(id, 'atendida')
   if (!mensagem.value?.anonimo && mensagem.value?.email) {
-    mostrarNotifEmail(`📧 E-mail de notificação enviado para ${mensagem.value.email}`)
+    mostrarNotifEmail(`E-mail de notificação enviado para ${mensagem.value.email}`)
   }
 }
 
@@ -56,7 +56,7 @@ function salvarResposta() {
   respostaSalva.value = true
   setTimeout(() => { respostaSalva.value = false }, 2000)
   if (resposta.value.trim() && !mensagem.value?.anonimo && mensagem.value?.email) {
-    mostrarNotifEmail(`📧 E-mail de notificação enviado para ${mensagem.value.email}`)
+    mostrarNotifEmail(`E-mail de notificação enviado para ${mensagem.value.email}`)
   }
 }
 
@@ -124,7 +124,7 @@ function confirmarExcluir() {
       <div class="paper" style="margin-bottom:1.2rem;">
         <div class="internal-note">
           <div class="internal-note-label">
-            🔒 Anotação interna
+            Anotação interna
             <span style="font-size:0.72rem;color:var(--cinza);text-transform:none;letter-spacing:0;font-weight:400;">
               — visível apenas para membros do CAESI
             </span>
@@ -143,7 +143,7 @@ function confirmarExcluir() {
       <!-- Contato direto por e-mail -->
       <div v-if="!mensagem.anonimo && mensagem.autor" class="paper" style="margin-bottom:1.2rem;">
         <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">
-          📧 Contato direto
+          Contato direto
         </div>
         <div style="font-size:0.76rem;color:var(--cinza);margin-bottom:1rem;">
           Enviar e-mail para <strong style="color:var(--preto);">{{ mensagem.autor }}</strong>
@@ -182,7 +182,7 @@ function confirmarExcluir() {
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;flex-wrap:wrap;gap:8px;">
           <div>
             <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;">
-              💬 Resposta ao aluno
+              Resposta ao aluno
             </div>
             <div style="font-size:0.76rem;color:var(--cinza);margin-top:2px;">
               Visível para o aluno no painel dele
