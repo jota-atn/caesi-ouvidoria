@@ -2,11 +2,7 @@ import { ref, computed } from 'vue'
 
 const KEY = 'caesi_notificacoes'
 
-function load() {
-  return JSON.parse(localStorage.getItem(KEY) || '[]')
-}
-
-const _list = ref(load())
+const _list = ref(JSON.parse(localStorage.getItem(KEY) || '[]'))
 
 export const notificacoes = computed(() => _list.value)
 
@@ -16,14 +12,12 @@ function persist(data) {
 }
 
 export function addNotificacao({ userEmail, tipo, mensagemId, mensagemProtocolo, mensagemAssunto }) {
-  const all = load()
-  // Evita duplicata do mesmo tipo para a mesma mensagem
-  const existe = all.find(n => n.tipo === tipo && n.mensagemId === mensagemId && n.userEmail === userEmail)
+  const existe = _list.value.find(n => n.tipo === tipo && n.mensagemId === mensagemId && n.userEmail === userEmail)
   if (existe) return
-  persist([...all, {
+  persist([..._list.value, {
     id: Date.now(),
     userEmail,
-    tipo,           // 'resposta' | 'atendida'
+    tipo,
     mensagemId,
     mensagemProtocolo,
     mensagemAssunto,
@@ -33,13 +27,9 @@ export function addNotificacao({ userEmail, tipo, mensagemId, mensagemProtocolo,
 }
 
 export function marcarLida(id) {
-  const all = load()
-  const n = all.find(n => n.id === id)
-  if (n) { n.lida = true; persist(all) }
+  persist(_list.value.map(n => n.id === id ? { ...n, lida: true } : n))
 }
 
 export function marcarTodasLidas(userEmail) {
-  const all = load()
-  all.forEach(n => { if (n.userEmail === userEmail) n.lida = true })
-  persist(all)
+  persist(_list.value.map(n => n.userEmail === userEmail ? { ...n, lida: true } : n))
 }

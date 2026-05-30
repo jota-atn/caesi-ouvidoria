@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 const KEY = 'caesi_usuarios'
 const ADMIN_DEFAULT = { nome: 'Admin CAESI', email: 'admin', matricula: null, senha: 'admin', role: 'admin', ativo: true }
 
-function load() {
+function init() {
   const stored = localStorage.getItem(KEY)
   if (!stored) {
     localStorage.setItem(KEY, JSON.stringify([ADMIN_DEFAULT]))
@@ -17,7 +17,7 @@ function load() {
   return users
 }
 
-const _list = ref(load())
+const _list = ref(init())
 export const usuarios = computed(() => _list.value)
 
 function persist(data) {
@@ -26,7 +26,7 @@ function persist(data) {
 }
 
 export function findUser(identificador, senha) {
-  return load().find(u =>
+  return _list.value.find(u =>
     (u.email === identificador || u.matricula === identificador) &&
     u.senha === senha &&
     u.ativo !== false
@@ -34,36 +34,31 @@ export function findUser(identificador, senha) {
 }
 
 export function registerUser({ nome, matricula, email, senha }) {
-  const users = load()
-  if (users.find(u => u.email === email || (matricula && u.matricula === matricula))) {
+  if (_list.value.find(u => u.email === email || (matricula && u.matricula === matricula))) {
     return { error: 'Já existe uma conta com esse e-mail ou matrícula.' }
   }
   const novo = { nome, matricula, email, senha, role: 'user', ativo: true }
-  persist([...users, novo])
+  persist([..._list.value, novo])
   return { user: novo }
 }
 
 export function setUserAtivo(email, ativo) {
-  const users = load()
-  const u = users.find(u => u.email === email)
-  if (u) { u.ativo = ativo; persist(users) }
+  persist(_list.value.map(u => u.email === email ? { ...u, ativo } : u))
 }
 
 export function updateUser(emailAtual, updates) {
-  const users = load()
-  const u = users.find(u => u.email === emailAtual)
+  const u = _list.value.find(u => u.email === emailAtual)
   if (!u) return { error: 'Usuário não encontrado.' }
-  Object.assign(u, updates)
-  persist(users)
-  return { user: { ...u } }
+  const updated = { ...u, ...updates }
+  persist(_list.value.map(u => u.email === emailAtual ? updated : u))
+  return { user: updated }
 }
 
 export function createAdmin({ nome, email, senha }) {
-  const users = load()
-  if (users.find(u => u.email === email)) {
+  if (_list.value.find(u => u.email === email)) {
     return { error: 'Já existe uma conta com esse e-mail.' }
   }
   const novo = { nome, email, matricula: null, senha, role: 'admin', ativo: true }
-  persist([...users, novo])
+  persist([..._list.value, novo])
   return { user: novo }
 }

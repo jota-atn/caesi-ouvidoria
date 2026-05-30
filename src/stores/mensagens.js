@@ -3,11 +3,7 @@ import { addNotificacao } from './notificacoes.js'
 
 const KEY = 'caesi_mensagens'
 
-function load() {
-  return JSON.parse(localStorage.getItem(KEY) || '[]')
-}
-
-const _list = ref(load())
+const _list = ref(JSON.parse(localStorage.getItem(KEY) || '[]'))
 
 export const mensagens = computed(() => _list.value)
 
@@ -17,7 +13,6 @@ function persist(data) {
 }
 
 export function addMensagem(msg) {
-  const all = load()
   const id = Date.now()
   const ano = new Date().getFullYear()
   const nova = {
@@ -29,58 +24,48 @@ export function addMensagem(msg) {
     data: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' }),
     preview: msg.corpo.slice(0, 110) + (msg.corpo.length > 110 ? '…' : ''),
   }
-  persist([...all, nova])
+  persist([..._list.value, nova])
   return nova
 }
 
 export function updateStatus(id, status) {
-  const all = load()
-  const m = all.find(m => m.id === id)
-  if (m) {
-    m.status = status
-    persist(all)
-    if (status === 'atendida' && m.email) {
-      addNotificacao({
-        userEmail: m.email,
-        tipo: 'atendida',
-        mensagemId: m.id,
-        mensagemProtocolo: m.protocolo,
-        mensagemAssunto: m.assunto,
-      })
-    }
+  const m = _list.value.find(m => m.id === id)
+  if (!m) return
+  persist(_list.value.map(msg => msg.id === id ? { ...msg, status } : msg))
+  if (status === 'atendida' && m.email) {
+    addNotificacao({
+      userEmail: m.email,
+      tipo: 'atendida',
+      mensagemId: m.id,
+      mensagemProtocolo: m.protocolo,
+      mensagemAssunto: m.assunto,
+    })
   }
 }
 
 export function updateNota(id, nota) {
-  const all = load()
-  const m = all.find(m => m.id === id)
-  if (m) { m.nota = nota; persist(all) }
+  persist(_list.value.map(m => m.id === id ? { ...m, nota } : m))
 }
 
 export function updateResposta(id, resposta) {
-  const all = load()
-  const m = all.find(m => m.id === id)
-  if (m) {
-    m.resposta = resposta
-    persist(all)
-    if (resposta.trim() && m.email) {
-      addNotificacao({
-        userEmail: m.email,
-        tipo: 'resposta',
-        mensagemId: m.id,
-        mensagemProtocolo: m.protocolo,
-        mensagemAssunto: m.assunto,
-      })
-    }
+  const m = _list.value.find(m => m.id === id)
+  if (!m) return
+  persist(_list.value.map(msg => msg.id === id ? { ...msg, resposta } : msg))
+  if (resposta.trim() && m.email) {
+    addNotificacao({
+      userEmail: m.email,
+      tipo: 'resposta',
+      mensagemId: m.id,
+      mensagemProtocolo: m.protocolo,
+      mensagemAssunto: m.assunto,
+    })
   }
 }
 
 export function deleteMensagem(id) {
-  persist(load().filter(m => m.id !== id))
+  persist(_list.value.filter(m => m.id !== id))
 }
 
 export function marcarRespostaVista(id) {
-  const all = load()
-  const m = all.find(m => m.id === id)
-  if (m) { m.respostaVista = true; persist(all) }
+  persist(_list.value.map(m => m.id === id ? { ...m, respostaVista: true } : m))
 }
