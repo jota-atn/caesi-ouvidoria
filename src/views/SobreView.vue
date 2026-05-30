@@ -8,7 +8,7 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
 </script>
 
 <template>
-  <div style="min-height:100vh;display:flex;flex-direction:column;">
+  <div class="page">
     <div class="deco-star" style="top:160px;right:2%;font-size:1.3rem;opacity:0.3;">✦</div>
     <div class="deco-star" style="top:500px;left:1.5%;font-size:1rem;opacity:0.25;">✦</div>
 
@@ -18,10 +18,8 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
       <div class="section-label">Quem somos</div>
       <h1 class="section-title">Sobre o <span>CAESI</span></h1>
 
-      <div class="paper" style="margin-bottom:1.5rem;">
-        <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--roxo-escuro);margin-bottom:1rem;">
-          Missão
-        </h2>
+      <div class="paper paper-mb-lg">
+        <h2 class="paper-title">Missão</h2>
         <p style="font-size:0.95rem;color:var(--preto);line-height:1.75;margin-bottom:1.2rem;">
           O CAESI, Centro Acadêmico de Ciência da Computação, é a entidade estudantil
           que representa os alunos do curso de Ciência da Computação da UFCG. Nossa missão é defender
@@ -34,16 +32,12 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
         </p>
       </div>
 
-      <div class="paper" style="margin-bottom:1.5rem;">
-        <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--roxo-escuro);margin-bottom:1.2rem;">
-          Gestão atual
-        </h2>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div class="paper paper-mb-lg">
+        <h2 class="paper-title" style="margin-bottom:1.2rem;">Gestão atual</h2>
+        <div class="field-grid">
           <div v-for="m in equipe" :key="m.diretoria"
             style="background:var(--branco);border:2px solid var(--creme-escuro);border-radius:2px;padding:14px 16px;">
-            <div style="font-size:0.72rem;font-weight:700;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;font-family:'Syne',sans-serif;margin-bottom:4px;">
-              Diretoria {{ m.diretoria }}
-            </div>
+            <div class="label-sm" style="margin-bottom:4px;">Diretoria {{ m.diretoria }}</div>
             <div style="font-size:0.95rem;color:var(--preto);font-weight:600;">
               {{ m.presidente || '—' }}
             </div>
@@ -52,9 +46,7 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
       </div>
 
       <div class="paper">
-        <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--roxo-escuro);margin-bottom:1rem;">
-          Onde nos encontrar
-        </h2>
+        <h2 class="paper-title">Onde nos encontrar</h2>
         <div style="display:flex;flex-direction:column;gap:0.75rem;">
           <div style="display:flex;align-items:center;gap:10px;font-size:0.92rem;color:var(--preto);">
             <span v-html="mapPinIcon" style="display:flex;flex-shrink:0;color:var(--roxo-escuro);width:17px;height:17px;"></span>

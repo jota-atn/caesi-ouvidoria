@@ -4,7 +4,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 </script>
 
 <template>
-  <div style="min-height:100vh;display:flex;flex-direction:column;">
+  <div class="page">
     <div class="deco-star" style="top:160px;right:2%;font-size:1.3rem;opacity:0.3;">✦</div>
 
     <PublicNavbar />

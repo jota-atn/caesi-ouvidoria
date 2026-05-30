@@ -69,6 +69,15 @@
   border-color: var(--roxo-escuro);
 }
 
+/* ── Modificadores de .stat-card ────────────────────────── */
+.stat-card--amarelo  { border-top: 3px solid var(--amarelo); }
+.stat-card--verde    { border-top: 3px solid var(--verde); }
+.stat-card--vermelho { border-top: 3px solid var(--vermelho); }
+
+.stat-number--roxo    { color: var(--roxo); }
+.stat-number--verde   { color: var(--verde); }
+.stat-number--vermelho { color: var(--vermelho); }
+
 @media (max-width: 600px) {
   .stats-row { grid-template-columns: 1fr 1fr; }
   .filter-bar { flex-direction: column; align-items: stretch; }

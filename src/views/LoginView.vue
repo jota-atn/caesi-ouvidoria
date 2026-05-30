@@ -72,23 +72,11 @@ function submit() {
               placeholder="••••••••"
               :class="{ invalid: errors.senha }"
             >
-            <button type="button" @click="senhaVisivel = !senhaVisivel"
-              style="position:absolute;right:12px;bottom:10px;background:none;border:none;cursor:pointer;font-size:1rem;color:var(--cinza);">
-              👁
-            </button>
+            <button type="button" @click="senhaVisivel = !senhaVisivel" class="toggle-vis">👁</button>
             <span class="error-msg">Preencha sua senha.</span>
           </div>
 
-          <div v-if="authError" style="
-            background:rgba(217,85,85,0.1);
-            border:2px solid var(--vermelho);
-            border-radius:2px;
-            padding:9px 13px;
-            font-size:0.85rem;
-            color:var(--vermelho);
-            font-weight:600;
-            margin-bottom:1rem;
-          ">
+          <div v-if="authError" class="alert-erro">
             Credenciais inválidas. Verifique e tente novamente.
           </div>
 

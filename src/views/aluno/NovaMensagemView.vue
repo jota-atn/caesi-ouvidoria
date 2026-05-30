@@ -83,7 +83,7 @@ function submit() {
           <div class="field">
             <label>
               Mensagem *
-              <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--cinza);">(mín. 20 caracteres)</span>
+              <span class="field-hint">(mín. 20 caracteres)</span>
             </label>
             <textarea
               v-model="form.mensagem"
@@ -117,12 +117,12 @@ function submit() {
             margin-bottom:1.2rem;
             line-height:1.5;
           ">
-            ⚠️ Ao enviar anonimamente, o CAESI <strong>não conseguirá te contatar</strong> para dar retorno individual.
+            Ao enviar anonimamente, o CAESI <strong>não conseguirá te contatar</strong> para dar retorno individual.
           </div>
 
           <hr class="divider">
 
-          <div style="display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;">
+          <div class="btn-row" style="justify-content:flex-end;">
             <RouterLink to="/aluno/mensagens" class="btn btn-outline">Cancelar</RouterLink>
             <button type="submit" class="btn btn-amarelo">Enviar mensagem →</button>
           </div>

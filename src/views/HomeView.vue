@@ -54,7 +54,7 @@ const posts = [
 </script>
 
 <template>
-  <div style="min-height:100vh;display:flex;flex-direction:column;">
+  <div class="page">
     <div class="deco-star" style="top:160px;right:2%;font-size:1.4rem;opacity:0.35;">✦</div>
     <div class="deco-star" style="top:420px;left:1.5%;font-size:0.9rem;opacity:0.25;">✦</div>
     <div class="deco-star" style="top:750px;right:3%;font-size:1.1rem;opacity:0.3;">✦</div>
@@ -76,16 +76,14 @@ const posts = [
         <RouterLink
           v-if="!isLoggedIn"
           to="/login"
-          class="btn btn-outline"
-          style="color:var(--creme);border-color:rgba(242,230,196,0.4);"
+          class="btn btn-outline btn-outline-creme"
         >
           Entrar na conta
         </RouterLink>
         <RouterLink
           v-else
           :to="isAdmin ? '/admin/painel' : '/aluno/mensagens'"
-          class="btn btn-outline"
-          style="color:var(--creme);border-color:rgba(242,230,196,0.4);"
+          class="btn btn-outline btn-outline-creme"
         >
           {{ isAdmin ? 'Painel admin' : 'Minhas mensagens' }}
         </RouterLink>
@@ -156,9 +154,9 @@ const posts = [
                 {{ isAdmin ? 'seu painel' : 'suas mensagens' }}</RouterLink>.
             </template>
           </p>
-          <div style="background:var(--branco);border:2px solid var(--creme-escuro);border-radius:2px;padding:10px 16px;display:inline-block;margin-bottom:1.5rem;">
-            <div style="font-size:0.72rem;font-weight:700;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;font-family:'Syne',sans-serif;margin-bottom:3px;">Protocolo</div>
-            <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--preto);">{{ protocolo }}</div>
+          <div class="protocolo-box">
+            <div class="protocolo-label">Protocolo</div>
+            <div class="protocolo-value">{{ protocolo }}</div>
           </div>
           <br>
           <button class="btn btn-outline btn-sm" @click="resetForm">Enviar outra mensagem</button>
@@ -166,23 +164,12 @@ const posts = [
 
         <template v-else>
 
-          <!-- Aviso para usuários não logados -->
-          <div v-if="!isLoggedIn" style="
-            background:rgba(80,64,160,0.07);
-            border:2px dashed rgba(80,64,160,0.3);
-            border-radius:2px;
-            padding:11px 14px;
-            font-size:0.86rem;
-            color:var(--preto);
-            margin-bottom:1.4rem;
-            line-height:1.55;
-          ">
+          <div v-if="!isLoggedIn" class="alert-info">
             Quer enviar identificado e acompanhar o status depois?
             <RouterLink to="/login" style="color:var(--roxo-escuro);font-weight:700;">Faça login</RouterLink>
             antes de enviar. Ou continue abaixo para envio anônimo.
           </div>
 
-          <!-- Intro para usuários logados -->
           <p v-else style="font-size:0.88rem;color:var(--cinza);margin-bottom:1.5rem;line-height:1.6;">
             Olá, <strong style="color:var(--roxo-escuro);">{{ user.nome }}</strong>. Envie identificado ou marque
             "anônimo" — o CAESI não verá seu nome, mas sua mensagem ficará vinculada à sua conta para você acompanhar.
@@ -214,7 +201,7 @@ const posts = [
             <div class="field">
               <label>
                 Mensagem *
-                <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--cinza);">(mín. 20 caracteres)</span>
+                <span class="field-hint">(mín. 20 caracteres)</span>
               </label>
               <textarea
                 v-model="form.mensagem"
@@ -230,7 +217,6 @@ const posts = [
               <div class="char-counter" :class="{ warn: charCount > 1800 }">{{ charCount }} / 2000</div>
             </div>
 
-            <!-- Checkbox anônimo só para logados -->
             <label v-if="isLoggedIn" class="check-anon">
               <input type="checkbox" v-model="form.anonimo">
               <div class="check-anon-label">
@@ -239,22 +225,12 @@ const posts = [
               </div>
             </label>
 
-            <!-- Aviso de privacidade para anônimo -->
-            <div v-if="form.anonimo || !isLoggedIn" style="
-              background:rgba(80,64,160,0.07);
-              border:2px dashed rgba(80,64,160,0.3);
-              border-radius:2px;
-              padding:10px 14px;
-              font-size:0.84rem;
-              color:var(--cinza);
-              margin-bottom:1.4rem;
-              line-height:1.5;
-            ">
+            <div v-if="form.anonimo || !isLoggedIn" class="alert-info">
               Esta mensagem será enviada de forma <strong style="color:var(--roxo-escuro);">anônima</strong> para o CAESI.
               <template v-if="isLoggedIn"> Ela ainda aparecerá no seu painel para acompanhamento.</template>
             </div>
 
-            <div style="display:flex;justify-content:flex-end;">
+            <div class="form-actions">
               <button type="submit" class="btn btn-amarelo">
                 {{ (isLoggedIn && !form.anonimo) ? 'Enviar mensagem →' : 'Enviar anonimamente →' }}
               </button>
@@ -272,7 +248,7 @@ const posts = [
           <h2 class="section-title" style="margin-bottom:0;">Últimas do <span>Instagram</span></h2>
         </div>
         <a href="https://instagram.com/caesiufcg" target="_blank" rel="noopener"
-          class="btn btn-outline btn-sm" style="color:var(--creme);border-color:rgba(242,230,196,0.35);">
+          class="btn btn-outline btn-sm btn-outline-creme">
           Ver perfil →
         </a>
       </div>

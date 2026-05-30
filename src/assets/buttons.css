@@ -45,3 +45,4 @@
 
 .btn-sm { padding: 7px 16px; font-size: 0.82rem; }
 .btn-full { width: 100%; justify-content: center; }
+.btn-outline-creme { color: var(--creme); border-color: rgba(242,230,196,0.4); }

@@ -79,27 +79,24 @@ function submitNewAdmin() {
         </button>
       </div>
 
-      <!-- Stats -->
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-number">{{ totalAlunos }}</div>
           <div class="stat-label">Alunos cadastrados</div>
         </div>
-        <div class="stat-card" style="border-top:3px solid var(--verde);">
-          <div class="stat-number" style="color:var(--verde);">{{ totalAtivos }}</div>
+        <div class="stat-card stat-card--verde">
+          <div class="stat-number stat-number--verde">{{ totalAtivos }}</div>
           <div class="stat-label">Ativos</div>
         </div>
-        <div class="stat-card" style="border-top:3px solid var(--vermelho);">
-          <div class="stat-number" style="color:var(--vermelho);">{{ totalInativos }}</div>
+        <div class="stat-card stat-card--vermelho">
+          <div class="stat-number stat-number--vermelho">{{ totalInativos }}</div>
           <div class="stat-label">Inativos</div>
         </div>
       </div>
 
       <!-- Formulário novo admin -->
-      <div v-if="showNewAdmin" class="paper" style="margin-bottom:1.5rem;">
-        <h3 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:var(--roxo-escuro);margin-bottom:1.2rem;">
-          Criar conta de administrador
-        </h3>
+      <div v-if="showNewAdmin" class="paper paper-mb-lg">
+        <h3 class="paper-subtitle">Criar conta de administrador</h3>
 
         <div v-if="newAdminSuccess" style="text-align:center;padding:1.2rem 0;">
           <div style="font-size:2rem;margin-bottom:0.5rem;">✓</div>
@@ -107,7 +104,7 @@ function submitNewAdmin() {
         </div>
 
         <form v-else @submit.prevent="submitNewAdmin" novalidate>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="field-grid">
             <div class="field">
               <label>Nome *</label>
               <input v-model="newAdmin.nome" type="text" placeholder="Nome completo"
@@ -122,20 +119,16 @@ function submitNewAdmin() {
             </div>
           </div>
           <div class="field" style="max-width:260px;position:relative;">
-            <label>Senha * <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:0.78rem;color:var(--cinza);">(mín. 6 caracteres)</span></label>
+            <label>Senha * <span class="field-hint">(mín. 6 caracteres)</span></label>
             <input v-model="newAdmin.senha" :type="senhaVisivel ? 'text' : 'password'"
               placeholder="••••••••" :class="{ invalid: newAdminErrors.senha }">
-            <button type="button" @click="senhaVisivel = !senhaVisivel"
-              style="position:absolute;right:12px;bottom:10px;background:none;border:none;cursor:pointer;font-size:0.9rem;color:var(--cinza);">👁</button>
+            <button type="button" @click="senhaVisivel = !senhaVisivel" class="toggle-vis">👁</button>
             <span class="error-msg">Mínimo 6 caracteres.</span>
           </div>
 
-          <div v-if="newAdminApiError" style="
-            background:rgba(217,85,85,0.1);border:2px solid var(--vermelho);border-radius:2px;
-            padding:9px 13px;font-size:0.85rem;color:var(--vermelho);font-weight:600;margin-bottom:1rem;
-          ">{{ newAdminApiError }}</div>
+          <div v-if="newAdminApiError" class="alert-erro">{{ newAdminApiError }}</div>
 
-          <div style="display:flex;gap:10px;">
+          <div class="btn-row">
             <button type="submit" class="btn btn-primary btn-sm">Criar admin</button>
             <button type="button" class="btn btn-outline btn-sm" @click="cancelNewAdmin">Cancelar</button>
           </div>
@@ -151,7 +144,7 @@ function submitNewAdmin() {
       </div>
 
       <!-- Lista -->
-      <div class="paper" style="padding:0;overflow:hidden;">
+      <div class="paper paper-flush">
         <div
           v-for="(u, i) in usuariosFiltrados"
           :key="u.email"

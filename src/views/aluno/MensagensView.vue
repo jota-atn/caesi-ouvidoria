@@ -42,11 +42,11 @@ const totalAtendida = computed(() => minhasMensagens.value.filter(m => m.status 
           <div class="stat-label">Total enviadas</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number" style="color:var(--roxo);">{{ totalPendente }}</div>
+          <div class="stat-number stat-number--roxo">{{ totalPendente }}</div>
           <div class="stat-label">Pendentes</div>
         </div>
         <div class="stat-card">
-          <div class="stat-number" style="color:var(--verde);">{{ totalAtendida }}</div>
+          <div class="stat-number stat-number--verde">{{ totalAtendida }}</div>
           <div class="stat-label">Atendidas</div>
         </div>
       </div>

@@ -20,7 +20,6 @@ onMounted(() => {
   if (mensagem.value?.resposta && !mensagem.value.respostaVista) {
     marcarRespostaVista(id)
   }
-  // Marca notificações dessa mensagem como lidas
   notificacoes.value
     .filter(n => n.mensagemId === id && n.userEmail === user.value?.email && !n.lida)
     .forEach(n => marcarLida(n.id))
@@ -33,7 +32,7 @@ onMounted(() => {
 
     <Navbar />
 
-    <div class="page-content" style="padding-top:2rem;">
+    <div class="page-content">
       <RouterLink to="/aluno/mensagens" class="back-link">← Minhas mensagens</RouterLink>
 
       <div class="paper">
@@ -42,39 +41,27 @@ onMounted(() => {
           <Badge :status="mensagem.status" />
         </div>
 
-        <h1 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--roxo-escuro);margin-bottom:0.8rem;line-height:1.25;">
-          {{ mensagem.assunto }}
-        </h1>
+        <h1 class="msg-title">{{ mensagem.assunto }}</h1>
 
-        <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:0.8rem;">
-          <div style="font-size:0.84rem;color:var(--cinza);">
-            <span style="font-weight:600;color:var(--preto);">Enviada em:</span> {{ mensagem.data }}
+        <div class="msg-meta" style="margin-bottom:0.8rem;">
+          <div class="msg-meta-item">
+            <span class="msg-meta-label">Enviada em:</span> {{ mensagem.data }}
           </div>
-          <div style="font-size:0.84rem;color:var(--cinza);">
-            <span style="font-weight:600;color:var(--preto);">Protocolo:</span> {{ mensagem.protocolo }}
+          <div class="msg-meta-item">
+            <span class="msg-meta-label">Protocolo:</span> {{ mensagem.protocolo }}
           </div>
-          <div v-if="mensagem.anonimo" style="font-size:0.84rem;color:var(--cinza);font-style:italic;">
+          <div v-if="mensagem.anonimo" class="msg-meta-item" style="font-style:italic;">
             Enviada anonimamente
           </div>
         </div>
 
         <hr class="divider">
 
-        <p style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.76rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px;">
-          Sua mensagem
-        </p>
+        <p class="label-sm" style="margin-bottom:10px;">Sua mensagem</p>
         <div class="msg-body">{{ mensagem.corpo }}</div>
 
-        <div v-if="mensagem.resposta" style="
-          margin-top:1.5rem;
-          background:rgba(80,64,160,0.07);
-          border:2px solid var(--roxo);
-          border-radius:2px;
-          padding:1rem 1.2rem;
-        ">
-          <p style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">
-            💬 Resposta do CAESI
-          </p>
+        <div v-if="mensagem.resposta" class="alert-resposta">
+          <p class="label-sm" style="margin-bottom:8px;">Resposta do CAESI</p>
           <div class="msg-body">{{ mensagem.resposta }}</div>
         </div>
 

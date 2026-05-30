@@ -26,7 +26,7 @@ const inativos       = computed(() => usuarios.value.filter(u => u.role !== 'adm
         <h2>Painel <span>Geral</span></h2>
       </div>
 
-      <div class="paper" style="padding:0;overflow:hidden;">
+      <div class="paper paper-flush">
 
         <!-- Mensagens -->
         <div class="geral-row">

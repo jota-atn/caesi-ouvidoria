@@ -75,37 +75,24 @@ function submit() {
             <input v-model="form.email" type="email" placeholder="nome@ccc.ufcg.edu.br" :class="{ invalid: errors.email }">
             <span class="error-msg">Preencha um e-mail válido.</span>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="field-grid">
             <div class="field" style="position:relative;">
               <label>Senha *</label>
               <input v-model="form.senha" :type="senhaVisivel ? 'text' : 'password'"
                 placeholder="••••••••" :class="{ invalid: errors.senha }">
-              <button type="button" @click="senhaVisivel = !senhaVisivel"
-                style="position:absolute;right:12px;bottom:10px;background:none;border:none;cursor:pointer;font-size:0.9rem;color:var(--cinza);">👁</button>
+              <button type="button" @click="senhaVisivel = !senhaVisivel" class="toggle-vis">👁</button>
               <span class="error-msg">Mínimo 6 caracteres.</span>
             </div>
             <div class="field" style="position:relative;">
               <label>Confirmar *</label>
               <input v-model="form.confirma" :type="confirmaVisivel ? 'text' : 'password'"
                 placeholder="••••••••" :class="{ invalid: errors.confirma }">
-              <button type="button" @click="confirmaVisivel = !confirmaVisivel"
-                style="position:absolute;right:12px;bottom:10px;background:none;border:none;cursor:pointer;font-size:0.9rem;color:var(--cinza);">👁</button>
+              <button type="button" @click="confirmaVisivel = !confirmaVisivel" class="toggle-vis">👁</button>
               <span class="error-msg">As senhas não coincidem.</span>
             </div>
           </div>
 
-          <div v-if="registerError" style="
-            background:rgba(217,85,85,0.1);
-            border:2px solid var(--vermelho);
-            border-radius:2px;
-            padding:9px 13px;
-            font-size:0.85rem;
-            color:var(--vermelho);
-            font-weight:600;
-            margin-bottom:1rem;
-          ">
-            {{ registerError }}
-          </div>
+          <div v-if="registerError" class="alert-erro">{{ registerError }}</div>
 
           <button type="submit" class="btn btn-primary btn-full" style="margin-top:0.4rem;">
             Criar conta →

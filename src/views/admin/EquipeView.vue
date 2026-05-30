@@ -3,9 +3,7 @@ import { ref } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import { equipe, saveEquipe } from '../../stores/equipe.js'
 
-// Cópia local para edição (evita mutação direta do store)
 const form = ref(equipe.value.map(d => ({ ...d })))
-
 const msg = ref({ tipo: '', texto: '' })
 
 function salvar() {

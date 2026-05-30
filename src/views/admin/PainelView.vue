@@ -161,30 +161,26 @@ const barOptions = {
           <div class="stat-number">{{ mensagens.length }}</div>
           <div class="stat-label">Total recebidas</div>
         </div>
-        <div class="stat-card" style="border-top:3px solid var(--amarelo);">
-          <div class="stat-number" style="color:var(--roxo);">{{ totalPendente }}</div>
+        <div class="stat-card stat-card--amarelo">
+          <div class="stat-number stat-number--roxo">{{ totalPendente }}</div>
           <div class="stat-label">Pendentes</div>
         </div>
-        <div class="stat-card" style="border-top:3px solid var(--verde);">
-          <div class="stat-number" style="color:var(--verde);">{{ totalAtendida }}</div>
+        <div class="stat-card stat-card--verde">
+          <div class="stat-number stat-number--verde">{{ totalAtendida }}</div>
           <div class="stat-label">Atendidas</div>
         </div>
       </div>
 
-      <div v-if="mensagens.length > 0" style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.5rem;">
-        <div class="paper" style="padding:1.2rem;">
-          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;">
-            Por categoria
-          </div>
-          <div style="height:200px;">
+      <div v-if="mensagens.length > 0" class="charts-grid">
+        <div class="paper paper-sm">
+          <p class="label-sm" style="margin-bottom:1rem;">Por categoria</p>
+          <div class="chart-wrap">
             <Doughnut :data="donutData" :options="donutOptions" />
           </div>
         </div>
-        <div class="paper" style="padding:1.2rem;">
-          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.75rem;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;">
-            Mensagens por mês
-          </div>
-          <div style="height:200px;">
+        <div class="paper paper-sm">
+          <p class="label-sm" style="margin-bottom:1rem;">Mensagens por mês</p>
+          <div class="chart-wrap">
             <Bar :data="barData" :options="barOptions" />
           </div>
         </div>

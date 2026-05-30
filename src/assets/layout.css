@@ -128,8 +128,138 @@
 }
 .internal-note textarea:focus { border-color: var(--roxo); }
 
+/* ── Modificadores de .paper ────────────────────────────── */
+.paper-mb    { margin-bottom: 1.2rem; }
+.paper-mb-lg { margin-bottom: 1.5rem; }
+.paper-flush { padding: 0; overflow: hidden; }
+.paper-sm    { padding: 1.2rem; }
+
+/* ── Tipografia interna ─────────────────────────────────── */
+.label-sm {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.76rem;
+  color: var(--roxo-escuro);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.paper-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--roxo-escuro);
+  margin-bottom: 1rem;
+}
+
+.paper-subtitle {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--roxo-escuro);
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.msg-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: var(--roxo-escuro);
+  margin-bottom: 0.8rem;
+  line-height: 1.25;
+}
+
+/* ── Metadados de mensagem ──────────────────────────────── */
+.msg-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+.msg-meta-item { font-size: 0.84rem; color: var(--cinza); }
+.msg-meta-label { font-weight: 600; color: var(--preto); }
+
+/* ── Layout de formulários ──────────────────────────────── */
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.field-hint { font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 0.78rem; color: var(--cinza); }
+.form-actions { display: flex; justify-content: flex-end; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.save-row { margin-top: 10px; text-align: right; }
+
+/* ── Alertas ────────────────────────────────────────────── */
+.alert-erro {
+  background: rgba(217,85,85,0.1);
+  border: 2px solid var(--vermelho);
+  border-radius: 2px;
+  padding: 9px 13px;
+  font-size: 0.85rem;
+  color: var(--vermelho);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.alert-info {
+  background: rgba(80,64,160,0.07);
+  border: 2px dashed rgba(80,64,160,0.3);
+  border-radius: 2px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: var(--preto);
+  margin-bottom: 1.4rem;
+  line-height: 1.55;
+}
+
+.alert-atendida {
+  background: rgba(78,170,119,0.12);
+  border: 2px solid var(--verde);
+  border-radius: 2px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+.alert-atendida-title { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--verde); font-size: 0.95rem; }
+.alert-atendida-sub   { font-size: 0.81rem; color: var(--cinza); margin-top: 2px; }
+
+.alert-resposta {
+  margin-top: 1.5rem;
+  background: rgba(80,64,160,0.07);
+  border: 2px solid var(--roxo);
+  border-radius: 2px;
+  padding: 1rem 1.2rem;
+}
+
+/* ── Protocolo ──────────────────────────────────────────── */
+.protocolo-box {
+  background: var(--branco);
+  border: 2px solid var(--creme-escuro);
+  border-radius: 2px;
+  padding: 10px 16px;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+.protocolo-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--roxo-escuro);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: 'Syne', sans-serif;
+  margin-bottom: 3px;
+}
+.protocolo-value {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--preto);
+}
+
 @media (max-width: 600px) {
   .page-content { padding: 1rem; }
   .paper { padding: 1.2rem; }
   .page-heading { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .field-grid { grid-template-columns: 1fr; }
 }

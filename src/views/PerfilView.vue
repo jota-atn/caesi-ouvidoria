@@ -8,11 +8,9 @@ import { updateUser } from '../stores/usuarios.js'
 const router = useRouter()
 if (!user.value) router.replace('/login')
 
-// ── Dados do perfil ──
 const nome    = ref(user.value?.nome ?? '')
 const perfilMsg   = ref({ tipo: '', texto: '' })
 
-// ── Dados de senha ──
 const senhaAtual    = ref('')
 const novaSenha     = ref('')
 const confirmarSenha = ref('')
@@ -23,7 +21,6 @@ const senhaMsg      = ref({ tipo: '', texto: '' })
 
 const avatar = computed(() => (user.value?.nome ?? 'U').charAt(0).toUpperCase())
 
-// ── Salvar nome ──
 function salvarPerfil() {
   perfilMsg.value = { tipo: '', texto: '' }
   if (!nome.value.trim()) {
@@ -36,7 +33,6 @@ function salvarPerfil() {
   perfilMsg.value = { tipo: 'ok', texto: 'Nome atualizado com sucesso!' }
 }
 
-// ── Alterar senha ──
 function alterarSenha() {
   senhaMsg.value = { tipo: '', texto: '' }
   if (!senhaAtual.value || !novaSenha.value || !confirmarSenha.value) {
@@ -76,11 +72,11 @@ function voltar() {
 
     <Navbar :admin="isAdmin" />
 
-    <div class="page-content" style="padding-top:2rem;max-width:640px;">
+    <div class="page-content" style="max-width:640px;">
       <button class="back-link" @click="voltar" style="background:none;border:none;cursor:pointer;">← Voltar</button>
 
       <!-- Card de identidade -->
-      <div class="paper" style="margin-bottom:1.5rem;">
+      <div class="paper paper-mb-lg">
         <div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;">
           <div class="perfil-avatar-grande">{{ avatar }}</div>
           <div>
@@ -112,10 +108,8 @@ function voltar() {
       </div>
 
       <!-- Editar nome -->
-      <div class="paper" style="margin-bottom:1.5rem;">
-        <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--roxo-escuro);margin-bottom:1.2rem;text-transform:uppercase;letter-spacing:0.05em;">
-          Editar nome
-        </h3>
+      <div class="paper paper-mb-lg">
+        <h3 class="paper-subtitle">Editar nome</h3>
 
         <div class="field">
           <label for="nome">Nome completo</label>
@@ -133,9 +127,7 @@ function voltar() {
 
       <!-- Alterar senha -->
       <div class="paper">
-        <h3 style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--roxo-escuro);margin-bottom:1.2rem;text-transform:uppercase;letter-spacing:0.05em;">
-          Alterar senha
-        </h3>
+        <h3 class="paper-subtitle">Alterar senha</h3>
 
         <div class="field" style="position:relative;">
           <label for="senhaAtual">Senha atual</label>

@@ -19,7 +19,7 @@ function submit() {
 </script>
 
 <template>
-  <div style="min-height:100vh;display:flex;flex-direction:column;">
+  <div class="page">
     <div class="deco-star" style="top:160px;right:2%;font-size:1.3rem;opacity:0.3;">✦</div>
     <div class="deco-star" style="top:500px;left:1.5%;font-size:1rem;opacity:0.25;">✦</div>
 
@@ -51,7 +51,7 @@ function submit() {
           </p>
 
           <form @submit.prevent="submit" novalidate>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="field-grid">
               <div class="field">
                 <label>Nome *</label>
                 <input v-model="form.nome" type="text" placeholder="Seu nome" :class="{ invalid: errors.nome }">
@@ -78,7 +78,7 @@ function submit() {
               <span class="error-msg">A mensagem é muito curta.</span>
             </div>
 
-            <div style="display:flex;justify-content:flex-end;">
+            <div class="form-actions">
               <button type="submit" class="btn btn-amarelo">Enviar mensagem →</button>
             </div>
           </form>

@@ -38,19 +38,13 @@ const protocolo = route.query.protocolo || `#${new Date().getFullYear()}-????`
           Sua mensagem foi recebida pelo CAESI. Você pode acompanhar o status pela lista de mensagens — assim que o time tratar, o status será atualizado.
         </p>
 
-        <div style="background:var(--branco);border:2px solid var(--creme-escuro);border-radius:2px;padding:10px 14px;margin-bottom:1.5rem;text-align:left;">
-          <div style="font-size:0.76rem;font-weight:700;color:var(--roxo-escuro);text-transform:uppercase;letter-spacing:0.06em;font-family:'Syne',sans-serif;margin-bottom:4px;">
-            Número do protocolo
-          </div>
-          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--preto);letter-spacing:0.04em;">
-            {{ protocolo }}
-          </div>
-          <div style="font-size:0.78rem;color:var(--cinza);margin-top:2px;">
-            Guarde este número para referência
-          </div>
+        <div class="protocolo-box" style="text-align:left;width:100%;">
+          <div class="protocolo-label">Número do protocolo</div>
+          <div class="protocolo-value">{{ protocolo }}</div>
+          <div style="font-size:0.78rem;color:var(--cinza);margin-top:2px;">Guarde este número para referência</div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="btn-row" style="flex-direction:column;">
           <RouterLink to="/aluno/mensagens" class="btn btn-primary btn-full">
             Ver minhas mensagens
           </RouterLink>
