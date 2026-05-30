@@ -167,6 +167,27 @@
   box-shadow: 3px 3px 0 var(--roxo-escuro);
 }
 
+/* ── Aviso para admin na seção de envio ─────────────────── */
+.admin-no-msg {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 0.4rem 0;
+}
+.admin-no-msg-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--roxo-escuro);
+  margin-bottom: 4px;
+}
+.admin-no-msg-sub {
+  font-size: 0.85rem;
+  color: var(--cinza);
+}
+
 @media (max-width: 640px) {
   .steps-grid  { grid-template-columns: 1fr; }
   .insta-grid  { grid-template-columns: repeat(2, 1fr); }

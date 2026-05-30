@@ -162,6 +162,16 @@ const posts = [
           <button class="btn btn-outline btn-sm" @click="resetForm">Enviar outra mensagem</button>
         </div>
 
+        <div v-if="isAdmin" class="admin-no-msg">
+          <div>
+            <p class="admin-no-msg-title">Administradores não enviam mensagens pela ouvidoria.</p>
+            <p class="admin-no-msg-sub">Use o painel para gerenciar as mensagens recebidas.</p>
+          </div>
+          <RouterLink to="/admin/mensagens" class="btn btn-outline btn-sm btn-outline-creme">
+            Ir ao painel →
+          </RouterLink>
+        </div>
+
         <template v-else>
 
           <div v-if="!isLoggedIn" class="alert-info">
