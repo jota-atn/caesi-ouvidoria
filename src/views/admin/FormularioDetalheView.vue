@@ -20,16 +20,12 @@ const comprovantesPendentes = computed(() =>
   inscricoesDaForm.value.filter(i => i.comprovante?.status === 'pendente').length
 )
 
-const campoQtd = computed(() =>
-  formulario.value?.campos?.find(c => c.isQuantidade) ?? null
-)
-
 const receitaConfirmada = computed(() => {
   if (!formulario.value?.pago) return null
   return inscricoesDaForm.value
     .filter(i => ['validado', 'arquivado'].includes(i.comprovante?.status))
     .reduce((soma, i) => {
-      const qtd = campoQtd.value ? Number(i.respostas?.[campoQtd.value.id]) || 1 : 1
+      const qtd = formulario.value.tipo === 'venda' ? (Number(i.respostas?.__quantidade) || 1) : 1
       return soma + formulario.value.valor * qtd
     }, 0)
 })

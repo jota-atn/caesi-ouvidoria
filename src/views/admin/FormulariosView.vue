@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import { formularios, inscricoes, addFormulario } from '../../stores/formularios.js'
 
@@ -55,20 +55,16 @@ function cancelNovoForm() {
   novoForm.value = { titulo: '', tipo: '', descricao: '', pago: false, valor: '', prazoInscricao: '', campos: [] }
 }
 
+watch(() => novoForm.value.tipo, (tipo) => {
+  if (tipo === 'venda') novoForm.value.pago = true
+})
+
 function addCampo() {
-  novoForm.value.campos.push({ _id: Date.now(), label: '', tipo: 'texto', opcoesStr: '', obrigatorio: false, isQuantidade: false })
+  novoForm.value.campos.push({ _id: Date.now(), label: '', tipo: 'texto', opcoesStr: '', obrigatorio: false })
 }
 
 function removeCampo(index) {
   novoForm.value.campos.splice(index, 1)
-}
-
-function onTipoCampoChange(campo) {
-  if (campo.tipo !== 'numero') campo.isQuantidade = false
-}
-
-function setQuantidadeCampo(index, value) {
-  novoForm.value.campos.forEach((c, i) => { c.isQuantidade = i === index ? value : false })
 }
 
 function submitNovoForm() {
@@ -86,7 +82,6 @@ function submitNovoForm() {
       label: c.label.trim(),
       tipo: c.tipo,
       obrigatorio: c.obrigatorio,
-      ...(c.isQuantidade ? { isQuantidade: true } : {}),
       ...(c.tipo === 'select' ? { opcoes: c.opcoesStr.split(',').map(s => s.trim()).filter(Boolean) } : {}),
     }))
 
@@ -174,9 +169,12 @@ function submitNovoForm() {
           </div>
 
           <div class="field-grid" style="align-items:end;">
-            <label class="check-anon" style="margin-bottom:0;">
-              <input v-model="novoForm.pago" type="checkbox">
-              <span class="check-anon-label"><strong>Formulário pago</strong> — exige comprovante de pagamento</span>
+            <label class="check-anon" style="margin-bottom:0;" :style="novoForm.tipo === 'venda' ? 'opacity:0.65;cursor:not-allowed;' : ''">
+              <input v-model="novoForm.pago" type="checkbox" :disabled="novoForm.tipo === 'venda'">
+              <span class="check-anon-label">
+                <strong>Formulário pago</strong> — exige comprovante de pagamento
+                <em v-if="novoForm.tipo === 'venda'" style="color:var(--cinza);font-weight:400;"> (obrigatório para vendas)</em>
+              </span>
             </label>
             <div class="field" style="margin-bottom:0;" v-if="novoForm.pago">
               <label>Valor (R$) *</label>
@@ -208,7 +206,7 @@ function submitNovoForm() {
 
           <div v-for="(campo, index) in novoForm.campos" :key="campo._id">
             <div class="campo-row">
-              <select v-model="campo.tipo" class="campo-row-select" @change="onTipoCampoChange(campo)">
+              <select v-model="campo.tipo" class="campo-row-select">
                 <option value="texto">Texto</option>
                 <option value="numero">Número</option>
                 <option value="select">Seleção</option>
@@ -223,14 +221,6 @@ function submitNovoForm() {
               <label class="campo-row-check">
                 <input v-model="campo.obrigatorio" type="checkbox">
                 Obrigatório
-              </label>
-              <label v-if="novoForm.pago && campo.tipo === 'numero'" class="campo-row-check" style="color:var(--roxo-escuro);font-weight:700;">
-                <input
-                  type="checkbox"
-                  :checked="campo.isQuantidade"
-                  @change="setQuantidadeCampo(index, $event.target.checked)"
-                >
-                Quantidade
               </label>
               <button type="button" class="btn btn-outline btn-sm" @click="removeCampo(index)">✕</button>
             </div>
