@@ -85,6 +85,20 @@ export function addInscricao(formularioId, userEmail, respostas, comprovante = n
   return { inscricao: nova }
 }
 
+export function emitirCertificados(formularioId) {
+  const hoje = new Date().toISOString().split('T')[0]
+  persistForms(_forms.value.map(f =>
+    f.id === formularioId
+      ? { ...f, certificadosEmitidos: true, certificadosEmitidosEm: hoje }
+      : f
+  ))
+  persistInscricoes(_inscricoes.value.map(i =>
+    i.formularioId === formularioId
+      ? { ...i, certificado: { emitidoEm: hoje } }
+      : i
+  ))
+}
+
 export function updateStatusComprovante(inscricaoId, status) {
   persistInscricoes(_inscricoes.value.map(i =>
     i.id === inscricaoId && i.comprovante

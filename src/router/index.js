@@ -25,6 +25,7 @@ const routes = [
   { path: '/admin/equipe',           component: () => import('../views/admin/EquipeView.vue'),              meta: { auth: true, admin: true } },
   { path: '/admin/formularios',      component: () => import('../views/admin/FormulariosView.vue'),          meta: { auth: true, admin: true } },
   { path: '/admin/formularios/:id',  component: () => import('../views/admin/FormularioDetalheView.vue'),    meta: { auth: true, admin: true } },
+  { path: '/aluno/certificado/:id',  component: () => import('../views/aluno/CertificadoView.vue'),            meta: { auth: true } },
   { path: '/:pathMatch(.*)*',        component: () => import('../views/NotFoundView.vue') },
 ]
 
