@@ -41,7 +41,8 @@ function ariaCurrent(path) {
         <RouterLink to="/admin/painel"    class="nav-link" :aria-current="ariaCurrent('/admin/painel')">Painel</RouterLink>
         <RouterLink to="/admin/mensagens" class="nav-link" :aria-current="ariaCurrent('/admin/mensagens')">Mensagens</RouterLink>
         <RouterLink to="/admin/usuarios"  class="nav-link" :aria-current="ariaCurrent('/admin/usuarios')">Usuários</RouterLink>
-        <RouterLink to="/admin/equipe"    class="nav-link" :aria-current="ariaCurrent('/admin/equipe')">Equipe</RouterLink>
+        <RouterLink to="/admin/equipe"       class="nav-link" :aria-current="ariaCurrent('/admin/equipe')">Equipe</RouterLink>
+        <RouterLink to="/admin/formularios" class="nav-link" :aria-current="ariaCurrent('/admin/formularios')">Formulários</RouterLink>
       </template>
 
       <NotifBell v-if="!admin" />
