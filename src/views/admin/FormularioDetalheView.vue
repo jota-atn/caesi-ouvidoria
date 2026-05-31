@@ -20,14 +20,26 @@ const comprovantesPendentes = computed(() =>
   inscricoesDaForm.value.filter(i => i.comprovante?.status === 'pendente').length
 )
 
+function _qtd(i) {
+  return formulario.value.tipo === 'venda' ? (Number(i.respostas?.__quantidade) || 1) : 1
+}
+
 const receitaConfirmada = computed(() => {
   if (!formulario.value?.pago) return null
   return inscricoesDaForm.value
     .filter(i => ['validado', 'arquivado'].includes(i.comprovante?.status))
-    .reduce((soma, i) => {
-      const qtd = formulario.value.tipo === 'venda' ? (Number(i.respostas?.__quantidade) || 1) : 1
-      return soma + formulario.value.valor * qtd
-    }, 0)
+    .reduce((soma, i) => soma + formulario.value.valor * _qtd(i), 0)
+})
+
+const receitaEsperada = computed(() => {
+  if (!formulario.value?.pago) return null
+  return inscricoesDaForm.value
+    .reduce((soma, i) => soma + formulario.value.valor * _qtd(i), 0)
+})
+
+const receitaPendente = computed(() => {
+  if (receitaEsperada.value === null) return null
+  return receitaEsperada.value - (receitaConfirmada.value ?? 0)
 })
 
 const TIPO_LABEL = {
@@ -220,6 +232,15 @@ function excluirFormulario() {
           </div>
           <div class="stat-number" v-else style="font-size:1.3rem;color:var(--cinza);">Gratuito</div>
           <div class="stat-label">Receita confirmada</div>
+          <template v-if="receitaEsperada !== null">
+            <div style="margin-top:6px;font-size:0.74rem;color:var(--cinza);line-height:1.4;">
+              <span v-if="receitaPendente > 0" style="color:var(--roxo);font-weight:600;">
+                {{ formatValorCompacto(receitaPendente) }} pendente
+              </span>
+              <span v-if="receitaPendente > 0"> · </span>
+              <span>{{ formatValorCompacto(receitaEsperada) }} total</span>
+            </div>
+          </template>
         </div>
       </div>
 
