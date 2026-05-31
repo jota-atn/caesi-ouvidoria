@@ -27,6 +27,12 @@ const route = useRoute()
       <RouterLink to="/sobre"    class="nav-link" :aria-current="route.path === '/sobre'    ? 'page' : undefined">Sobre</RouterLink>
       <RouterLink to="/estatuto" class="nav-link" :aria-current="route.path === '/estatuto' ? 'page' : undefined">Estatuto</RouterLink>
       <RouterLink to="/contato"  class="nav-link" :aria-current="route.path === '/contato'  ? 'page' : undefined">Contato</RouterLink>
+      <span class="nav-separator" />
+      <RouterLink
+        :to="isAdmin ? '/admin/formularios' : '/aluno/formularios'"
+        class="nav-link"
+        :aria-current="route.path.startsWith('/aluno/formularios') || route.path.startsWith('/admin/formularios') ? 'page' : undefined"
+      >Formulários</RouterLink>
 
       <template v-if="isLoggedIn">
         <NotifBell v-if="!isAdmin" />
