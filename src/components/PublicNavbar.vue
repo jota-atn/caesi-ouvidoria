@@ -15,7 +15,7 @@ const route = useRoute()
       <div class="logo-circle">
         <img src="/logo_caesi.png" alt="CAESI" class="logo-img">
       </div>
-      <span class="navbar-title">CAESI <span>Ouvidoria</span></span>
+      <span class="navbar-title">CAESI</span>
     </RouterLink>
 
     <button class="hamburger" @click="menuOpen = !menuOpen"

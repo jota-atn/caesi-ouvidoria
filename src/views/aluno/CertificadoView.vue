@@ -24,13 +24,15 @@ function formatData(data) {
   const [ano, mes, dia] = data.split('-')
   return `${dia}/${mes}/${ano}`
 }
+
+function imprimir() { window.print() }
 </script>
 
 <template>
   <div class="cert-page" v-if="inscricao && formulario">
     <div class="cert-actions no-print">
       <RouterLink to="/aluno/inscricoes" class="back-link" style="color:var(--preto);opacity:0.6;">← Minhas inscrições</RouterLink>
-      <button class="btn btn-amarelo btn-sm" @click="window.print()">Imprimir certificado</button>
+      <button class="btn btn-amarelo btn-sm" @click="imprimir">Imprimir certificado</button>
     </div>
 
     <div class="cert-wrap">

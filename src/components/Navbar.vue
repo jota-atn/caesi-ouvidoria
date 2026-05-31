@@ -23,7 +23,7 @@ function ariaCurrent(path) {
         <img src="/logo_caesi.png" alt="CAESI" class="logo-img">
       </div>
       <span class="navbar-title">
-        CAESI <span>{{ admin ? 'Admin' : 'Ouvidoria' }}</span>
+        CAESI <span v-if="admin">Admin</span>
       </span>
     </RouterLink>
 
