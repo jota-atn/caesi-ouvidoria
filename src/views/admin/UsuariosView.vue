@@ -122,7 +122,7 @@ function submitNewAdmin() {
             <label>Senha * <span class="field-hint">(mín. 6 caracteres)</span></label>
             <input v-model="newAdmin.senha" :type="senhaVisivel ? 'text' : 'password'"
               placeholder="••••••••" :class="{ invalid: newAdminErrors.senha }">
-            <button type="button" @click="senhaVisivel = !senhaVisivel" class="toggle-vis">👁</button>
+            <button type="button" @click="senhaVisivel = !senhaVisivel" class="toggle-vis" aria-label="Mostrar/ocultar senha"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
             <span class="error-msg">Mínimo 6 caracteres.</span>
           </div>
 

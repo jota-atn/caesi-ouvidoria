@@ -80,14 +80,14 @@ function submit() {
               <label>Senha *</label>
               <input v-model="form.senha" :type="senhaVisivel ? 'text' : 'password'"
                 placeholder="••••••••" :class="{ invalid: errors.senha }">
-              <button type="button" @click="senhaVisivel = !senhaVisivel" class="toggle-vis">👁</button>
+              <button type="button" @click="senhaVisivel = !senhaVisivel" class="toggle-vis" aria-label="Mostrar/ocultar senha"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
               <span class="error-msg" role="alert">Mínimo 6 caracteres.</span>
             </div>
             <div class="field" style="position:relative;">
               <label>Confirmar *</label>
               <input v-model="form.confirma" :type="confirmaVisivel ? 'text' : 'password'"
                 placeholder="••••••••" :class="{ invalid: errors.confirma }">
-              <button type="button" @click="confirmaVisivel = !confirmaVisivel" class="toggle-vis">👁</button>
+              <button type="button" @click="confirmaVisivel = !confirmaVisivel" class="toggle-vis" aria-label="Mostrar/ocultar senha"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
               <span class="error-msg" role="alert">As senhas não coincidem.</span>
             </div>
           </div>

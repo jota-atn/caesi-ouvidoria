@@ -141,19 +141,19 @@ function voltar() {
         <div class="field" style="position:relative;">
           <label for="senhaAtual">Senha atual</label>
           <input id="senhaAtual" v-model="senhaAtual" :type="senhaAtualVis ? 'text' : 'password'" placeholder="••••••••">
-          <button type="button" @click="senhaAtualVis = !senhaAtualVis" class="toggle-vis">👁</button>
+          <button type="button" @click="senhaAtualVis = !senhaAtualVis" class="toggle-vis" aria-label="Mostrar/ocultar senha"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
 
         <div class="field" style="position:relative;">
           <label for="novaSenha">Nova senha</label>
           <input id="novaSenha" v-model="novaSenha" :type="novaSenhaVis ? 'text' : 'password'" placeholder="Mínimo 6 caracteres">
-          <button type="button" @click="novaSenhaVis = !novaSenhaVis" class="toggle-vis">👁</button>
+          <button type="button" @click="novaSenhaVis = !novaSenhaVis" class="toggle-vis" aria-label="Mostrar/ocultar senha"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
 
         <div class="field" style="position:relative;">
           <label for="confirmarSenha">Confirmar nova senha</label>
           <input id="confirmarSenha" v-model="confirmarSenha" :type="confirmarVis ? 'text' : 'password'" placeholder="••••••••">
-          <button type="button" @click="confirmarVis = !confirmarVis" class="toggle-vis">👁</button>
+          <button type="button" @click="confirmarVis = !confirmarVis" class="toggle-vis" aria-label="Mostrar/ocultar senha"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
 
         <div v-if="senhaMsg.texto" class="feedback-msg" :class="senhaMsg.tipo">

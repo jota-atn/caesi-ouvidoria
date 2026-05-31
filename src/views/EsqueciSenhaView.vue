@@ -118,7 +118,7 @@ function redefinir() {
               placeholder="Mínimo 6 caracteres"
               :class="{ invalid: novaSenhaErr }"
             >
-            <button type="button" @click="novaSenhaVis = !novaSenhaVis" class="toggle-vis">👁</button>
+            <button type="button" @click="novaSenhaVis = !novaSenhaVis" class="toggle-vis" aria-label="Mostrar/ocultar senha"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
             <span class="error-msg" role="alert">A senha deve ter pelo menos 6 caracteres.</span>
           </div>
 
@@ -131,7 +131,7 @@ function redefinir() {
               placeholder="Repita a nova senha"
               :class="{ invalid: confirmarErr }"
             >
-            <button type="button" @click="confirmarVis = !confirmarVis" class="toggle-vis">👁</button>
+            <button type="button" @click="confirmarVis = !confirmarVis" class="toggle-vis" aria-label="Mostrar/ocultar senha"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
             <span class="error-msg" role="alert">As senhas não coincidem.</span>
           </div>
 
