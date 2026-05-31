@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar.vue'
 import { mensagens } from '../../stores/mensagens.js'
 import { usuarios } from '../../stores/usuarios.js'
 import { equipe } from '../../stores/equipe.js'
+import { formularios, inscricoes } from '../../stores/formularios.js'
 
 const totalMensagens = computed(() => mensagens.value.length)
 const pendentes      = computed(() => mensagens.value.filter(m => m.status === 'pendente').length)
@@ -12,6 +13,21 @@ const atendidas      = computed(() => mensagens.value.filter(m => m.status === '
 const totalUsuarios  = computed(() => usuarios.value.filter(u => u.role !== 'admin').length)
 const ativos         = computed(() => usuarios.value.filter(u => u.role !== 'admin' && u.ativo !== false).length)
 const inativos       = computed(() => usuarios.value.filter(u => u.role !== 'admin' && u.ativo === false).length)
+
+const formsAbertos    = computed(() => formularios.value.filter(f => f.status === 'aberto').length)
+const formsEncerrados = computed(() => formularios.value.filter(f => f.status === 'encerrado').length)
+const compPendentes   = computed(() => inscricoes.value.filter(i => i.comprovante?.status === 'pendente').length)
+
+const receitaTotal = computed(() => {
+  return formularios.value
+    .filter(f => f.pago)
+    .reduce((soma, f) => {
+      const confirmadas = inscricoes.value.filter(
+        i => i.formularioId === f.id && ['validado', 'arquivado'].includes(i.comprovante?.status)
+      )
+      return soma + confirmadas.reduce((s, i) => s + f.valor * (Number(i.respostas?.quantidade) || 1), 0)
+    }, 0)
+})
 </script>
 
 <template>
@@ -78,6 +94,35 @@ const inativos       = computed(() => usuarios.value.filter(u => u.role !== 'adm
             </div>
           </div>
           <RouterLink to="/admin/usuarios" class="geral-row-link">Gerenciar →</RouterLink>
+        </div>
+
+        <div class="geral-divider" />
+
+        <!-- Formulários -->
+        <div class="geral-row">
+          <div class="geral-row-left">
+            <span class="geral-row-title">Formulários</span>
+            <span class="geral-row-badge" :class="compPendentes > 0 ? 'alerta' : 'ok'">
+              {{ compPendentes > 0 ? `${compPendentes} comp. pendente${compPendentes > 1 ? 's' : ''}` : 'Em dia' }}
+            </span>
+          </div>
+          <div class="geral-row-stats">
+            <div class="geral-mini-stat">
+              <span class="geral-mini-num" style="color:var(--verde);">{{ formsAbertos }}</span>
+              <span class="geral-mini-label">Abertos</span>
+            </div>
+            <div class="geral-mini-stat">
+              <span class="geral-mini-num" style="color:var(--cinza);">{{ formsEncerrados }}</span>
+              <span class="geral-mini-label">Encerrados</span>
+            </div>
+            <div class="geral-mini-stat">
+              <span class="geral-mini-num" style="color:var(--roxo);font-size:1.2rem;">
+                {{ receitaTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}
+              </span>
+              <span class="geral-mini-label">Receita confirmada</span>
+            </div>
+          </div>
+          <RouterLink to="/admin/formularios" class="geral-row-link">Ver formulários →</RouterLink>
         </div>
 
         <div class="geral-divider" />
