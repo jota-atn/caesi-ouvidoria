@@ -1,8 +1,8 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
-import { formularios, inscricoes, updateStatusComprovante } from '../../stores/formularios.js'
+import { formularios, inscricoes, updateStatusComprovante, updateFormulario, deleteFormulario } from '../../stores/formularios.js'
 
 const route  = useRoute()
 const router = useRouter()
@@ -60,6 +60,63 @@ function labelAvancar(status) {
 function avancarStatus(inscricaoId, statusAtual) {
   const proximo = statusAtual === 'pendente' ? 'validado' : 'arquivado'
   updateStatusComprovante(inscricaoId, proximo)
+}
+
+// ── Editar ───────────────────────────────────────────────
+const editando    = ref(false)
+const editSalvo   = ref(false)
+const editErrors  = ref({})
+const editForm    = ref({ titulo: '', descricao: '', prazoInscricao: '', valor: '' })
+
+function abrirEdicao() {
+  editForm.value = {
+    titulo:          formulario.value.titulo,
+    descricao:       formulario.value.descricao ?? '',
+    prazoInscricao:  formulario.value.prazoInscricao ?? '',
+    valor:           formulario.value.valor ?? '',
+  }
+  editErrors.value = {}
+  editando.value = true
+}
+
+function cancelarEdicao() {
+  editando.value = false
+  editErrors.value = {}
+}
+
+function salvarEdicao() {
+  const e = {}
+  if (!editForm.value.titulo.trim()) e.titulo = true
+  if (formulario.value.pago && (!editForm.value.valor || Number(editForm.value.valor) <= 0)) e.valor = true
+  editErrors.value = e
+  if (Object.keys(e).length > 0) return
+
+  updateFormulario(id, {
+    titulo:         editForm.value.titulo.trim(),
+    descricao:      editForm.value.descricao.trim(),
+    prazoInscricao: editForm.value.prazoInscricao || null,
+    ...(formulario.value.pago ? { valor: Number(editForm.value.valor) } : {}),
+  })
+  editando.value = false
+  editSalvo.value = true
+  setTimeout(() => { editSalvo.value = false }, 2500)
+}
+
+// ── Encerrar / reabrir ───────────────────────────────────
+function encerrarFormulario() {
+  updateFormulario(id, { status: 'encerrado' })
+}
+
+function reabrirFormulario() {
+  updateFormulario(id, { status: 'aberto' })
+}
+
+// ── Excluir ──────────────────────────────────────────────
+function excluirFormulario() {
+  if (confirm('Tem certeza que deseja excluir este formulário? Todas as inscrições serão removidas permanentemente.')) {
+    deleteFormulario(id)
+    router.push('/admin/formularios')
+  }
 }
 </script>
 
@@ -119,6 +176,70 @@ function avancarStatus(inscricaoId, statusAtual) {
           </div>
           <div class="stat-number" v-else style="font-size:1.3rem;color:var(--cinza);">Gratuito</div>
           <div class="stat-label">Receita confirmada</div>
+        </div>
+      </div>
+
+      <!-- Formulário de edição -->
+      <div v-if="editando" class="paper paper-mb">
+        <h3 class="paper-subtitle">Editar informações</h3>
+        <form @submit.prevent="salvarEdicao" novalidate>
+          <div class="field-grid">
+            <div class="field">
+              <label>Título *</label>
+              <input v-model="editForm.titulo" type="text" :class="{ invalid: editErrors.titulo }">
+              <span class="error-msg">Preencha o título.</span>
+            </div>
+            <div class="field">
+              <label>Prazo de inscrição</label>
+              <input v-model="editForm.prazoInscricao" type="date">
+            </div>
+          </div>
+          <div class="field">
+            <label>Descrição</label>
+            <textarea v-model="editForm.descricao" rows="3" style="min-height:80px;" />
+          </div>
+          <div v-if="formulario.pago" class="field" style="max-width:200px;">
+            <label>Valor (R$) *</label>
+            <input v-model="editForm.valor" type="number" min="0.01" step="0.01" :class="{ invalid: editErrors.valor }">
+            <span class="error-msg">Informe um valor válido.</span>
+          </div>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary btn-sm">Salvar alterações</button>
+            <button type="button" class="btn btn-outline btn-sm" @click="cancelarEdicao">Cancelar</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Ações do formulário -->
+      <div class="paper paper-mb">
+        <h3 class="paper-subtitle">Ações</h3>
+
+        <div v-if="editSalvo" class="alert-atendida" style="margin-bottom:1rem;">
+          <span style="font-size:1.3rem;">✓</span>
+          <div>
+            <div class="alert-atendida-title">Alterações salvas</div>
+          </div>
+        </div>
+
+        <p style="font-size:0.85rem;color:var(--cinza);margin-bottom:1.2rem;line-height:1.5;">
+          Campos personalizados não podem ser alterados após a criação. Encerrar o formulário impede novas inscrições sem excluir as existentes.
+        </p>
+
+        <div class="btn-row">
+          <button class="btn btn-outline btn-sm" @click="abrirEdicao" :disabled="editando">
+            Editar informações
+          </button>
+          <button
+            v-if="formulario.status === 'aberto'"
+            class="btn btn-outline btn-sm"
+            @click="encerrarFormulario"
+          >Encerrar formulário</button>
+          <button
+            v-else
+            class="btn btn-outline btn-sm"
+            @click="reabrirFormulario"
+          >Reabrir formulário</button>
+          <button class="btn btn-danger btn-sm" @click="excluirFormulario">Excluir</button>
         </div>
       </div>
 
