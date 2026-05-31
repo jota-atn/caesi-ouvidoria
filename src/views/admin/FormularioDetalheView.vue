@@ -65,6 +65,38 @@ function labelAvancar(status) {
   return null
 }
 
+function exportarCSV() {
+  const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`
+
+  const colsFixas   = ['E-mail', 'Inscrito em']
+  const colsCampos  = formulario.value.campos.map(c => c.label)
+  const colsExtras  = []
+  if (formulario.value.tipo === 'venda') colsExtras.push('Quantidade')
+  if (formulario.value.pago)             colsExtras.push('Status do comprovante')
+
+  const cols = [...colsFixas, ...colsCampos, ...colsExtras]
+
+  const linhas = inscricoesDaForm.value.map(i => {
+    const row = [
+      i.userEmail,
+      formatData(i.criadoEm),
+      ...formulario.value.campos.map(c => i.respostas?.[c.id] ?? ''),
+    ]
+    if (formulario.value.tipo === 'venda') row.push(i.respostas?.__quantidade ?? '')
+    if (formulario.value.pago)             row.push(i.comprovante?.status ?? 'sem comprovante')
+    return row.map(esc).join(',')
+  })
+
+  const csv  = [cols.map(esc).join(','), ...linhas].join('\r\n')
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  a.href     = url
+  a.download = `inscricoes-${formulario.value.titulo.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 function avancarStatus(inscricaoId, statusAtual) {
   const proximo = statusAtual === 'pendente' ? 'validado' : 'arquivado'
   updateStatusComprovante(inscricaoId, proximo)
@@ -288,9 +320,14 @@ function excluirFormulario() {
 
       <!-- Lista de inscrições -->
       <div class="paper">
-        <p class="label-sm" style="margin-bottom:1rem;">
-          Inscrições ({{ inscricoesDaForm.length }})
-        </p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <p class="label-sm">Inscrições ({{ inscricoesDaForm.length }})</p>
+          <button
+            class="btn btn-outline btn-sm"
+            :disabled="inscricoesDaForm.length === 0"
+            @click="exportarCSV"
+          >↓ Exportar CSV</button>
+        </div>
 
         <div v-if="inscricoesDaForm.length === 0" class="empty-state" style="padding:1.5rem 0;">
           <p>Nenhuma inscrição recebida ainda.</p>
