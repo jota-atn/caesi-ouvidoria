@@ -60,6 +60,16 @@ export function getInscricoesByUser(userEmail) {
 }
 
 export function addInscricao(formularioId, userEmail, respostas, comprovante = null) {
+  const formulario = _forms.value.find(f => f.id === formularioId)
+  if (!formulario) {
+    return { error: 'Formulário não encontrado.' }
+  }
+  if (formulario.status !== 'aberto') {
+    return { error: 'Este formulário está encerrado.' }
+  }
+  if (formulario.prazoInscricao && new Date(formulario.prazoInscricao + 'T23:59:59') < new Date()) {
+    return { error: 'O prazo de inscrição deste formulário já encerrou.' }
+  }
   if (_inscricoes.value.find(i => i.formularioId === formularioId && i.userEmail === userEmail)) {
     return { error: 'Você já se inscreveu neste formulário.' }
   }
