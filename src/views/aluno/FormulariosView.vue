@@ -37,11 +37,13 @@ function formatValor(valor) {
 }
 
 const formulariosFiltrados = computed(() =>
-  formularios.value.filter(f => {
-    if (filtro.value === 'gratuitos') return !f.pago
-    if (filtro.value === 'pagos')     return f.pago
-    return true
-  })
+  formularios.value
+    .filter(f => {
+      if (filtro.value === 'gratuitos') return !f.pago
+      if (filtro.value === 'pagos')     return f.pago
+      return true
+    })
+    .sort((a, b) => (a.status === 'aberto' ? -1 : 1) - (b.status === 'aberto' ? -1 : 1))
 )
 
 const totalInscritos = computed(() =>

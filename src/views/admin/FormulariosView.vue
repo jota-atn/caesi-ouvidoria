@@ -14,12 +14,14 @@ const TIPO_LABEL = {
 }
 
 const formulariosFiltrados = computed(() =>
-  formularios.value.filter(f => {
-    const matchFiltro = filtro.value === 'todos' || f.status === filtro.value
-    const t = busca.value.toLowerCase()
-    const matchBusca = !t || f.titulo.toLowerCase().includes(t) || f.descricao.toLowerCase().includes(t)
-    return matchFiltro && matchBusca
-  })
+  formularios.value
+    .filter(f => {
+      const matchFiltro = filtro.value === 'todos' || f.status === filtro.value
+      const t = busca.value.toLowerCase()
+      const matchBusca = !t || f.titulo.toLowerCase().includes(t) || f.descricao.toLowerCase().includes(t)
+      return matchFiltro && matchBusca
+    })
+    .sort((a, b) => (a.status === 'aberto' ? -1 : 1) - (b.status === 'aberto' ? -1 : 1))
 )
 
 const totalAbertos   = computed(() => formularios.value.filter(f => f.status === 'aberto').length)
