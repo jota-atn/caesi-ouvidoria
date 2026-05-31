@@ -96,6 +96,14 @@ const pagamentosPendentes = computed(() =>
                 <span style="font-size:0.78rem;">{{ inscricao.comprovante.nome }}</span>
               </template>
             </div>
+            <div v-if="inscricao.certificado" style="margin-top:8px;">
+              <RouterLink
+                :to="`/aluno/certificado/${inscricao.id}`"
+                class="btn btn-amarelo btn-sm"
+                style="text-decoration:none;display:inline-flex;"
+                @click.stop
+              >Ver certificado</RouterLink>
+            </div>
           </div>
           <div class="form-card-right">
             <span class="msg-card-arrow">→</span>
