@@ -100,9 +100,6 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown))
           <RouterLink to="/aluno/nova-mensagem" class="user-dropdown-item">
             Nova mensagem
           </RouterLink>
-          <RouterLink to="/aluno/formularios" class="user-dropdown-item">
-            Formulários e eventos
-          </RouterLink>
         </template>
 
         <hr class="user-dropdown-divider">
