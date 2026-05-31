@@ -26,17 +26,33 @@ function fechar(e) {
 function clicarNotif(notif) {
   marcarLida(notif.id)
   aberto.value = false
-  router.push(`/aluno/mensagem/${notif.mensagemId}`)
+  if (notif.link) {
+    router.push(notif.link)
+  } else if (notif.mensagemId) {
+    router.push(`/aluno/mensagem/${notif.mensagemId}`)
+  }
 }
 
 function marcarTodas() {
   marcarTodasLidas(user.value?.email)
 }
 
-function textoNotif(tipo) {
-  if (tipo === 'resposta') return 'O CAESI respondeu sua mensagem'
-  if (tipo === 'atendida') return 'Sua mensagem foi marcada como atendida'
+function textoNotif(n) {
+  if (n.titulo) return n.titulo
+  if (n.tipo === 'resposta') return 'O CAESI respondeu sua mensagem'
+  if (n.tipo === 'atendida') return 'Sua mensagem foi marcada como atendida'
   return 'Nova atualização'
+}
+
+function subtituloNotif(n) {
+  return n.subtitulo ?? n.mensagemAssunto ?? null
+}
+
+function metaNotif(n) {
+  const partes = []
+  if (n.mensagemProtocolo) partes.push(n.mensagemProtocolo)
+  partes.push(relativo(n.criadaEm))
+  return partes.join(' · ')
 }
 
 function relativo(iso) {
@@ -88,9 +104,9 @@ onUnmounted(() => document.removeEventListener('click', fechar))
           >
             <div class="notif-item-dot" v-if="!n.lida" />
             <div class="notif-item-body">
-              <div class="notif-item-texto">{{ textoNotif(n.tipo) }}</div>
-              <div class="notif-item-assunto">{{ n.mensagemAssunto }}</div>
-              <div class="notif-item-meta">{{ n.mensagemProtocolo }} · {{ relativo(n.criadaEm) }}</div>
+              <div class="notif-item-texto">{{ textoNotif(n) }}</div>
+              <div v-if="subtituloNotif(n)" class="notif-item-assunto">{{ subtituloNotif(n) }}</div>
+              <div class="notif-item-meta">{{ metaNotif(n) }}</div>
             </div>
           </button>
         </div>
