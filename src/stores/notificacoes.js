@@ -2,6 +2,8 @@ import { ref, computed } from 'vue'
 
 const KEY = 'caesi_notificacoes'
 
+let _idCounter = Date.now()
+
 const _list = ref(JSON.parse(localStorage.getItem(KEY) || '[]'))
 
 export const notificacoes = computed(() => _list.value)
@@ -11,16 +13,34 @@ function persist(data) {
   _list.value = [...data]
 }
 
-export function addNotificacao({ userEmail, tipo, mensagemId, mensagemProtocolo, mensagemAssunto }) {
-  const existe = _list.value.find(n => n.tipo === tipo && n.mensagemId === mensagemId && n.userEmail === userEmail)
-  if (existe) return
+export function addNotificacao(payload) {
+  const {
+    userEmail, tipo,
+    titulo, subtitulo, link, dedupeKey,
+    mensagemId, mensagemProtocolo, mensagemAssunto,
+  } = payload
+
+  const chave = dedupeKey ?? mensagemId
+  if (chave) {
+    const existe = _list.value.find(n =>
+      n.tipo === tipo &&
+      n.userEmail === userEmail &&
+      (n.dedupeKey === chave || n.mensagemId === chave)
+    )
+    if (existe) return
+  }
+
   persist([..._list.value, {
-    id: Date.now(),
+    id: ++_idCounter,
     userEmail,
     tipo,
-    mensagemId,
-    mensagemProtocolo,
-    mensagemAssunto,
+    titulo:            titulo            ?? null,
+    subtitulo:         subtitulo         ?? null,
+    link:              link              ?? null,
+    dedupeKey:         chave             ?? null,
+    mensagemId:        mensagemId        ?? null,
+    mensagemProtocolo: mensagemProtocolo ?? null,
+    mensagemAssunto:   mensagemAssunto   ?? null,
     lida: false,
     criadaEm: new Date().toISOString(),
   }])

@@ -25,6 +25,18 @@ export function addMensagem(msg) {
     preview: msg.corpo.slice(0, 110) + (msg.corpo.length > 110 ? '…' : ''),
   }
   persist([..._list.value, nova])
+
+  if (!nova.anonimo && nova.email) {
+    addNotificacao({
+      userEmail: nova.email,
+      tipo: 'mensagem-enviada',
+      titulo: 'Mensagem enviada com sucesso',
+      subtitulo: nova.assunto,
+      link: `/aluno/mensagem/${nova.id}`,
+      dedupeKey: `mensagem-enviada-${nova.id}`,
+    })
+  }
+
   return nova
 }
 

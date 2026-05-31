@@ -1,4 +1,6 @@
 import { ref, computed } from 'vue'
+import { addNotificacao } from './notificacoes.js'
+import { usuarios } from './usuarios.js'
 
 const KEY_FORMS = 'caesi_formularios_v2'
 const KEY_INSCRICOES = 'caesi_inscricoes_v2'
@@ -39,10 +41,35 @@ export function addFormulario(dados) {
     criadoEm: new Date().toISOString().split('T')[0],
   }
   persistForms([..._forms.value, novo])
+
+  usuarios.value
+    .filter(u => u.role !== 'admin' && u.ativo !== false)
+    .forEach(u => addNotificacao({
+      userEmail: u.email,
+      tipo: 'novo-formulario',
+      titulo: 'Novo evento ou formulário disponível',
+      subtitulo: novo.titulo,
+      link: `/aluno/formularios/${novo.id}`,
+      dedupeKey: `novo-formulario-${novo.id}`,
+    }))
+
   return novo
 }
 
 export function updateFormulario(id, updates) {
+  const f = _forms.value.find(f => f.id === id)
+  if (f && updates.status === 'encerrado' && f.status !== 'encerrado') {
+    _inscricoes.value
+      .filter(i => i.formularioId === id)
+      .forEach(i => addNotificacao({
+        userEmail: i.userEmail,
+        tipo: 'formulario-encerrado',
+        titulo: 'Um formulário foi encerrado',
+        subtitulo: f.titulo,
+        link: `/aluno/formularios/${id}`,
+        dedupeKey: `formulario-encerrado-${id}`,
+      }))
+  }
   persistForms(_forms.value.map(f => f.id === id ? { ...f, ...updates } : f))
 }
 
@@ -93,22 +120,53 @@ export function addInscricao(formularioId, userEmail, respostas, comprovante = n
 
 export function emitirCertificados(formularioId) {
   const hoje = new Date().toISOString().split('T')[0]
+  const f = _forms.value.find(f => f.id === formularioId)
+
   persistForms(_forms.value.map(f =>
     f.id === formularioId
       ? { ...f, certificadosEmitidos: true, certificadosEmitidosEm: hoje }
       : f
   ))
-  persistInscricoes(_inscricoes.value.map(i =>
+
+  const atualizadas = _inscricoes.value.map(i =>
     i.formularioId === formularioId
       ? { ...i, certificado: { emitidoEm: hoje } }
       : i
-  ))
+  )
+  persistInscricoes(atualizadas)
+
+  if (f) {
+    atualizadas
+      .filter(i => i.formularioId === formularioId)
+      .forEach(i => addNotificacao({
+        userEmail: i.userEmail,
+        tipo: 'certificado-emitido',
+        titulo: 'Seu certificado está disponível',
+        subtitulo: f.titulo,
+        link: '/aluno/inscricoes',
+        dedupeKey: `certificado-emitido-${formularioId}-${i.userEmail}`,
+      }))
+  }
 }
 
 export function updateStatusComprovante(inscricaoId, status) {
+  const inscricao = _inscricoes.value.find(i => i.id === inscricaoId)
+
   persistInscricoes(_inscricoes.value.map(i =>
     i.id === inscricaoId && i.comprovante
       ? { ...i, comprovante: { ...i.comprovante, status } }
       : i
   ))
+
+  if (status === 'validado' && inscricao) {
+    const f = _forms.value.find(f => f.id === inscricao.formularioId)
+    addNotificacao({
+      userEmail: inscricao.userEmail,
+      tipo: 'inscricao-confirmada',
+      titulo: 'Inscrição confirmada!',
+      subtitulo: f?.titulo ?? '',
+      link: '/aluno/inscricoes',
+      dedupeKey: `inscricao-confirmada-${inscricaoId}`,
+    })
+  }
 }
