@@ -25,7 +25,10 @@ const receitaTotal = computed(() => {
       const confirmadas = inscricoes.value.filter(
         i => i.formularioId === f.id && ['validado', 'arquivado'].includes(i.comprovante?.status)
       )
-      return soma + confirmadas.reduce((s, i) => s + f.valor * (Number(i.respostas?.quantidade) || 1), 0)
+      return soma + confirmadas.reduce((s, i) => {
+        const qtd = f.tipo === 'venda' ? (Number(i.respostas?.__quantidade) || 1) : 1
+        return s + f.valor * qtd
+      }, 0)
     }, 0)
 })
 </script>
