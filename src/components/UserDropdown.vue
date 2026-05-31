@@ -94,14 +94,14 @@ onUnmounted(() => document.removeEventListener('click', closeDropdown))
             Minhas mensagens
             <span v-if="badgeCount > 0" class="dropdown-notif">{{ badgeCount }}</span>
           </RouterLink>
+          <RouterLink to="/aluno/inscricoes" class="user-dropdown-item">
+            Minhas inscrições
+          </RouterLink>
           <RouterLink to="/aluno/nova-mensagem" class="user-dropdown-item">
             Nova mensagem
           </RouterLink>
           <RouterLink to="/aluno/formularios" class="user-dropdown-item">
             Formulários e eventos
-          </RouterLink>
-          <RouterLink to="/aluno/inscricoes" class="user-dropdown-item">
-            Minhas inscrições
           </RouterLink>
         </template>
 
