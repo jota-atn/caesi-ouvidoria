@@ -14,12 +14,17 @@ const routes = [
   { path: '/aluno/nova-mensagem',    component: () => import('../views/aluno/NovaMensagemView.vue'),        meta: { auth: true, aluno: true } },
   { path: '/aluno/enviada',          component: () => import('../views/aluno/MensagemEnviadaView.vue'),     meta: { auth: true, aluno: true } },
   { path: '/aluno/mensagem/:id',     component: () => import('../views/aluno/DetalheView.vue'),             meta: { auth: true, aluno: true } },
+  { path: '/aluno/formularios',      component: () => import('../views/aluno/FormulariosView.vue'),          meta: { auth: true, aluno: true } },
+  { path: '/aluno/formularios/:id',  component: () => import('../views/aluno/FormularioDetalheView.vue'),    meta: { auth: true, aluno: true } },
+  { path: '/aluno/inscricoes',       component: () => import('../views/aluno/InscricoesView.vue'),           meta: { auth: true, aluno: true } },
   { path: '/admin',                  redirect: '/admin/painel' },
   { path: '/admin/painel',           component: () => import('../views/admin/GeralView.vue'),               meta: { auth: true, admin: true } },
   { path: '/admin/mensagens',        component: () => import('../views/admin/PainelView.vue'),              meta: { auth: true, admin: true } },
   { path: '/admin/mensagens/:id',    component: () => import('../views/admin/DetalheView.vue'),             meta: { auth: true, admin: true } },
   { path: '/admin/usuarios',         component: () => import('../views/admin/UsuariosView.vue'),            meta: { auth: true, admin: true } },
   { path: '/admin/equipe',           component: () => import('../views/admin/EquipeView.vue'),              meta: { auth: true, admin: true } },
+  { path: '/admin/formularios',      component: () => import('../views/admin/FormulariosView.vue'),          meta: { auth: true, admin: true } },
+  { path: '/admin/formularios/:id',  component: () => import('../views/admin/FormularioDetalheView.vue'),    meta: { auth: true, admin: true } },
   { path: '/:pathMatch(.*)*',        component: () => import('../views/NotFoundView.vue') },
 ]
 
