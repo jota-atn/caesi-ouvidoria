@@ -37,6 +37,7 @@ function ariaCurrent(path) {
         <RouterLink to="/sobre"    class="nav-link" :aria-current="ariaCurrent('/sobre')">Sobre</RouterLink>
         <RouterLink to="/estatuto" class="nav-link" :aria-current="ariaCurrent('/estatuto')">Estatuto</RouterLink>
         <RouterLink to="/contato"  class="nav-link" :aria-current="ariaCurrent('/contato')">Contato</RouterLink>
+        <RouterLink to="/admin/formularios" class="nav-link" :aria-current="ariaCurrent('/admin/formularios')">Formulários</RouterLink>
         <span class="nav-separator" />
         <RouterLink to="/admin/painel"    class="nav-link" :aria-current="ariaCurrent('/admin/painel')">Painel</RouterLink>
         <RouterLink to="/admin/mensagens" class="nav-link" :aria-current="ariaCurrent('/admin/mensagens')">Mensagens</RouterLink>
@@ -49,6 +50,7 @@ function ariaCurrent(path) {
         <RouterLink to="/sobre"    class="nav-link" :aria-current="ariaCurrent('/sobre')">Sobre</RouterLink>
         <RouterLink to="/estatuto" class="nav-link" :aria-current="ariaCurrent('/estatuto')">Estatuto</RouterLink>
         <RouterLink to="/contato"  class="nav-link" :aria-current="ariaCurrent('/contato')">Contato</RouterLink>
+        <RouterLink to="/aluno/formularios" class="nav-link" :aria-current="ariaCurrent('/aluno/formularios')">Formulários</RouterLink>
         <span class="nav-separator" />
         <RouterLink to="/aluno/mensagens"  class="nav-link" :aria-current="ariaCurrent('/aluno/mensagens')">Mensagens</RouterLink>
         <RouterLink to="/aluno/inscricoes" class="nav-link" :aria-current="ariaCurrent('/aluno/inscricoes')">Inscrições</RouterLink>
