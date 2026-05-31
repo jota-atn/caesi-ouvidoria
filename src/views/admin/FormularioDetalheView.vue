@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
-import { formularios, inscricoes, updateStatusComprovante, updateFormulario, deleteFormulario } from '../../stores/formularios.js'
+import { formularios, inscricoes, updateStatusComprovante, updateFormulario, deleteFormulario, emitirCertificados } from '../../stores/formularios.js'
 
 const route  = useRoute()
 const router = useRouter()
@@ -228,6 +228,31 @@ function excluirFormulario() {
             <div class="alert-atendida-title">Alterações salvas</div>
           </div>
         </div>
+
+        <!-- Emitir certificados (somente evento-com-certificado) -->
+        <template v-if="formulario.tipo === 'evento-com-certificado'">
+          <hr class="divider">
+          <p class="label-sm" style="margin-bottom:0.6rem;">Certificados</p>
+          <div v-if="formulario.certificadosEmitidos" class="alert-atendida" style="margin-bottom:0;">
+            <span style="font-size:1.3rem;">✓</span>
+            <div>
+              <div class="alert-atendida-title">Certificados emitidos</div>
+              <div class="alert-atendida-sub">em {{ formatData(formulario.certificadosEmitidosEm) }} para {{ inscricoesDaForm.length }} inscrito{{ inscricoesDaForm.length !== 1 ? 's' : '' }}</div>
+            </div>
+          </div>
+          <template v-else>
+            <p style="font-size:0.84rem;color:var(--cinza);margin-bottom:0.8rem;line-height:1.5;">
+              Emite certificados de participação para todos os inscritos. A ação não pode ser desfeita.
+            </p>
+            <button
+              class="btn btn-amarelo btn-sm"
+              :disabled="inscricoesDaForm.length === 0"
+              @click="emitirCertificados(formulario.id)"
+            >Emitir certificados ({{ inscricoesDaForm.length }})</button>
+          </template>
+        </template>
+
+        <hr class="divider">
 
         <p style="font-size:0.85rem;color:var(--cinza);margin-bottom:1.2rem;line-height:1.5;">
           Campos personalizados não podem ser alterados após a criação. Encerrar o formulário impede novas inscrições sem excluir as existentes.
