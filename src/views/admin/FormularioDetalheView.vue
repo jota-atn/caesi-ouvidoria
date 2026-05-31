@@ -74,7 +74,7 @@ function avancarStatus(inscricaoId, statusAtual) {
 const editando    = ref(false)
 const editSalvo   = ref(false)
 const editErrors  = ref({})
-const editForm    = ref({ titulo: '', descricao: '', prazoInscricao: '', valor: '' })
+const editForm    = ref({ titulo: '', descricao: '', prazoInscricao: '', valor: '', limiteVagas: '' })
 
 function abrirEdicao() {
   editForm.value = {
@@ -82,6 +82,7 @@ function abrirEdicao() {
     descricao:       formulario.value.descricao ?? '',
     prazoInscricao:  formulario.value.prazoInscricao ?? '',
     valor:           formulario.value.valor ?? '',
+    limiteVagas:     formulario.value.limiteVagas ?? '',
   }
   editErrors.value = {}
   editando.value = true
@@ -104,6 +105,7 @@ function salvarEdicao() {
     descricao:      editForm.value.descricao.trim(),
     prazoInscricao: editForm.value.prazoInscricao || null,
     ...(formulario.value.pago ? { valor: Number(editForm.value.valor) } : {}),
+    limiteVagas: editForm.value.limiteVagas ? Number(editForm.value.limiteVagas) : null,
   })
   editando.value = false
   editSalvo.value = true
@@ -171,8 +173,10 @@ function excluirFormulario() {
       <!-- Stats -->
       <div class="stats-row">
         <div class="stat-card">
-          <div class="stat-number">{{ inscricoesDaForm.length }}</div>
-          <div class="stat-label">Inscrições</div>
+          <div class="stat-number">
+            {{ inscricoesDaForm.length }}<span v-if="formulario.limiteVagas" style="font-size:1.1rem;opacity:0.45;">/{{ formulario.limiteVagas }}</span>
+          </div>
+          <div class="stat-label">{{ formulario.limiteVagas ? 'Vagas' : 'Inscrições' }}</div>
         </div>
         <div class="stat-card stat-card--amarelo">
           <div class="stat-number stat-number--roxo">{{ comprovantesPendentes }}</div>
@@ -206,10 +210,16 @@ function excluirFormulario() {
             <label>Descrição</label>
             <textarea v-model="editForm.descricao" rows="3" style="min-height:80px;" />
           </div>
-          <div v-if="formulario.pago" class="field" style="max-width:200px;">
-            <label>Valor (R$) *</label>
-            <input v-model="editForm.valor" type="number" min="0.01" step="0.01" :class="{ invalid: editErrors.valor }">
-            <span class="error-msg">Informe um valor válido.</span>
+          <div class="field-grid">
+            <div v-if="formulario.pago" class="field">
+              <label>Valor (R$) *</label>
+              <input v-model="editForm.valor" type="number" min="0.01" step="0.01" :class="{ invalid: editErrors.valor }">
+              <span class="error-msg">Informe um valor válido.</span>
+            </div>
+            <div class="field">
+              <label>Limite de submissões <span class="field-hint">(opcional)</span></label>
+              <input v-model="editForm.limiteVagas" type="number" min="1" step="1" placeholder="Ilimitado">
+            </div>
           </div>
           <div class="btn-row">
             <button type="submit" class="btn btn-primary btn-sm">Salvar alterações</button>

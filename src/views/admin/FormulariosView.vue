@@ -49,6 +49,7 @@ const novoFormErrors  = ref({})
 const novoForm = ref({
   titulo: '', tipo: '', descricao: '',
   pago: false, valor: '', prazoInscricao: '',
+  limiteVagas: '',
   campos: [],
 })
 
@@ -56,7 +57,7 @@ function cancelNovoForm() {
   showNovoForm.value = false
   novoFormSuccess.value = false
   novoFormErrors.value = {}
-  novoForm.value = { titulo: '', tipo: '', descricao: '', pago: false, valor: '', prazoInscricao: '', campos: [] }
+  novoForm.value = { titulo: '', tipo: '', descricao: '', pago: false, valor: '', prazoInscricao: '', limiteVagas: '', campos: [] }
 }
 
 watch(() => novoForm.value.tipo, (tipo) => {
@@ -96,6 +97,7 @@ function submitNovoForm() {
     pago: novoForm.value.pago,
     valor: novoForm.value.pago ? Number(novoForm.value.valor) : null,
     prazoInscricao: novoForm.value.prazoInscricao || null,
+    limiteVagas: novoForm.value.limiteVagas ? Number(novoForm.value.limiteVagas) : null,
     campos,
   })
 
@@ -191,9 +193,15 @@ function submitNovoForm() {
             </div>
           </div>
 
-          <div class="field" style="margin-top:1.2rem;max-width:260px;">
-            <label>Prazo de inscrição</label>
-            <input v-model="novoForm.prazoInscricao" type="date">
+          <div class="field-grid" style="margin-top:1.2rem;">
+            <div class="field">
+              <label>Prazo de inscrição</label>
+              <input v-model="novoForm.prazoInscricao" type="date">
+            </div>
+            <div class="field">
+              <label>Limite de submissões <span class="field-hint">(opcional)</span></label>
+              <input v-model="novoForm.limiteVagas" type="number" min="1" step="1" placeholder="Ilimitado">
+            </div>
           </div>
 
           <hr class="divider">
