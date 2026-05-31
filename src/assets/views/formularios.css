@@ -1,0 +1,136 @@
+/* ── Tipo do formulário ─────────────────────────────────── */
+.tipo-tag {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 3px 9px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+  white-space: nowrap;
+}
+.tipo-evento-com-certificado { background: rgba(78,170,119,0.15);  color: #1A6040; border: 1px solid rgba(78,170,119,0.3); }
+.tipo-evento-sem-certificado { background: rgba(80,64,160,0.15);   color: var(--roxo-escuro); border: 1px solid rgba(80,64,160,0.3); }
+.tipo-venda                  { background: rgba(210,120,40,0.15);  color: #904010; border: 1px solid rgba(210,120,40,0.3); }
+.tipo-arrecadacao            { background: rgba(240,192,64,0.2);   color: #7A5A00; border: 1px solid rgba(240,192,64,0.4); }
+
+/* ── Status do formulário ───────────────────────────────── */
+.form-status-badge {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 3px 9px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-block;
+  white-space: nowrap;
+}
+.form-status-aberto    { background: rgba(78,170,119,0.15); color: #1A6640; }
+.form-status-encerrado { background: rgba(100,100,120,0.12); color: #404060; }
+.form-status-rascunho  { background: rgba(240,192,64,0.18); color: #7A5A00; }
+
+/* ── Status do comprovante ──────────────────────────────── */
+.comp-badge {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.68rem;
+  padding: 3px 8px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-block;
+  white-space: nowrap;
+}
+.comp-pendente  { background: var(--amarelo); color: var(--preto); }
+.comp-validado  { background: rgba(78,170,119,0.18); color: #1A6640; border: 1px solid rgba(78,170,119,0.35); }
+.comp-arquivado { background: rgba(100,100,120,0.12); color: #505060; }
+
+/* ── Card de formulário (listagem) ──────────────────────── */
+.form-card {
+  background: var(--creme);
+  border-radius: 2px;
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--roxo);
+  box-shadow: 3px 3px 0 var(--roxo-escuro);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.form-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--roxo-escuro);
+}
+.form-card.aberto    { border-left-color: var(--verde); }
+.form-card.encerrado { border-left-color: var(--cinza); opacity: 0.82; }
+
+.form-card-info { flex: 1; min-width: 0; }
+.form-card-tags { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; }
+.form-card-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 4px;
+  color: var(--preto);
+}
+.form-card-desc {
+  font-size: 0.87rem;
+  color: var(--preto);
+  opacity: 0.65;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 8px;
+}
+.form-card-meta { font-size: 0.8rem; color: var(--cinza); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.form-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+/* ── Linhas de inscrição (view de detalhe) ──────────────── */
+.inscricao-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--creme-escuro);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.inscricao-row:last-child { border-bottom: none; }
+
+.inscricao-info { flex: 1; min-width: 0; }
+.inscricao-nome {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--preto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.inscricao-meta { font-size: 0.79rem; color: var(--cinza); margin-top: 2px; }
+
+.inscricao-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+/* ── Receita no detalhe ─────────────────────────────────── */
+.stat-number--receita { color: var(--verde); }
+
+@media (max-width: 600px) {
+  .form-card { flex-direction: column; gap: 10px; }
+  .form-card-right { flex-direction: row; }
+  .form-card-desc { display: none; }
+  .inscricao-row { flex-direction: column; align-items: flex-start; }
+  .inscricao-actions { flex-direction: row; flex-wrap: wrap; }
+}
