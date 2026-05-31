@@ -22,8 +22,23 @@ function estaInscrito(formularioId) {
   return inscricoes.value.some(i => i.formularioId === formularioId && i.userEmail === user.value?.email)
 }
 
+function inscricoesCount(formularioId) {
+  return inscricoes.value.filter(i => i.formularioId === formularioId).length
+}
+
+function vagasEsgotadas(f) {
+  return f.limiteVagas != null && inscricoesCount(f.id) >= f.limiteVagas
+}
+
 function disponivel(f) {
-  return f.status === 'aberto' && !prazoExpirado(f.prazoInscricao)
+  return f.status === 'aberto' && !prazoExpirado(f.prazoInscricao) && !vagasEsgotadas(f)
+}
+
+function badgeIndisponivel(f) {
+  if (f.status !== 'aberto') return 'Encerrado'
+  if (prazoExpirado(f.prazoInscricao)) return 'Prazo esgotado'
+  if (vagasEsgotadas(f)) return 'Vagas esgotadas'
+  return null
 }
 
 function formatData(data) {
@@ -94,8 +109,8 @@ const totalInscritos = computed(() =>
         <div class="form-card-info">
           <div class="form-card-tags">
             <span class="tipo-tag" :class="`tipo-${f.tipo}`">{{ TIPO_LABEL[f.tipo] }}</span>
-            <span v-if="!disponivel(f)" class="form-status-badge form-status-encerrado">
-              {{ f.status === 'encerrado' ? 'Encerrado' : 'Prazo esgotado' }}
+            <span v-if="badgeIndisponivel(f)" class="form-status-badge form-status-encerrado">
+              {{ badgeIndisponivel(f) }}
             </span>
             <span v-if="estaInscrito(f.id)" class="comp-badge comp-validado">Inscrito</span>
           </div>
@@ -103,6 +118,12 @@ const totalInscritos = computed(() =>
           <div class="form-card-desc">{{ f.descricao }}</div>
           <div class="form-card-meta">
             <span>{{ f.pago ? formatValor(f.valor) + (f.tipo === 'venda' ? ' / unid.' : ' / pessoa') : 'Gratuito' }}</span>
+            <template v-if="f.limiteVagas">
+              <span>·</span>
+              <span :style="vagasEsgotadas(f) ? 'color:var(--vermelho);font-weight:600;' : ''">
+                {{ inscricoesCount(f.id) }}/{{ f.limiteVagas }} vagas
+              </span>
+            </template>
             <template v-if="f.prazoInscricao">
               <span>·</span>
               <span>Prazo: {{ formatData(f.prazoInscricao) }}</span>

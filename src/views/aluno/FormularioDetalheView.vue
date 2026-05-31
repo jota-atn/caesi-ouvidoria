@@ -25,9 +25,27 @@ function prazoExpirado(prazo) {
   return new Date(prazo + 'T23:59:59') < new Date()
 }
 
-const disponivel = computed(() =>
-  formulario.value?.status === 'aberto' && !prazoExpirado(formulario.value?.prazoInscricao)
+const inscricoesDaForm = computed(() =>
+  inscricoes.value.filter(i => i.formularioId === id).length
 )
+
+const vagasEsgotadas = computed(() =>
+  formulario.value?.limiteVagas != null &&
+  inscricoesDaForm.value >= formulario.value.limiteVagas
+)
+
+const disponivel = computed(() =>
+  formulario.value?.status === 'aberto' &&
+  !prazoExpirado(formulario.value?.prazoInscricao) &&
+  !vagasEsgotadas.value
+)
+
+const motivoBloqueio = computed(() => {
+  if (formulario.value?.status !== 'aberto') return 'Este formulário está encerrado.'
+  if (prazoExpirado(formulario.value?.prazoInscricao)) return 'O prazo de inscrição já encerrou.'
+  if (vagasEsgotadas.value) return 'As vagas para este formulário já foram preenchidas.'
+  return null
+})
 
 const jaInscrito = computed(() =>
   inscricoes.value.some(i => i.formularioId === id && i.userEmail === user.value?.email)
@@ -137,6 +155,12 @@ function submitForm() {
             <span class="msg-meta-label">Pagamento:</span>
             {{ formulario.pago ? formatValor(formulario.valor) + (formulario.tipo === 'venda' ? ' / unidade' : ' / pessoa') : 'Gratuito' }}
           </div>
+          <div v-if="formulario.limiteVagas" class="msg-meta-item">
+            <span class="msg-meta-label">Vagas:</span>
+            <span :style="vagasEsgotadas ? 'color:var(--vermelho);font-weight:600;' : ''">
+              {{ inscricoesDaForm }}/{{ formulario.limiteVagas }}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -155,10 +179,10 @@ function submitForm() {
         </div>
       </div>
 
-      <!-- Encerrado / prazo esgotado -->
+      <!-- Indisponível (encerrado / prazo / vagas) -->
       <div v-else-if="!disponivel" class="paper">
         <div class="alert-erro" style="margin-bottom:0;">
-          Este formulário não está mais aceitando inscrições.
+          {{ motivoBloqueio }}
         </div>
       </div>
 
