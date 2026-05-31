@@ -47,8 +47,10 @@ function formatValor(valor) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
 }
 
-function formatPrazo(prazo) {
-  return new Date(prazo + 'T00:00:00').toLocaleDateString('pt-BR')
+function formatData(data) {
+  if (!data) return ''
+  const [ano, mes, dia] = data.split('-')
+  return `${dia}/${mes}/${ano}`
 }
 
 function labelAvancar(status) {
@@ -145,10 +147,10 @@ function excluirFormulario() {
         <div class="msg-meta">
           <div class="msg-meta-item">
             <span class="msg-meta-label">Criado em:</span>
-            {{ new Date(formulario.criadoEm + 'T00:00:00').toLocaleDateString('pt-BR') }}
+            {{ formatData(formulario.criadoEm) }}
           </div>
           <div v-if="formulario.prazoInscricao" class="msg-meta-item">
-            <span class="msg-meta-label">Prazo:</span> {{ formatPrazo(formulario.prazoInscricao) }}
+            <span class="msg-meta-label">Prazo:</span> {{ formatData(formulario.prazoInscricao) }}
           </div>
           <div class="msg-meta-item">
             <span class="msg-meta-label">Pagamento:</span>
@@ -262,7 +264,7 @@ function excluirFormulario() {
             <div class="inscricao-nome">{{ inscricao.respostas.nome ?? '—' }}</div>
             <div class="inscricao-meta">
               {{ inscricao.userEmail }}
-              · Inscrito em {{ new Date(inscricao.criadoEm + 'T00:00:00').toLocaleDateString('pt-BR') }}
+              · Inscrito em {{ formatData(inscricao.criadoEm) }}
             </div>
           </div>
 

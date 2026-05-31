@@ -34,8 +34,10 @@ function pendenteCount(id) {
 function formatValor(valor) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
 }
-function formatPrazo(prazo) {
-  return new Date(prazo + 'T00:00:00').toLocaleDateString('pt-BR')
+function formatData(data) {
+  if (!data) return ''
+  const [ano, mes, dia] = data.split('-')
+  return `${dia}/${mes}/${ano}`
 }
 
 // ── Criação de formulário ────────────────────────────────
@@ -274,7 +276,7 @@ function submitNovoForm() {
             </template>
             <template v-if="f.prazoInscricao">
               <span>·</span>
-              <span>Prazo: {{ formatPrazo(f.prazoInscricao) }}</span>
+              <span>Prazo: {{ formatData(f.prazoInscricao) }}</span>
             </template>
           </div>
         </div>
