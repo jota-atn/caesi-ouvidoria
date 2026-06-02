@@ -67,6 +67,7 @@ function ariaCurrentFormularios() {
         <RouterLink to="/admin/mensagens"   class="nav-link" :aria-current="ariaCurrent('/admin/mensagens')"   @click="menuOpen = false">Mensagens</RouterLink>
         <RouterLink to="/admin/usuarios"    class="nav-link" :aria-current="ariaCurrent('/admin/usuarios')"    @click="menuOpen = false">Usuários</RouterLink>
         <RouterLink to="/admin/equipe"      class="nav-link" :aria-current="ariaCurrent('/admin/equipe')"      @click="menuOpen = false">Equipe</RouterLink>
+        <RouterLink to="/admin/tasks"       class="nav-link" :aria-current="ariaCurrent('/admin/tasks')"       @click="menuOpen = false">Tasks</RouterLink>
         <RouterLink to="/admin/formularios" class="nav-link" :aria-current="ariaCurrentFormularios()"         @click="menuOpen = false">Formulários</RouterLink>
         <div class="navbar-desktop-user">
           <UserDropdown :admin="true" />
