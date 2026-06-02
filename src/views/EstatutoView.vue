@@ -1,4 +1,5 @@
 <script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
@@ -19,6 +20,24 @@ const titulos = [
 function ir(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
+
+const activeId = ref('titulo-1')
+let observer
+
+onMounted(() => {
+  const sections = document.querySelectorAll('.est-titulo')
+  observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) activeId.value = entry.target.id
+      })
+    },
+    { rootMargin: '-10% 0px -80% 0px', threshold: 0 }
+  )
+  sections.forEach(s => observer.observe(s))
+})
+
+onBeforeUnmount(() => observer?.disconnect())
 </script>
 
 <template>
@@ -54,8 +73,13 @@ function ir(id) {
       <div class="paper paper-mb-lg">
         <h2 class="paper-title" style="margin-bottom:1rem;">Sumário</h2>
         <div class="est-toc">
-          <button v-for="t in titulos" :key="t.id" class="est-toc-item" @click="ir(t.id)">
-            <span class="est-toc-num">{{ t.num }}</span>
+          <button
+            v-for="t in titulos" :key="t.id"
+            class="est-toc-item"
+            :class="{ 'est-toc-ativo': activeId === t.id }"
+            @click="ir(t.id)"
+          >
+            <span class="est-toc-num" :class="{ 'est-toc-num-ativo': activeId === t.id }">{{ t.num }}</span>
             <span class="est-toc-texto">{{ t.texto }}</span>
           </button>
         </div>
@@ -611,6 +635,10 @@ function ir(id) {
   border-color: var(--roxo);
   background: rgba(80, 64, 160, 0.04);
 }
+.est-toc-ativo {
+  border-color: var(--roxo-escuro) !important;
+  background: rgba(80, 64, 160, 0.09) !important;
+}
 .est-toc-num {
   display: inline-block;
   background: var(--roxo-escuro);
@@ -624,6 +652,9 @@ function ir(id) {
   flex-shrink: 0;
   margin-top: 2px;
 }
+.est-toc-num-ativo {
+  background: var(--roxo);
+}
 .est-toc-texto {
   font-size: 0.85rem;
   color: var(--preto);
@@ -633,6 +664,9 @@ function ir(id) {
 /* ── Título ──────────────────────────────────────────────── */
 .est-titulo {
   scroll-margin-top: 5rem;
+}
+.est-titulo.paper::before {
+  background: var(--roxo-escuro);
 }
 .est-titulo-header {
   display: flex;
