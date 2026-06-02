@@ -75,7 +75,7 @@ onMounted(() => {
           color:var(--preto);
           line-height:1.5;
         ">
-          ✅ Esta mensagem foi <strong>atendida</strong> pelo CAESI.
+          Esta mensagem foi <strong>atendida</strong> pelo CAESI.
         </div>
       </div>
     </div>
