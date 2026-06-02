@@ -2,8 +2,10 @@
 import { ref, computed } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import MsgCard from '../../components/MsgCard.vue'
+import Pagination from '../../components/Pagination.vue'
 import { mensagens } from '../../stores/mensagens.js'
 import { user } from '../../stores/auth.js'
+import { usePagination } from '../../composables/usePagination.js'
 
 const filtro = ref('todas')
 
@@ -21,6 +23,8 @@ const mensagensFiltradas = computed(() =>
 
 const totalPendente = computed(() => minhasMensagens.value.filter(m => m.status === 'pendente').length)
 const totalAtendida = computed(() => minhasMensagens.value.filter(m => m.status === 'atendida').length)
+
+const { page, totalPages, paginated: mensagensPaginadas, next, prev, goTo } = usePagination(mensagensFiltradas, 10)
 </script>
 
 <template>
@@ -58,7 +62,7 @@ const totalAtendida = computed(() => minhasMensagens.value.filter(m => m.status 
       </div>
 
       <MsgCard
-        v-for="m in mensagensFiltradas"
+        v-for="m in mensagensPaginadas"
         :key="m.id"
         :mensagem="m"
         :to="`/aluno/mensagem/${m.id}`"
@@ -70,6 +74,8 @@ const totalAtendida = computed(() => minhasMensagens.value.filter(m => m.status 
           Enviar primeira mensagem
         </RouterLink>
       </div>
+
+      <Pagination :page="page" :totalPages="totalPages" @prev="prev" @next="next" @goto="goTo" />
     </div>
   </div>
 </template>

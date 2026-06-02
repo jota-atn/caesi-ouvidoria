@@ -5,6 +5,8 @@ import { formularios, inscricoes, cancelarInscricaoDireta, solicitarCancelamento
 import { user } from '../../stores/auth.js'
 import { showToast } from '../../stores/toast.js'
 import { useEscapeKey } from '../../composables/useEscapeKey.js'
+import { usePagination } from '../../composables/usePagination.js'
+import Pagination from '../../components/Pagination.vue'
 
 const TIPO_LABEL = {
   'evento-com-certificado': 'Evento c/ Certificado',
@@ -59,6 +61,8 @@ function podeSolicitar(inscricao) {
   if (inscricao.certificado) return false
   return true
 }
+
+const { page, totalPages, paginated: inscricoesPaginadas, next, prev, goTo } = usePagination(minhasInscricoes, 10)
 
 const modalDireto = ref(null)
 const modalSolicitar = ref(null)
@@ -123,7 +127,7 @@ function confirmarSolicitar() {
         </div>
       </div>
 
-      <template v-for="inscricao in minhasInscricoes" :key="inscricao.id">
+      <template v-for="inscricao in inscricoesPaginadas" :key="inscricao.id">
         <RouterLink
           :to="`/aluno/formularios/${inscricao.formularioId}`"
           class="form-card aberto"
@@ -176,6 +180,8 @@ function confirmarSolicitar() {
           </div>
         </RouterLink>
       </template>
+
+      <Pagination :page="page" :totalPages="totalPages" @prev="prev" @next="next" @goto="goTo" />
 
       <div v-if="minhasInscricoes.length === 0" class="empty-state">
         <p>Você ainda não se inscreveu em nenhum formulário.</p>

@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, computed, watch } from 'vue'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
 import { formularios, inscricoes, addInscricao } from '../../stores/formularios.js'
 import { user } from '../../stores/auth.js'
@@ -98,6 +98,17 @@ function onFileChange(e) {
   const file = e.target.files?.[0]
   comprovanteNome.value = file ? file.name : ''
 }
+
+const hasInteracted = ref(false)
+watch(respostas,       () => { hasInteracted.value = true }, { deep: true })
+watch(comprovanteNome, () => { hasInteracted.value = true })
+watch(quantidade,      () => { hasInteracted.value = true })
+
+onBeforeRouteLeave(() => {
+  if (!jaInscrito.value && hasInteracted.value) {
+    return window.confirm('Você tem dados preenchidos neste formulário. Deseja sair sem se inscrever?')
+  }
+})
 
 function submitForm() {
   submitError.value = ''

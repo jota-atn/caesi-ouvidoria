@@ -6,6 +6,8 @@ import { formularios, inscricoes, updateStatusComprovante, updateFormulario, del
 import { usuarios } from '../../stores/usuarios.js'
 import { showToast } from '../../stores/toast.js'
 import { useEscapeKey } from '../../composables/useEscapeKey.js'
+import { usePagination } from '../../composables/usePagination.js'
+import Pagination from '../../components/Pagination.vue'
 
 const route  = useRoute()
 const router = useRouter()
@@ -26,6 +28,8 @@ const comprovantesPendentes = computed(() =>
 const cancelamentosPendentes = computed(() =>
   inscricoesDaForm.value.filter(i => i.cancelamento?.solicitado).length
 )
+
+const { page: inscPage, totalPages: inscTotalPages, paginated: inscricoesPaginadas, next: inscNext, prev: inscPrev, goTo: inscGoTo } = usePagination(inscricoesDaForm, 10)
 
 function _qtd(i) {
   return formulario.value.tipo === 'venda' ? (Number(i.respostas?.__quantidade) || 1) : 1
@@ -397,7 +401,7 @@ function excluirFormulario() {
         </div>
 
         <div
-          v-for="inscricao in inscricoesDaForm"
+          v-for="inscricao in inscricoesPaginadas"
           :key="inscricao.id"
           class="inscricao-row"
         >
@@ -439,6 +443,8 @@ function excluirFormulario() {
             </template>
           </div>
         </div>
+
+        <Pagination :page="inscPage" :totalPages="inscTotalPages" @prev="inscPrev" @next="inscNext" @goto="inscGoTo" />
       </div>
     </div>
   </div>

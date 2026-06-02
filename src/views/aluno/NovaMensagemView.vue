@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
 import { user } from '../../stores/auth.js'
 import { addMensagem } from '../../stores/mensagens.js'
@@ -10,6 +10,13 @@ const router = useRouter()
 const form = ref({ assunto: '', categoria: '', mensagem: '', anonimo: false })
 const errors = ref({})
 const charCount = ref(0)
+const submitted = ref(false)
+
+onBeforeRouteLeave(() => {
+  if (!submitted.value && (form.value.assunto.trim() || form.value.mensagem.trim())) {
+    return window.confirm('Você tem uma mensagem em rascunho. Deseja sair sem enviar?')
+  }
+})
 
 function onMensagemInput(e) {
   charCount.value = e.target.value.length
@@ -22,6 +29,7 @@ function submit() {
   if (form.value.mensagem.trim().length < 20) e.mensagem = true
   errors.value = e
   if (Object.keys(e).length === 0) {
+    submitted.value = true
     const nova = addMensagem({
       assunto: form.value.assunto,
       categoria: form.value.categoria,

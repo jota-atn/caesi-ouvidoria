@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
 import { formularios, inscricoes, addFormulario } from '../../stores/formularios.js'
 
@@ -71,6 +72,20 @@ function addCampo() {
 function removeCampo(index) {
   novoForm.value.campos.splice(index, 1)
 }
+
+const formDirty = computed(() =>
+  showNovoForm.value && (
+    novoForm.value.titulo.trim() !== '' ||
+    novoForm.value.descricao.trim() !== '' ||
+    novoForm.value.campos.length > 0
+  )
+)
+
+onBeforeRouteLeave(() => {
+  if (formDirty.value) {
+    return window.confirm('Você tem um formulário em criação com dados não salvos. Deseja sair mesmo assim?')
+  }
+})
 
 function submitNovoForm() {
   const e = {}

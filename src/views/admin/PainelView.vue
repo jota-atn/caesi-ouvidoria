@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import MsgCard from '../../components/MsgCard.vue'
+import Pagination from '../../components/Pagination.vue'
+import { usePagination } from '../../composables/usePagination.js'
 import { mensagens } from '../../stores/mensagens.js'
 import { Doughnut, Bar } from 'vue-chartjs'
 import {
@@ -29,6 +31,8 @@ const mensagensFiltradas = computed(() => {
 
 const totalPendente = computed(() => mensagens.value.filter(m => m.status === 'pendente').length)
 const totalAtendida = computed(() => mensagens.value.filter(m => m.status === 'atendida').length)
+
+const { page, totalPages, paginated: mensagensPaginadas, next, prev, goTo } = usePagination(mensagensFiltradas, 15)
 
 function exportarCSV() {
   const cols = ['Protocolo', 'Data', 'Categoria', 'Assunto', 'Autor', 'Matrícula', 'Status', 'Anotação interna', 'Resposta']
@@ -194,7 +198,7 @@ const barOptions = {
       </div>
 
       <MsgCard
-        v-for="m in mensagensFiltradas"
+        v-for="m in mensagensPaginadas"
         :key="m.id"
         :mensagem="m"
         :to="`/admin/mensagens/${m.id}`"
@@ -204,6 +208,8 @@ const barOptions = {
         <p>{{ mensagens.length === 0 ? 'Nenhuma mensagem recebida ainda.' : 'Nenhuma mensagem encontrada.' }}</p>
         <span v-if="mensagens.length > 0" style="font-size:0.85rem;">Tente outro filtro ou termo de busca.</span>
       </div>
+
+      <Pagination :page="page" :totalPages="totalPages" @prev="prev" @next="next" @goto="goTo" />
     </div>
   </div>
 </template>
