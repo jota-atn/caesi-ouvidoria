@@ -82,8 +82,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  width: 460px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
 }
 
 .geral-equipe-chip {
@@ -111,3 +111,25 @@
   color: var(--preto);
 }
 .geral-chip-nome.vazio { color: var(--cinza); font-style: italic; font-weight: 400; }
+
+@media (max-width: 600px) {
+  .geral-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.2rem 1.2rem;
+  }
+
+  .geral-divider { margin: 0 1.2rem; }
+
+  .geral-row-stats { gap: 1.2rem; }
+
+  .geral-mini-num { font-size: 1.4rem; }
+
+  .geral-equipe-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .geral-row-link { align-self: flex-end; }
+}
