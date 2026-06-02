@@ -392,14 +392,19 @@ useEscapeKey(() => {
           </div>
         </div>
 
-        <div v-if="adminsDisponiveis.length" class="field">
+        <div class="field">
           <label>Admins alocados</label>
-          <div class="alocados-checkboxes">
-            <label v-for="a in adminsDisponiveis" :key="a.email" class="alocado-check">
+          <div v-if="adminsDisponiveis.length" class="alocados-checkboxes">
+            <label
+              v-for="a in adminsDisponiveis" :key="a.email"
+              class="alocado-check"
+              :class="{ 'alocado-check--ativo': form.alocados.includes(a.email) }"
+            >
               <input type="checkbox" :checked="form.alocados.includes(a.email)" @change="toggleAlocado(a.email)" />
               <span>{{ a.nome }}</span>
             </label>
           </div>
+          <p v-else class="field-hint">Nenhum administrador cadastrado além do Admin CAESI.</p>
         </div>
 
         <div class="modal-actions">
@@ -644,7 +649,7 @@ useEscapeKey(() => {
 .solicitacao-acoes { display: flex; gap: 0.4rem; }
 
 /* ── Modal form ──────────────────────────────────────────── */
-.modal-box--lg { max-width: 620px; }
+.modal-box--lg { max-width: 620px; padding-bottom: 2.5rem; }
 .modal-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 .modal-row .field { margin-bottom: 0; }
 .obrig { color: var(--vermelho); }
@@ -667,7 +672,7 @@ useEscapeKey(() => {
   cursor: pointer;
   transition: border-color 0.12s;
 }
-.alocado-check:has(input:checked) { border-color: var(--roxo-escuro); background: rgba(80,64,160,0.06); }
+.alocado-check--ativo { border-color: var(--roxo-escuro); background: rgba(80,64,160,0.06); }
 .alocado-check input { width: 14px; height: 14px; accent-color: var(--roxo-escuro); }
 
 /* ── Botões extras ───────────────────────────────────────── */
