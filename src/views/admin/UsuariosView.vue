@@ -82,7 +82,7 @@ function submitNewAdmin() {
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-number">{{ totalAlunos }}</div>
-          <div class="stat-label">Alunos cadastrados</div>
+          <div class="stat-label">Cadastrados</div>
         </div>
         <div class="stat-card stat-card--verde">
           <div class="stat-number stat-number--verde">{{ totalAtivos }}</div>
