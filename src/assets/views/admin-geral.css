@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 2rem;
   padding: 1.6rem 2rem;
 }
 
@@ -112,6 +113,23 @@
 }
 .geral-chip-nome.vazio { color: var(--cinza); font-style: italic; font-weight: 400; }
 
+@media (max-width: 860px) {
+  .geral-equipe-grid {
+    flex: unset;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    width: 100%;
+  }
+
+  .geral-row--equipe {
+    flex-wrap: wrap;
+  }
+
+  .geral-row--equipe .geral-row-link {
+    align-self: flex-end;
+    margin-left: auto;
+  }
+}
+
 @media (max-width: 600px) {
   .geral-row {
     flex-direction: column;
@@ -127,7 +145,7 @@
   .geral-mini-num { font-size: 1.4rem; }
 
   .geral-equipe-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     width: 100%;
   }
 
