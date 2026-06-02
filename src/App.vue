@@ -4,6 +4,7 @@ import BackToTop from './components/BackToTop.vue'
 import ToastContainer from './components/ToastContainer.vue'
 import { user } from './stores/auth.js'
 import { formularios, inscricoes } from './stores/formularios.js'
+import { tasks } from './stores/tasks.js'
 import { addNotificacao } from './stores/notificacoes.js'
 
 watch(user, (u) => {
@@ -27,6 +28,29 @@ watch(user, (u) => {
           subtitulo: f.titulo,
           link: `/aluno/formularios/${f.id}`,
           dedupeKey: `prazo-proximo-${f.id}-${f.prazoInscricao}`,
+        })
+      }
+    })
+}, { immediate: true })
+
+watch(user, (u) => {
+  if (!u || u.role !== 'admin' || u.email === 'admin') return
+
+  const hoje    = new Date(); hoje.setHours(0, 0, 0, 0)
+  const em3dias = new Date(hoje.getTime() + 3 * 24 * 60 * 60 * 1000)
+
+  tasks.value
+    .filter(t => t.alocados.includes(u.email) && t.status !== 'concluida' && t.prazo)
+    .forEach(t => {
+      const prazo = new Date(t.prazo + 'T00:00:00')
+      if (prazo >= hoje && prazo <= em3dias) {
+        addNotificacao({
+          userEmail: u.email,
+          tipo: 'task-prazo-proximo',
+          titulo: 'Prazo de task se aproximando',
+          subtitulo: t.titulo,
+          link: '/admin/tasks',
+          dedupeKey: `task-prazo-proximo-${t.id}-${t.prazo}`,
         })
       }
     })
