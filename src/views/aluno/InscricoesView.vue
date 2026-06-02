@@ -195,8 +195,8 @@ function confirmarSolicitar() {
   <!-- Modal: cancelamento direto -->
   <Teleport to="body">
     <div v-if="modalDireto" class="modal-overlay" @click.self="modalDireto = null">
-      <div class="modal-box">
-        <div class="modal-title">Cancelar inscrição</div>
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-cancelar-title" v-focus-trap>
+        <div class="modal-title" id="modal-cancelar-title">Cancelar inscrição</div>
         <div class="modal-body">
           <p>Tem certeza que deseja cancelar sua inscrição em <strong>{{ getFormulario(modalDireto.formularioId)?.titulo }}</strong>?</p>
           <p v-if="getFormulario(modalDireto.formularioId)?.limiteVagas" style="margin-top:8px;padding:8px 10px;background:rgba(210,80,40,0.08);border-radius:2px;border-left:3px solid #C04020;">
@@ -214,8 +214,8 @@ function confirmarSolicitar() {
   <!-- Modal: solicitar cancelamento (pago) -->
   <Teleport to="body">
     <div v-if="modalSolicitar" class="modal-overlay" @click.self="modalSolicitar = null">
-      <div class="modal-box">
-        <div class="modal-title">Solicitar cancelamento</div>
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-solicitar-title" v-focus-trap>
+        <div class="modal-title" id="modal-solicitar-title">Solicitar cancelamento</div>
         <div class="modal-body">
           <p>Sua solicitação será analisada pela gestão do CAESI. Você será notificado da decisão.</p>
           <p style="margin-top:6px;">Para cancelamentos com reembolso, a gestão entrará em contato com as instruções de devolução.</p>

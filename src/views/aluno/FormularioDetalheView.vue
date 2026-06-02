@@ -2,8 +2,10 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
-import { formularios, inscricoes, addInscricao } from '../../stores/formularios.js'
+import { formularios, inscricoes, addInscricao, cancelarInscricaoDireta, solicitarCancelamento } from '../../stores/formularios.js'
 import { user } from '../../stores/auth.js'
+import { showToast } from '../../stores/toast.js'
+import { useEscapeKey } from '../../composables/useEscapeKey.js'
 
 const route  = useRoute()
 const router = useRouter()
@@ -110,6 +112,50 @@ onBeforeRouteLeave(() => {
   }
 })
 
+// ── Cancelamento de inscrição ─────────────────────────────
+const minhaInscricao = computed(() =>
+  inscricoes.value.find(i => i.formularioId === id && i.userEmail === user.value?.email)
+)
+
+function podeCancelarDireto(insc) {
+  if (!insc || formulario.value?.tipo === 'arrecadacao') return false
+  if (formulario.value?.pago) return false
+  if (insc.cancelamento?.solicitado || insc.certificado) return false
+  if (formulario.value?.prazoInscricao && new Date(formulario.value.prazoInscricao + 'T23:59:59') < new Date()) return false
+  return true
+}
+
+function podeSolicitar(insc) {
+  if (!insc || formulario.value?.tipo === 'arrecadacao') return false
+  if (!formulario.value?.pago) return false
+  if (insc.cancelamento?.solicitado || insc.certificado) return false
+  return true
+}
+
+const modalCancelarDireto = ref(false)
+const modalSolicitarCancel = ref(false)
+const motivoCancelamento = ref('')
+
+useEscapeKey(() => {
+  if (modalCancelarDireto.value) { modalCancelarDireto.value = false; return }
+  if (modalSolicitarCancel.value) { modalSolicitarCancel.value = false }
+})
+
+function confirmarCancelamentoDireto() {
+  if (!minhaInscricao.value) return
+  cancelarInscricaoDireta(minhaInscricao.value.id)
+  modalCancelarDireto.value = false
+  showToast('Inscrição cancelada.')
+}
+
+function confirmarSolicitarCancel() {
+  if (!minhaInscricao.value) return
+  solicitarCancelamento(minhaInscricao.value.id, motivoCancelamento.value)
+  modalSolicitarCancel.value = false
+  motivoCancelamento.value = ''
+  showToast('Solicitação enviada. O CAESI vai te notificar da decisão.', 'info')
+}
+
 function submitForm() {
   submitError.value = ''
 
@@ -205,6 +251,19 @@ function submitForm() {
             </div>
           </div>
         </div>
+
+        <template v-if="minhaInscricao">
+          <hr class="divider" style="margin:1.2rem 0;">
+          <div v-if="podeCancelarDireto(minhaInscricao)">
+            <button class="btn btn-danger btn-sm" @click="modalCancelarDireto = true">Cancelar inscrição</button>
+          </div>
+          <div v-else-if="podeSolicitar(minhaInscricao)">
+            <button class="btn btn-outline btn-sm" @click="modalSolicitarCancel = true; motivoCancelamento = ''">Solicitar cancelamento</button>
+          </div>
+          <div v-else-if="minhaInscricao.cancelamento?.solicitado">
+            <span class="cancelamento-badge">Cancelamento solicitado</span>
+          </div>
+        </template>
       </div>
 
       <!-- Indisponível (encerrado / prazo / vagas) -->
@@ -297,4 +356,46 @@ function submitForm() {
       </div>
     </div>
   </div>
+
+  <!-- Modal: cancelamento direto -->
+  <Teleport to="body">
+    <div v-if="modalCancelarDireto" class="modal-overlay" @click.self="modalCancelarDireto = false">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="mdireto-title" v-focus-trap>
+        <div class="modal-title" id="mdireto-title">Cancelar inscrição</div>
+        <div class="modal-body">
+          <p>Tem certeza que deseja cancelar sua inscrição em <strong>{{ formulario?.titulo }}</strong>?</p>
+          <p v-if="formulario?.limiteVagas" style="margin-top:8px;padding:8px 10px;background:rgba(210,80,40,0.08);border-radius:2px;border-left:3px solid #C04020;">
+            Atenção: se houver limite de vagas, pode não haver disponibilidade caso queira se inscrever novamente.
+          </p>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-outline btn-sm" @click="modalCancelarDireto = false">Voltar</button>
+          <button class="btn btn-danger btn-sm" @click="confirmarCancelamentoDireto">Confirmar cancelamento</button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
+
+  <!-- Modal: solicitar cancelamento (pago) -->
+  <Teleport to="body">
+    <div v-if="modalSolicitarCancel" class="modal-overlay" @click.self="modalSolicitarCancel = false">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="msolicitar-title" v-focus-trap>
+        <div class="modal-title" id="msolicitar-title">Solicitar cancelamento</div>
+        <div class="modal-body">
+          <p>Sua solicitação será analisada pela gestão do CAESI. Você será notificado da decisão.</p>
+          <p style="margin-top:6px;">Para cancelamentos com reembolso, a gestão entrará em contato com as instruções.</p>
+        </div>
+        <div class="field" style="margin-bottom:1.2rem;">
+          <label style="font-size:0.84rem;font-weight:600;margin-bottom:4px;display:block;">
+            Motivo <span style="font-weight:400;color:var(--cinza);">(opcional)</span>
+          </label>
+          <textarea v-model="motivoCancelamento" rows="3" placeholder="Descreva o motivo da desistência..." style="width:100%;min-height:76px;" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-outline btn-sm" @click="modalSolicitarCancel = false">Voltar</button>
+          <button class="btn btn-danger btn-sm" @click="confirmarSolicitarCancel">Enviar solicitação</button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>

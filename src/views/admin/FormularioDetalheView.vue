@@ -452,8 +452,8 @@ function excluirFormulario() {
   <!-- Modal: cancelamento de inscrição -->
   <Teleport to="body">
     <div v-if="modalCancelamento" class="modal-overlay" @click.self="modalCancelamento = null">
-      <div class="modal-box">
-        <div class="modal-title">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-admin-cancel-title" v-focus-trap>
+        <div class="modal-title" id="modal-admin-cancel-title">
           {{ modalCancelamento.acao === 'aprovar' ? 'Aprovar cancelamento' : 'Recusar solicitação' }}
         </div>
         <div class="modal-body">
