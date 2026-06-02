@@ -666,7 +666,7 @@ onBeforeUnmount(() => observer?.disconnect())
   scroll-margin-top: 5rem;
 }
 .est-titulo.paper::before {
-  background: var(--roxo-escuro);
+  background: var(--amarelo);
 }
 .est-titulo-header {
   display: flex;
@@ -675,7 +675,7 @@ onBeforeUnmount(() => observer?.disconnect())
   gap: 1rem;
   margin: -2rem -2rem 1.8rem;
   padding: 1.1rem 2rem;
-  background: var(--roxo-escuro);
+  background: var(--amarelo);
   border-radius: 2px 2px 0 0;
   overflow: hidden;
 }
@@ -684,7 +684,7 @@ onBeforeUnmount(() => observer?.disconnect())
   font-weight: 800;
   font-size: 0.65rem;
   letter-spacing: 0.15em;
-  color: rgba(242, 230, 196, 0.6);
+  color: rgba(80, 64, 160, 0.6);
   text-transform: uppercase;
   margin-bottom: 4px;
 }
@@ -693,13 +693,13 @@ onBeforeUnmount(() => observer?.disconnect())
   font-weight: 700;
   font-size: 1rem;
   line-height: 1.35;
-  color: var(--creme);
+  color: var(--roxo-escuro);
 }
 .est-titulo-deco {
   font-family: 'Syne', sans-serif;
   font-size: 4rem;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.1);
+  color: rgba(80, 64, 160, 0.12);
   line-height: 1;
   flex-shrink: 0;
   user-select: none;
