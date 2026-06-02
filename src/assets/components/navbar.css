@@ -111,6 +111,12 @@
 .mobile-action-link,
 .nav-separator--mobile { display: none; }
 
+.navbar-desktop-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 @media (max-width: 600px) {
   .hamburger { display: flex; }
   .navbar { padding: 0 1rem; }
