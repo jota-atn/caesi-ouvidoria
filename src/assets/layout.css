@@ -261,5 +261,6 @@
   .page-content { padding: 1rem; }
   .paper { padding: 1.2rem; }
   .page-heading { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .page-heading h2 { font-size: 1.45rem; }
   .field-grid { grid-template-columns: 1fr; }
 }
