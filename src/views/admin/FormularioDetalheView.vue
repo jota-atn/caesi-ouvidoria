@@ -184,7 +184,7 @@ function excluirFormulario() {
     <div class="deco-star" style="top:110px;right:2%;font-size:1.2rem;opacity:0.38;">✦</div>
     <div class="deco-star" style="bottom:20%;left:1%;font-size:1.4rem;opacity:0.28;">✦</div>
 
-    <Navbar :admin="true" />
+    <Navbar />
 
     <div class="page-content">
       <RouterLink to="/admin/formularios" class="back-link">← Voltar aos formulários</RouterLink>

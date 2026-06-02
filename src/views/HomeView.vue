@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import PublicNavbar from '../components/PublicNavbar.vue'
+import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import { addMensagem } from '../stores/mensagens.js'
 import { isLoggedIn, isAdmin, user } from '../stores/auth.js'
@@ -59,7 +59,7 @@ const posts = [
     <div class="deco-star" style="top:420px;left:1.5%;font-size:0.9rem;opacity:0.25;">✦</div>
     <div class="deco-star" style="top:750px;right:3%;font-size:1.1rem;opacity:0.3;">✦</div>
 
-    <PublicNavbar />
+    <Navbar />
 
     <!-- Hero -->
     <section class="hero">

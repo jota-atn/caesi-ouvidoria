@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import PublicNavbar from '../components/PublicNavbar.vue'
+import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 
 const form = ref({ nome: '', email: '', assunto: '', mensagem: '' })
@@ -23,7 +23,7 @@ function submit() {
     <div class="deco-star" style="top:160px;right:2%;font-size:1.3rem;opacity:0.3;">✦</div>
     <div class="deco-star" style="top:500px;left:1.5%;font-size:1rem;opacity:0.25;">✦</div>
 
-    <PublicNavbar />
+    <Navbar />
 
     <div class="home-section" style="padding-top:3rem;flex:1;max-width:640px;">
       <div class="section-label">Fale conosco</div>

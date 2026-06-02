@@ -1,5 +1,5 @@
 <script setup>
-import PublicNavbar from '../components/PublicNavbar.vue'
+import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import { equipe } from '../stores/equipe.js'
 import mapPinIcon from '../assets/icons/map-pin.svg?raw'
@@ -12,7 +12,7 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
     <div class="deco-star" style="top:160px;right:2%;font-size:1.3rem;opacity:0.3;">✦</div>
     <div class="deco-star" style="top:500px;left:1.5%;font-size:1rem;opacity:0.25;">✦</div>
 
-    <PublicNavbar />
+    <Navbar />
 
     <div class="home-section" style="padding-top:3.5rem;flex:1;">
       <div class="section-label">Quem somos</div>

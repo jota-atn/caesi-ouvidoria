@@ -1,5 +1,5 @@
 <script setup>
-import PublicNavbar from '../components/PublicNavbar.vue'
+import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 </script>
 
@@ -7,7 +7,7 @@ import SiteFooter from '../components/SiteFooter.vue'
   <div class="page">
     <div class="deco-star" style="top:160px;right:2%;font-size:1.3rem;opacity:0.3;">✦</div>
 
-    <PublicNavbar />
+    <Navbar />
 
     <div class="home-section" style="padding-top:3.5rem;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
       <div class="paper" style="max-width:480px;width:100%;">

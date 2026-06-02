@@ -71,7 +71,7 @@ function voltar() {
     <div class="deco-star" style="top:110px;right:2%;font-size:1.2rem;opacity:0.4;">✦</div>
     <div class="deco-star" style="bottom:20%;left:1.2%;font-size:1.5rem;opacity:0.32;">✦</div>
 
-    <Navbar :admin="isAdmin" />
+    <Navbar />
 
     <div class="page-content" style="max-width:640px;">
       <button class="back-link" @click="voltar" style="background:none;border:none;cursor:pointer;">← Voltar</button>

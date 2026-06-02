@@ -1,5 +1,5 @@
 <script setup>
-import PublicNavbar from '../components/PublicNavbar.vue'
+import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 </script>
 
@@ -8,7 +8,7 @@ import SiteFooter from '../components/SiteFooter.vue'
     <div class="deco-star" style="top:180px;right:3%;font-size:1.4rem;opacity:0.3;">✦</div>
     <div class="deco-star" style="top:420px;left:2%;font-size:1rem;opacity:0.25;">✦</div>
 
-    <PublicNavbar />
+    <Navbar />
 
     <div class="not-found-wrap">
       <div class="not-found-inner">
