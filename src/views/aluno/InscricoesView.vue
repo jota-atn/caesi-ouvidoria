@@ -144,25 +144,21 @@ function confirmarSolicitar() {
                 :to="`/aluno/certificado/${inscricao.id}`"
                 class="btn btn-amarelo btn-sm"
                 style="text-decoration:none;display:inline-flex;"
-                @click.stop
+                @click.stop.prevent="$router.push(`/aluno/certificado/${inscricao.id}`)"
               >Ver certificado</RouterLink>
             </div>
 
             <!-- Cancelamento -->
-            <div
-              v-if="podeCancelarDireto(inscricao) || podeSolicitar(inscricao)"
-              style="margin-top:10px;"
-              @click.stop
-            >
+            <div v-if="podeCancelarDireto(inscricao) || podeSolicitar(inscricao)" style="margin-top:10px;">
               <button
                 v-if="podeCancelarDireto(inscricao)"
                 class="btn btn-danger btn-sm"
-                @click="abrirModalDireto(inscricao)"
+                @click.prevent.stop="abrirModalDireto(inscricao)"
               >Cancelar inscrição</button>
               <button
                 v-else
                 class="btn btn-outline btn-sm"
-                @click="abrirModalSolicitar(inscricao)"
+                @click.prevent.stop="abrirModalSolicitar(inscricao)"
               >Solicitar cancelamento</button>
             </div>
           </div>

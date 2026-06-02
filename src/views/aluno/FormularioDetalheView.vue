@@ -13,6 +13,14 @@ const formulario = computed(() => formularios.value.find(f => f.id === id))
 
 if (!formulario.value) router.replace('/aluno/formularios')
 
+function voltarOuFormularios() {
+  if (window.history.state?.back) {
+    router.back()
+  } else {
+    router.push('/aluno/formularios')
+  }
+}
+
 const TIPO_LABEL = {
   'evento-com-certificado': 'Evento c/ Certificado',
   'evento-sem-certificado': 'Evento s/ Certificado',
@@ -140,7 +148,7 @@ function submitForm() {
     <Navbar />
 
     <div class="page-content">
-      <RouterLink to="/aluno/formularios" class="back-link">← Formulários e eventos</RouterLink>
+      <button class="back-link" @click="voltarOuFormularios">← Voltar</button>
 
       <!-- Cabeçalho -->
       <div class="paper paper-mb">
