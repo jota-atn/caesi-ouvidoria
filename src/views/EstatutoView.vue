@@ -24,7 +24,7 @@ function ir(id) {
 <template>
   <div class="page">
     <div class="deco-star" style="top:160px;right:2%;font-size:1.3rem;opacity:0.3;">✦</div>
-    <div class="deco-star" style="top:600px;left:1.5%;font-size:1rem;opacity:0.2;">✦</div>
+    <div class="deco-star" style="top:700px;left:1.5%;font-size:1rem;opacity:0.2;">✦</div>
 
     <Navbar />
 
@@ -55,21 +55,23 @@ function ir(id) {
         <h2 class="paper-title" style="margin-bottom:1rem;">Sumário</h2>
         <div class="est-toc">
           <button v-for="t in titulos" :key="t.id" class="est-toc-item" @click="ir(t.id)">
-            <span class="est-toc-num">TÍT. {{ t.num }}</span>
+            <span class="est-toc-num">{{ t.num }}</span>
             <span class="est-toc-texto">{{ t.texto }}</span>
           </button>
         </div>
       </div>
 
       <!-- ─── TÍTULO I ──────────────────────────────────────────── -->
-      <section class="est-titulo" id="titulo-1">
+      <section class="est-titulo paper paper-mb-lg" id="titulo-1">
         <div class="est-titulo-header">
-          <span class="est-titulo-num">TÍTULO I</span>
-          <span class="est-titulo-texto">Do Centro Acadêmico de Ciência da Computação,
-            seus Princípios e Finalidades</span>
+          <div>
+            <div class="est-titulo-num">TÍTULO I</div>
+            <div class="est-titulo-texto">Do Centro Acadêmico de Ciência da Computação,<br>seus Princípios e Finalidades</div>
+          </div>
+          <span class="est-titulo-deco" aria-hidden="true">I</span>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo I — Da Entidade</h3>
           <div class="art">
             <p><strong>Art. 1º</strong> O "Centro Acadêmico dos Estudantes de Ciência da Computação" é órgão de coordenação e representação do corpo discente do Bacharelado em Ciência da Computação da UFCG, com sede na Rua Aprígio Veloso, 822, Bodocongó, Campina Grande – PB.</p>
@@ -79,7 +81,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo II — Dos Princípios e Finalidades</h3>
           <div class="art">
             <p><strong>Art. 2º</strong> São finalidades do CAESI:</p>
@@ -92,7 +94,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo III — Do Estatuto</h3>
           <div class="art">
             <p><strong>Art. 3º</strong> Os artigos do estatuto são identificados por numeração ordinal seguida de um número entre parênteses que indica a categoria de modificação. A numeração ordinal é única em todo o documento.</p>
@@ -120,13 +122,16 @@ function ir(id) {
       </section>
 
       <!-- ─── TÍTULO II ─────────────────────────────────────────── -->
-      <section class="est-titulo" id="titulo-2">
+      <section class="est-titulo paper paper-mb-lg" id="titulo-2">
         <div class="est-titulo-header">
-          <span class="est-titulo-num">TÍTULO II</span>
-          <span class="est-titulo-texto">Dos Direitos e Deveres dos Filiados</span>
+          <div>
+            <div class="est-titulo-num">TÍTULO II</div>
+            <div class="est-titulo-texto">Dos Direitos e Deveres dos Filiados</div>
+          </div>
+          <span class="est-titulo-deco" aria-hidden="true">II</span>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo I — Dos Filiados</h3>
           <div class="art">
             <p><strong>Art. 6º</strong> São membros do CAESI todos os estudantes com vínculo ativo ao curso de Bacharelado em Ciência da Computação da UFCG.</p>
@@ -134,7 +139,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo II — Dos Direitos</h3>
           <div class="art">
             <p><strong>Art. 7º</strong> Aos membros é assegurado:</p>
@@ -150,7 +155,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo III — Dos Deveres</h3>
           <div class="art">
             <p><strong>Art. 9º</strong> São deveres dos membros:</p>
@@ -168,13 +173,16 @@ function ir(id) {
       </section>
 
       <!-- ─── TÍTULO III ────────────────────────────────────────── -->
-      <section class="est-titulo" id="titulo-3">
+      <section class="est-titulo paper paper-mb-lg" id="titulo-3">
         <div class="est-titulo-header">
-          <span class="est-titulo-num">TÍTULO III</span>
-          <span class="est-titulo-texto">Da Administração e Atribuições Específicas</span>
+          <div>
+            <div class="est-titulo-num">TÍTULO III</div>
+            <div class="est-titulo-texto">Da Administração e Atribuições Específicas</div>
+          </div>
+          <span class="est-titulo-deco" aria-hidden="true">III</span>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo I — Da Administração</h3>
           <div class="art">
             <p><strong>Art. 10º</strong> São órgãos administrativos do CAESI:</p>
@@ -185,7 +193,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo II — Da Assembleia Geral</h3>
 
           <div class="art">
@@ -230,7 +238,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo III — Da Diretoria</h3>
 
           <div class="art">
@@ -320,13 +328,16 @@ function ir(id) {
       </section>
 
       <!-- ─── TÍTULO IV ─────────────────────────────────────────── -->
-      <section class="est-titulo" id="titulo-4">
+      <section class="est-titulo paper paper-mb-lg" id="titulo-4">
         <div class="est-titulo-header">
-          <span class="est-titulo-num">TÍTULO IV</span>
-          <span class="est-titulo-texto">Do Patrimônio e dos Recursos Financeiros</span>
+          <div>
+            <div class="est-titulo-num">TÍTULO IV</div>
+            <div class="est-titulo-texto">Do Patrimônio e dos Recursos Financeiros</div>
+          </div>
+          <span class="est-titulo-deco" aria-hidden="true">IV</span>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo I — Do Patrimônio</h3>
           <div class="art">
             <p><strong>Art. 27º</strong> O patrimônio do CAESI é constituído por bens móveis e imóveis adquiridos por compra, doação ou legado, bem como por dados, registros e documentos da entidade.</p>
@@ -337,7 +348,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo II — Da Arrecadação dos Recursos Financeiros</h3>
           <div class="art">
             <p><strong>Art. 29º</strong> Os recursos do CAESI são provenientes de:</p>
@@ -351,7 +362,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo III — Dos Gastos e Prestação de Contas</h3>
           <div class="art">
             <p><strong>Art. 30º</strong> São gastos de manutenção do CAESI:</p>
@@ -380,13 +391,16 @@ function ir(id) {
       </section>
 
       <!-- ─── TÍTULO V ──────────────────────────────────────────── -->
-      <section class="est-titulo" id="titulo-5">
+      <section class="est-titulo paper paper-mb-lg" id="titulo-5">
         <div class="est-titulo-header">
-          <span class="est-titulo-num">TÍTULO V</span>
-          <span class="est-titulo-texto">Dos Processos Eleitorais</span>
+          <div>
+            <div class="est-titulo-num">TÍTULO V</div>
+            <div class="est-titulo-texto">Dos Processos Eleitorais</div>
+          </div>
+          <span class="est-titulo-deco" aria-hidden="true">V</span>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo I — Das Eleições</h3>
           <div class="art">
             <p><strong>Art. 33º</strong> As eleições são geridas por uma Comissão Eleitoral durante o período de aulas e compreendem:</p>
@@ -420,7 +434,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo II — Da Comissão Eleitoral</h3>
           <div class="art">
             <p><strong>Art. 36º</strong> A Comissão Eleitoral é composta por 1 (um) membro indicado por cada chapa por urna, mais 1 (um) fiscal da gestão vigente.</p>
@@ -431,13 +445,16 @@ function ir(id) {
       </section>
 
       <!-- ─── TÍTULO VI ─────────────────────────────────────────── -->
-      <section class="est-titulo" id="titulo-6">
+      <section class="est-titulo paper paper-mb-lg" id="titulo-6">
         <div class="est-titulo-header">
-          <span class="est-titulo-num">TÍTULO VI</span>
-          <span class="est-titulo-texto">Das Penalidades</span>
+          <div>
+            <div class="est-titulo-num">TÍTULO VI</div>
+            <div class="est-titulo-texto">Das Penalidades</div>
+          </div>
+          <span class="est-titulo-deco" aria-hidden="true">VI</span>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <div class="art">
             <p><strong>Art. 37º</strong> Todos os membros são passíveis de penalidades por descumprimento deste estatuto.</p>
           </div>
@@ -449,7 +466,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo I — Da Denúncia</h3>
           <div class="art">
             <p><strong>Art. 40º</strong> A denúncia, devidamente documentada, deve ser submetida a um membro da Diretoria Administrativa.</p>
@@ -459,7 +476,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo II — Da Comissão Avaliadora</h3>
           <div class="art">
             <p><strong>Art. 41º</strong> A Comissão Avaliadora tem por objetivo confirmar a validade da denúncia.</p>
@@ -476,7 +493,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper paper-mb">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo III — Do Júri</h3>
           <div class="art">
             <p><strong>Art. 44º</strong> O Júri tem por objetivo absolver ou condenar o denunciado.</p>
@@ -507,7 +524,7 @@ function ir(id) {
           </div>
         </div>
 
-        <div class="paper">
+        <div class="est-cap-section">
           <h3 class="est-cap">Capítulo IV — Do Sorteio de Convocação</h3>
           <div class="art">
             <p><strong>Art. 49º</strong> As convocações por sorteio são realizadas pela Diretoria Administrativa.</p>
@@ -521,13 +538,16 @@ function ir(id) {
       </section>
 
       <!-- ─── TÍTULO VII ────────────────────────────────────────── -->
-      <section class="est-titulo" id="titulo-7">
+      <section class="est-titulo paper paper-mb-lg" id="titulo-7">
         <div class="est-titulo-header">
-          <span class="est-titulo-num">TÍTULO VII</span>
-          <span class="est-titulo-texto">Anexos</span>
+          <div>
+            <div class="est-titulo-num">TÍTULO VII</div>
+            <div class="est-titulo-texto">Anexos</div>
+          </div>
+          <span class="est-titulo-deco" aria-hidden="true">VII</span>
         </div>
 
-        <div class="paper">
+        <div class="est-cap-section">
           <h3 class="est-cap">Anexo I — Critério de Modificação de Artigos</h3>
           <p style="font-size:0.88rem;color:var(--cinza);margin-bottom:1rem;">
             Relação entre a categoria de um artigo e o quórum necessário para sua alteração em Assembleia Geral.
@@ -556,7 +576,7 @@ function ir(id) {
 </template>
 
 <style scoped>
-/* ── Meta header ─────────────────────────────────────────── */
+/* ── Meta ────────────────────────────────────────────────── */
 .est-meta {
   display: flex;
   flex-wrap: wrap;
@@ -571,94 +591,119 @@ function ir(id) {
 
 /* ── TOC ─────────────────────────────────────────────────── */
 .est-toc {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+  gap: 0.5rem;
 }
 .est-toc-item {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: none;
-  border: none;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: var(--branco);
+  border: 1.5px solid var(--creme-escuro);
   cursor: pointer;
   text-align: left;
-  padding: 6px 10px;
+  padding: 9px 12px;
   border-radius: 4px;
-  transition: background 0.15s;
+  transition: border-color 0.15s, background 0.15s;
 }
-.est-toc-item:hover { background: rgba(80, 64, 160, 0.07); }
+.est-toc-item:hover {
+  border-color: var(--roxo);
+  background: rgba(80, 64, 160, 0.04);
+}
 .est-toc-num {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--roxo-escuro);
+  display: inline-block;
+  background: var(--roxo-escuro);
+  color: var(--creme);
+  padding: 2px 7px;
+  border-radius: 2px;
   font-family: 'Syne', sans-serif;
-  letter-spacing: 0.05em;
-  min-width: 2.8rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   flex-shrink: 0;
+  margin-top: 2px;
 }
 .est-toc-texto {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--preto);
+  line-height: 1.35;
 }
 
 /* ── Título ──────────────────────────────────────────────── */
 .est-titulo {
-  margin-bottom: 2rem;
   scroll-margin-top: 5rem;
 }
 .est-titulo-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+  justify-content: space-between;
   gap: 1rem;
+  margin: -2rem -2rem 1.8rem;
+  padding: 1.1rem 2rem;
   background: var(--roxo-escuro);
-  color: var(--creme);
-  padding: 0.9rem 1.5rem;
-  margin-bottom: 0.8rem;
-  border-radius: 4px 4px 0 0;
-  flex-wrap: wrap;
+  border-radius: 2px 2px 0 0;
+  overflow: hidden;
 }
 .est-titulo-num {
   font-family: 'Syne', sans-serif;
   font-weight: 800;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: rgba(242, 230, 196, 0.6);
   text-transform: uppercase;
-  flex-shrink: 0;
-  opacity: 0.75;
+  margin-bottom: 4px;
 }
 .est-titulo-texto {
   font-family: 'Syne', sans-serif;
   font-weight: 700;
   font-size: 1rem;
-  line-height: 1.4;
+  line-height: 1.35;
+  color: var(--creme);
+}
+.est-titulo-deco {
+  font-family: 'Syne', sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.1);
+  line-height: 1;
+  flex-shrink: 0;
+  user-select: none;
+  letter-spacing: -0.02em;
+}
+
+/* ── Seções de Capítulo ──────────────────────────────────── */
+.est-cap-section + .est-cap-section {
+  border-top: 1.5px solid var(--creme-escuro);
+  margin-top: 1.8rem;
+  padding-top: 1.8rem;
 }
 
 /* ── Capítulo / Seção ────────────────────────────────────── */
 .est-cap {
   font-family: 'Syne', sans-serif;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--roxo-escuro);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   margin-bottom: 1.2rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 2px dashed var(--creme-escuro);
 }
 .est-secao {
   font-family: 'Syne', sans-serif;
-  font-weight: 600;
-  font-size: 0.8rem;
+  font-weight: 700;
+  font-size: 0.75rem;
   color: var(--roxo);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  margin: 1.5rem 0 1rem;
+  letter-spacing: 0.04em;
+  margin: 1.6rem 0 1rem;
+  padding-left: 0.7rem;
+  border-left: 3px solid var(--roxo);
 }
 
 /* ── Artigos ─────────────────────────────────────────────── */
 .art {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.1rem;
 }
 .art:last-child { margin-bottom: 0; }
 .art p {
@@ -667,10 +712,13 @@ function ir(id) {
   line-height: 1.8;
   margin: 0;
 }
+.art p > strong:first-child {
+  color: var(--roxo-escuro);
+}
 .par {
-  margin-top: 0.5rem !important;
-  padding-left: 1.25rem;
-  border-left: 2px solid var(--creme-escuro);
+  margin-top: 0.45rem !important;
+  padding-left: 1.2rem;
+  border-left: 2px solid rgba(80, 64, 160, 0.2);
 }
 
 /* ── Listas ──────────────────────────────────────────────── */
@@ -681,8 +729,7 @@ function ir(id) {
   color: var(--preto);
   line-height: 1.8;
 }
-.incisos li { margin-bottom: 0.25rem; }
-
+.incisos li { margin-bottom: 0.2rem; }
 .incisos-ul {
   margin: 0.6rem 0 0;
   padding-left: 1.5rem;
@@ -691,7 +738,7 @@ function ir(id) {
   line-height: 1.8;
   list-style: disc;
 }
-.incisos-ul li { margin-bottom: 0.35rem; }
+.incisos-ul li { margin-bottom: 0.3rem; }
 
 /* ── Tabela ──────────────────────────────────────────────── */
 .est-table-wrap { overflow-x: auto; margin-top: 0.8rem; }
@@ -707,8 +754,8 @@ function ir(id) {
   text-align: left;
   font-family: 'Syne', sans-serif;
   font-weight: 700;
-  font-size: 0.76rem;
-  letter-spacing: 0.04em;
+  font-size: 0.74rem;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 .est-table td {
@@ -718,4 +765,11 @@ function ir(id) {
 }
 .est-table tbody tr:last-child td { border-bottom: none; }
 .est-table tbody tr:hover td { background: rgba(80, 64, 160, 0.05); }
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .est-titulo-header { margin: -1.2rem -1.2rem 1.4rem; padding: 1rem 1.2rem; }
+  .est-titulo-deco { font-size: 2.8rem; }
+  .est-toc { grid-template-columns: 1fr 1fr; }
+}
 </style>
