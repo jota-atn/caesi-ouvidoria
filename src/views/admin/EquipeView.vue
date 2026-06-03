@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
-import { equipe, saveEquipe, descricaoGestao, saveDescricao, gestaoInfo, saveInfo } from '../../stores/equipe.js'
+import { equipe, saveEquipe, descricaoGestao, saveDescricao, gestaoInfo, saveInfo, MESES } from '../../stores/equipe.js'
 
 const router = useRouter()
 function voltar() { window.history.state?.back ? router.back() : router.push('/admin/painel') }
@@ -10,6 +10,9 @@ function voltar() { window.history.state?.back ? router.back() : router.push('/a
 const form = ref(equipe.value.map(d => ({ ...d })))
 const descricao = ref(descricaoGestao.value)
 const info = ref({ ...gestaoInfo.value })
+
+const anoAtual = new Date().getFullYear()
+const anos = Array.from({ length: 12 }, (_, i) => anoAtual - 4 + i)
 const msg = ref({ tipo: '', texto: '' })
 const fileInputs = ref([])
 
@@ -78,14 +81,41 @@ function salvar() {
           Edite os nomes e fotos de cada diretoria. As alterações aparecem imediatamente na página <strong>Sobre</strong>.
         </p>
 
-        <div class="info-grid">
-          <div class="field" style="margin:0;">
-            <label for="nome-chapa">Nome da chapa</label>
-            <input id="nome-chapa" v-model="info.nomeChapa" type="text" placeholder="Ex: Compilando Futuros">
-          </div>
-          <div class="field" style="margin:0;">
-            <label for="periodo">Período da gestão</label>
-            <input id="periodo" v-model="info.periodo" type="text" placeholder="Ex: Mar 2025 – Mar 2026">
+        <div class="field" style="margin:0 0 1.2rem;">
+          <label for="nome-chapa">Nome da chapa</label>
+          <input id="nome-chapa" v-model="info.nomeChapa" type="text" placeholder="Ex: Compilando Futuros">
+        </div>
+
+        <div class="field" style="margin:0 0 1.6rem;">
+          <label>Período da gestão</label>
+          <div class="periodo-grid">
+            <div class="periodo-group">
+              <span class="periodo-label">Início</span>
+              <div class="periodo-selects">
+                <select v-model="info.mesInicio" class="select-mes">
+                  <option value="">Mês</option>
+                  <option v-for="m in MESES" :key="m" :value="m">{{ m }}</option>
+                </select>
+                <select v-model="info.anoInicio" class="select-ano">
+                  <option value="">Ano</option>
+                  <option v-for="a in anos" :key="a" :value="String(a)">{{ a }}</option>
+                </select>
+              </div>
+            </div>
+            <span class="periodo-sep">–</span>
+            <div class="periodo-group">
+              <span class="periodo-label">Fim</span>
+              <div class="periodo-selects">
+                <select v-model="info.mesFim" class="select-mes">
+                  <option value="">Mês</option>
+                  <option v-for="m in MESES" :key="m" :value="m">{{ m }}</option>
+                </select>
+                <select v-model="info.anoFim" class="select-ano">
+                  <option value="">Ano</option>
+                  <option v-for="a in anos" :key="a" :value="String(a)">{{ a }}</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -237,11 +267,58 @@ function salvar() {
   margin-top: 4px;
 }
 
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.6rem;
+.periodo-grid {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+
+.periodo-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.periodo-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cinza);
+  font-family: 'Syne', sans-serif;
+}
+
+.periodo-selects {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.select-mes,
+.select-ano {
+  border: 1.5px solid var(--creme-escuro);
+  border-radius: 2px;
+  background: var(--branco);
+  color: var(--preto);
+  font-size: 0.88rem;
+  padding: 7px 8px;
+  cursor: pointer;
+  appearance: auto;
+}
+.select-mes { width: 72px; }
+.select-ano { width: 80px; }
+.select-mes:focus,
+.select-ano:focus {
+  outline: none;
+  border-color: var(--roxo);
+}
+
+.periodo-sep {
+  font-size: 1.1rem;
+  color: var(--cinza);
+  padding-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .secao-sep {

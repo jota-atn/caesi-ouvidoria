@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
-import { equipe, descricaoGestao, gestaoInfo } from '../stores/equipe.js'
+import { equipe, descricaoGestao, gestaoInfo, periodoFormatado } from '../stores/equipe.js'
 
 const router = useRouter()
 function voltar() { window.history.state?.back ? router.back() : router.push('/') }
@@ -43,7 +43,7 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
             <h2 class="paper-title" style="margin-bottom:0;">Gestão atual</h2>
             <div v-if="gestaoInfo.nomeChapa" class="chapa-nome">{{ gestaoInfo.nomeChapa }}</div>
           </div>
-          <div v-if="gestaoInfo.periodo" class="chapa-periodo">{{ gestaoInfo.periodo }}</div>
+          <div v-if="periodoFormatado" class="chapa-periodo">{{ periodoFormatado }}</div>
         </div>
         <div class="equipe-grid">
           <div v-for="m in equipe" :key="m.diretoria" class="membro-card">

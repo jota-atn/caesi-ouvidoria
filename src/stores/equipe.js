@@ -19,11 +19,21 @@ function load() {
 
 const _equipe = ref(load())
 const _descricao = ref(localStorage.getItem(KEY_DESC) || '')
-const _info = ref(JSON.parse(localStorage.getItem(KEY_INFO) || '{"nomeChapa":"","periodo":""}'))
+const INFO_DEFAULT = { nomeChapa: '', mesInicio: '', anoInicio: '', mesFim: '', anoFim: '' }
+const _info = ref({ ...INFO_DEFAULT, ...JSON.parse(localStorage.getItem(KEY_INFO) || '{}') })
+
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 
 export const equipe = computed(() => _equipe.value)
 export const descricaoGestao = computed(() => _descricao.value)
 export const gestaoInfo = computed(() => _info.value)
+export const periodoFormatado = computed(() => {
+  const { mesInicio, anoInicio, mesFim, anoFim } = _info.value
+  if (!mesInicio || !anoInicio) return ''
+  const fim = mesFim && anoFim ? ` – ${mesFim} ${anoFim}` : ''
+  return `${mesInicio} ${anoInicio}${fim}`
+})
+export { MESES }
 
 export function saveEquipe(novaEquipe) {
   localStorage.setItem(KEY, JSON.stringify(novaEquipe))
