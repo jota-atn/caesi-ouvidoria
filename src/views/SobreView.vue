@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
-import { equipe, descricaoGestao } from '../stores/equipe.js'
+import { equipe, descricaoGestao, gestaoInfo } from '../stores/equipe.js'
 
 const router = useRouter()
 function voltar() { window.history.state?.back ? router.back() : router.push('/') }
@@ -38,7 +38,13 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
       </div>
 
       <div class="paper paper-mb-lg">
-        <h2 class="paper-title" style="margin-bottom:1.4rem;">Gestão atual</h2>
+        <div class="gestao-header">
+          <div>
+            <h2 class="paper-title" style="margin-bottom:0;">Gestão atual</h2>
+            <div v-if="gestaoInfo.nomeChapa" class="chapa-nome">{{ gestaoInfo.nomeChapa }}</div>
+          </div>
+          <div v-if="gestaoInfo.periodo" class="chapa-periodo">{{ gestaoInfo.periodo }}</div>
+        </div>
         <div class="equipe-grid">
           <div v-for="m in equipe" :key="m.diretoria" class="membro-card">
             <div class="membro-avatar">
@@ -132,6 +138,35 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
   font-weight: 600;
   color: var(--preto);
   line-height: 1.3;
+}
+
+.gestao-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+
+.chapa-nome {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--roxo);
+  margin-top: 4px;
+}
+
+.chapa-periodo {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--cinza);
+  background: var(--branco);
+  border: 1.5px solid var(--creme-escuro);
+  border-radius: 2px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: center;
 }
 
 .gestao-desc {

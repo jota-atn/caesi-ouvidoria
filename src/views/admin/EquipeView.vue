@@ -2,13 +2,14 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
-import { equipe, saveEquipe, descricaoGestao, saveDescricao } from '../../stores/equipe.js'
+import { equipe, saveEquipe, descricaoGestao, saveDescricao, gestaoInfo, saveInfo } from '../../stores/equipe.js'
 
 const router = useRouter()
 function voltar() { window.history.state?.back ? router.back() : router.push('/admin/painel') }
 
 const form = ref(equipe.value.map(d => ({ ...d })))
 const descricao = ref(descricaoGestao.value)
+const info = ref({ ...gestaoInfo.value })
 const msg = ref({ tipo: '', texto: '' })
 const fileInputs = ref([])
 
@@ -54,6 +55,7 @@ function salvar() {
   }
   saveEquipe(form.value.map(d => ({ ...d, presidente: d.presidente.trim() })))
   saveDescricao(descricao.value.trim())
+  saveInfo({ nomeChapa: info.value.nomeChapa.trim(), periodo: info.value.periodo.trim() })
   msg.value = { tipo: 'ok', texto: 'Equipe atualizada com sucesso!' }
 }
 </script>
@@ -75,6 +77,19 @@ function salvar() {
         <p style="font-size:0.88rem;color:var(--cinza);margin-bottom:1.8rem;line-height:1.6;">
           Edite os nomes e fotos de cada diretoria. As alterações aparecem imediatamente na página <strong>Sobre</strong>.
         </p>
+
+        <div class="info-grid">
+          <div class="field" style="margin:0;">
+            <label for="nome-chapa">Nome da chapa</label>
+            <input id="nome-chapa" v-model="info.nomeChapa" type="text" placeholder="Ex: Compilando Futuros">
+          </div>
+          <div class="field" style="margin:0;">
+            <label for="periodo">Período da gestão</label>
+            <input id="periodo" v-model="info.periodo" type="text" placeholder="Ex: Mar 2025 – Mar 2026">
+          </div>
+        </div>
+
+        <div class="secao-sep">Diretores</div>
 
         <div v-for="(d, i) in form" :key="d.diretoria" class="membro-row">
           <!-- Avatar / upload -->
@@ -220,5 +235,28 @@ function salvar() {
   color: var(--cinza);
   text-align: right;
   margin-top: 4px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+}
+
+.secao-sep {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cinza);
+  border-top: 1.5px solid var(--creme-escuro);
+  padding-top: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+@media (max-width: 500px) {
+  .info-grid { grid-template-columns: 1fr; }
 }
 </style>
