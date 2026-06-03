@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
-import { equipe } from '../stores/equipe.js'
+import { equipe, descricaoGestao } from '../stores/equipe.js'
 
 const router = useRouter()
 function voltar() { window.history.state?.back ? router.back() : router.push('/') }
@@ -48,6 +48,11 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
             <div class="label-sm" style="margin-bottom:3px;">Diretoria {{ m.diretoria }}</div>
             <div class="membro-nome">{{ m.presidente || '—' }}</div>
           </div>
+        </div>
+
+        <div v-if="descricaoGestao" class="gestao-desc">
+          <div class="label-sm" style="margin-bottom:0.6rem;">Sobre a gestão</div>
+          <p class="gestao-texto">{{ descricaoGestao }}</p>
         </div>
       </div>
 
@@ -127,5 +132,19 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
   font-weight: 600;
   color: var(--preto);
   line-height: 1.3;
+}
+
+.gestao-desc {
+  margin-top: 1.6rem;
+  padding-top: 1.4rem;
+  border-top: 1.5px solid var(--creme-escuro);
+}
+
+.gestao-texto {
+  font-size: 0.95rem;
+  color: var(--preto);
+  line-height: 1.8;
+  white-space: pre-line;
+  margin: 0;
 }
 </style>

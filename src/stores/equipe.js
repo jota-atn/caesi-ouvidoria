@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 
 const KEY = 'caesi_equipe'
+const KEY_DESC = 'caesi_gestao_descricao'
 
 const DEFAULT = [
   { diretoria: 'Administrativa',        presidente: '', foto: '' },
@@ -16,10 +17,17 @@ function load() {
 }
 
 const _equipe = ref(load())
+const _descricao = ref(localStorage.getItem(KEY_DESC) || '')
 
 export const equipe = computed(() => _equipe.value)
+export const descricaoGestao = computed(() => _descricao.value)
 
 export function saveEquipe(novaEquipe) {
   localStorage.setItem(KEY, JSON.stringify(novaEquipe))
   _equipe.value = [...novaEquipe]
+}
+
+export function saveDescricao(texto) {
+  localStorage.setItem(KEY_DESC, texto)
+  _descricao.value = texto
 }

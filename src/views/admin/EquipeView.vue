@@ -2,12 +2,13 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
-import { equipe, saveEquipe } from '../../stores/equipe.js'
+import { equipe, saveEquipe, descricaoGestao, saveDescricao } from '../../stores/equipe.js'
 
 const router = useRouter()
 function voltar() { window.history.state?.back ? router.back() : router.push('/admin/painel') }
 
 const form = ref(equipe.value.map(d => ({ ...d })))
+const descricao = ref(descricaoGestao.value)
 const msg = ref({ tipo: '', texto: '' })
 const fileInputs = ref([])
 
@@ -52,6 +53,7 @@ function salvar() {
     }
   }
   saveEquipe(form.value.map(d => ({ ...d, presidente: d.presidente.trim() })))
+  saveDescricao(descricao.value.trim())
   msg.value = { tipo: 'ok', texto: 'Equipe atualizada com sucesso!' }
 }
 </script>
@@ -106,6 +108,17 @@ function salvar() {
               placeholder="Nome do presidente"
             >
           </div>
+        </div>
+
+        <div class="field" style="margin-top:0.4rem;">
+          <label for="descricao-gestao">Sobre a gestão atual</label>
+          <textarea
+            id="descricao-gestao"
+            v-model="descricao"
+            rows="5"
+            placeholder="Conte um pouco sobre a chapa, seus objetivos e o que planejam para a gestão..."
+          ></textarea>
+          <div class="char-count">{{ descricao.length }} caracteres</div>
         </div>
 
         <div v-if="msg.texto" class="feedback-msg" :class="msg.tipo" style="margin-bottom:1rem;">
@@ -200,5 +213,12 @@ function salvar() {
 .btn-remover:hover {
   border-color: #c0392b;
   color: #c0392b;
+}
+
+.char-count {
+  font-size: 0.75rem;
+  color: var(--cinza);
+  text-align: right;
+  margin-top: 4px;
 }
 </style>
