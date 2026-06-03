@@ -1,10 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 import Navbar from '../../components/Navbar.vue'
-import { Bar } from 'vue-chartjs'
+import { Bar, Doughnut } from 'vue-chartjs'
 import {
   Chart as ChartJS,
-  CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
+  CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement,
 } from 'chart.js'
 import { mensagens } from '../../stores/mensagens.js'
 import { usuarios } from '../../stores/usuarios.js'
@@ -13,7 +13,7 @@ import { formularios, inscricoes } from '../../stores/formularios.js'
 import { tasks } from '../../stores/tasks.js'
 import { user } from '../../stores/auth.js'
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement)
 
 const totalMensagens = computed(() => mensagens.value.length)
 const pendentes      = computed(() => mensagens.value.filter(m => m.status === 'pendente').length)
@@ -26,6 +26,7 @@ const inativos       = computed(() => usuarios.value.filter(u => u.role !== 'adm
 const formsAbertos    = computed(() => formularios.value.filter(f => f.status === 'aberto').length)
 const formsEncerrados = computed(() => formularios.value.filter(f => f.status === 'encerrado').length)
 const compPendentes   = computed(() => inscricoes.value.filter(i => i.comprovante?.status === 'pendente').length)
+const cancelamentosPendentes = computed(() => inscricoes.value.filter(i => i.cancelamento?.solicitado).length)
 
 function formatValorCompacto(valor) {
   if (valor >= 1_000_000) return `R$ ${(valor / 1_000_000).toFixed(1).replace('.', ',')}M`
@@ -55,26 +56,40 @@ const receitaTotal = computed(() => {
     }, 0)
 })
 
+function chaveDoMes(timestamp) {
+  const d = new Date(timestamp)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
 function buildMesesLabels() {
   const agora = new Date()
   const meses = {}
   for (let i = 5; i >= 0; i--) {
     const d = new Date(agora.getFullYear(), agora.getMonth() - i, 1)
-    const chave = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-    meses[chave] = 0
+    meses[`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`] = 0
   }
   return meses
-}
-
-function chaveDoMes(timestamp) {
-  const d = new Date(timestamp)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
 }
 
 function mesToLabel(chave) {
   const [ano, mes] = chave.split('-')
   return new Date(Number(ano), Number(mes) - 1).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })
 }
+
+function calcTendencia(lista, getTimestamp) {
+  const agora = new Date()
+  const atual   = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}`
+  const prev    = new Date(agora.getFullYear(), agora.getMonth() - 1, 1)
+  const anterior = `${prev.getFullYear()}-${String(prev.getMonth() + 1).padStart(2, '0')}`
+  const contAtual    = lista.filter(x => chaveDoMes(getTimestamp(x)) === atual).length
+  const contAnterior = lista.filter(x => chaveDoMes(getTimestamp(x)) === anterior).length
+  if (contAnterior === 0) return null
+  const pct = Math.round(((contAtual - contAnterior) / contAnterior) * 100)
+  return { pct: Math.abs(pct), sobe: pct >= 0 }
+}
+
+const tendenciaMensagens  = computed(() => calcTendencia(mensagens.value, m => m.id))
+const tendenciaInscricoes = computed(() => calcTendencia(inscricoes.value, i => i.id))
 
 const barOptions = {
   responsive: true,
@@ -89,26 +104,49 @@ const barOptions = {
 const barMensagens = computed(() => {
   const meses = buildMesesLabels()
   for (const m of mensagens.value) {
-    const chave = chaveDoMes(m.id)
-    if (chave in meses) meses[chave]++
+    const c = chaveDoMes(m.id)
+    if (c in meses) meses[c]++
   }
   return {
     labels: Object.keys(meses).map(mesToLabel),
-    datasets: [{ label: 'Mensagens', data: Object.values(meses), backgroundColor: 'rgba(107,79,187,0.75)', borderRadius: 4 }],
+    datasets: [{ data: Object.values(meses), backgroundColor: 'rgba(107,79,187,0.75)', borderRadius: 4 }],
   }
 })
 
 const barInscricoes = computed(() => {
   const meses = buildMesesLabels()
   for (const i of inscricoes.value) {
-    const chave = chaveDoMes(i.id)
-    if (chave in meses) meses[chave]++
+    const c = chaveDoMes(i.id)
+    if (c in meses) meses[c]++
   }
   return {
     labels: Object.keys(meses).map(mesToLabel),
-    datasets: [{ label: 'Inscrições', data: Object.values(meses), backgroundColor: 'rgba(78,170,119,0.75)', borderRadius: 4 }],
+    datasets: [{ data: Object.values(meses), backgroundColor: 'rgba(78,170,119,0.75)', borderRadius: 4 }],
   }
 })
+
+const donutInscricoes = computed(() => {
+  const confirmadas   = inscricoes.value.filter(i => !i.cancelamento?.solicitado && (i.comprovante === null || ['validado', 'arquivado'].includes(i.comprovante?.status))).length
+  const pagPendente   = inscricoes.value.filter(i => !i.cancelamento?.solicitado && i.comprovante?.status === 'pendente').length
+  const cancelamento  = inscricoes.value.filter(i => i.cancelamento?.solicitado).length
+  return {
+    labels: ['Confirmadas', 'Pag. pendente', 'Cancel. solicit.'],
+    datasets: [{
+      data: [confirmadas, pagPendente, cancelamento],
+      backgroundColor: ['rgba(78,170,119,0.8)', 'rgba(240,192,64,0.8)', 'rgba(217,85,85,0.8)'],
+      borderWidth: 2,
+      borderColor: '#FEFAF4',
+    }],
+  }
+})
+
+const donutOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { position: 'bottom', labels: { font: { family: 'Inter', size: 11 }, padding: 10 } },
+  },
+}
 
 const temDados = computed(() => mensagens.value.length > 0 || inscricoes.value.length > 0)
 </script>
@@ -128,15 +166,27 @@ const temDados = computed(() => mensagens.value.length > 0 || inscricoes.value.l
       <!-- Gráficos de atividade -->
       <div v-if="temDados" class="painel-charts-grid">
         <div class="paper paper-sm">
-          <p class="label-sm" style="margin-bottom:1rem;">Mensagens por mês</p>
+          <p class="label-sm">Mensagens por mês</p>
+          <p v-if="tendenciaMensagens" class="painel-tendencia">
+            {{ tendenciaMensagens.sobe ? '↑' : '↓' }} {{ tendenciaMensagens.pct }}% vs. mês ant.
+          </p>
           <div class="painel-chart-wrap">
             <Bar :data="barMensagens" :options="barOptions" />
           </div>
         </div>
         <div class="paper paper-sm">
-          <p class="label-sm" style="margin-bottom:1rem;">Inscrições por mês</p>
+          <p class="label-sm">Inscrições por mês</p>
+          <p v-if="tendenciaInscricoes" class="painel-tendencia">
+            {{ tendenciaInscricoes.sobe ? '↑' : '↓' }} {{ tendenciaInscricoes.pct }}% vs. mês ant.
+          </p>
           <div class="painel-chart-wrap">
             <Bar :data="barInscricoes" :options="barOptions" />
+          </div>
+        </div>
+        <div v-if="inscricoes.length > 0" class="paper paper-sm">
+          <p class="label-sm" style="margin-bottom:0.75rem;">Inscrições por status</p>
+          <div class="painel-chart-wrap">
+            <Doughnut :data="donutInscricoes" :options="donutOptions" />
           </div>
         </div>
       </div>
@@ -201,8 +251,14 @@ const temDados = computed(() => mensagens.value.length > 0 || inscricoes.value.l
         <div class="geral-row">
           <div class="geral-row-left">
             <span class="geral-row-title">Formulários</span>
-            <span class="geral-row-badge" :class="compPendentes > 0 ? 'alerta' : 'ok'">
-              {{ compPendentes > 0 ? `${compPendentes} comp. pendente${compPendentes > 1 ? 's' : ''}` : 'Em dia' }}
+            <span class="geral-row-badge" :class="cancelamentosPendentes > 0 || compPendentes > 0 ? 'alerta' : 'ok'">
+              <template v-if="cancelamentosPendentes > 0">
+                {{ cancelamentosPendentes }} cancel. pendente{{ cancelamentosPendentes > 1 ? 's' : '' }}
+              </template>
+              <template v-else-if="compPendentes > 0">
+                {{ compPendentes }} comp. pendente{{ compPendentes > 1 ? 's' : '' }}
+              </template>
+              <template v-else>Em dia</template>
             </span>
           </div>
           <div class="geral-row-stats">
