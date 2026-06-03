@@ -38,14 +38,15 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
       </div>
 
       <div class="paper paper-mb-lg">
-        <h2 class="paper-title" style="margin-bottom:1.2rem;">Gestão atual</h2>
-        <div class="field-grid">
-          <div v-for="m in equipe" :key="m.diretoria"
-            style="background:var(--branco);border:2px solid var(--creme-escuro);border-radius:2px;padding:14px 16px;">
-            <div class="label-sm" style="margin-bottom:4px;">Diretoria {{ m.diretoria }}</div>
-            <div style="font-size:0.95rem;color:var(--preto);font-weight:600;">
-              {{ m.presidente || '—' }}
+        <h2 class="paper-title" style="margin-bottom:1.4rem;">Gestão atual</h2>
+        <div class="equipe-grid">
+          <div v-for="m in equipe" :key="m.diretoria" class="membro-card">
+            <div class="membro-avatar">
+              <img v-if="m.foto" :src="m.foto" :alt="m.presidente" class="membro-foto">
+              <span v-else class="membro-inicial">{{ m.presidente?.[0]?.toUpperCase() || '?' }}</span>
             </div>
+            <div class="label-sm" style="margin-bottom:3px;">Diretoria {{ m.diretoria }}</div>
+            <div class="membro-nome">{{ m.presidente || '—' }}</div>
           </div>
         </div>
       </div>
@@ -74,3 +75,57 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
     <SiteFooter />
   </div>
 </template>
+
+<style scoped>
+.equipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.membro-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--branco);
+  border: 1.5px solid var(--creme-escuro);
+  border-radius: 2px;
+  padding: 1.2rem 0.8rem 1rem;
+  gap: 0.35rem;
+}
+
+.membro-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 0.6rem;
+  flex-shrink: 0;
+  background: var(--roxo-escuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.membro-foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.membro-inicial {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--creme);
+  line-height: 1;
+}
+
+.membro-nome {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--preto);
+  line-height: 1.3;
+}
+</style>

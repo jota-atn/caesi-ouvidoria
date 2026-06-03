@@ -3,16 +3,16 @@ import { ref, computed } from 'vue'
 const KEY = 'caesi_equipe'
 
 const DEFAULT = [
-  { diretoria: 'Administrativa',        presidente: '' },
-  { diretoria: 'Cultura e Lazer',        presidente: '' },
-  { diretoria: 'Assistência Estudantil', presidente: '' },
-  { diretoria: 'Financeira',             presidente: '' },
+  { diretoria: 'Administrativa',        presidente: '', foto: '' },
+  { diretoria: 'Cultura e Lazer',        presidente: '', foto: '' },
+  { diretoria: 'Assistência Estudantil', presidente: '', foto: '' },
+  { diretoria: 'Financeira',             presidente: '', foto: '' },
 ]
 
 function load() {
   const stored = localStorage.getItem(KEY)
   if (!stored) return DEFAULT.map(d => ({ ...d }))
-  return JSON.parse(stored)
+  return JSON.parse(stored).map(d => ({ foto: '', ...d }))
 }
 
 const _equipe = ref(load())
