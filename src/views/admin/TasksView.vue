@@ -589,7 +589,7 @@ useEscapeKey(() => {
 
 /* ── Kanban wrapper ──────────────────────────────────────── */
 .kanban-wrapper {
-  padding: 0 1.5rem 3rem;
+  padding: 2rem 1.5rem 3rem;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
