@@ -1,23 +1,56 @@
 import { ref, computed } from 'vue'
 
-const KEY = 'caesi_tasks'
+const KEY_TASKS   = 'caesi_tasks'
+const KEY_MEMBROS = 'caesi_membros'
 
-function load() {
-  return JSON.parse(localStorage.getItem(KEY) || '[]')
-}
+function loadTasks()   { return JSON.parse(localStorage.getItem(KEY_TASKS)   || '[]') }
+function loadMembros() { return JSON.parse(localStorage.getItem(KEY_MEMBROS) || '[]') }
 
-const _tasks = ref(load())
+const _tasks   = ref(loadTasks())
+const _membros = ref(loadMembros())
 
-function persist(data) {
-  localStorage.setItem(KEY, JSON.stringify(data))
+function persistTasks(data) {
+  localStorage.setItem(KEY_TASKS, JSON.stringify(data))
   _tasks.value = [...data]
 }
 
-export const tasks = computed(() => _tasks.value)
+function persistMembros(data) {
+  localStorage.setItem(KEY_MEMBROS, JSON.stringify(data))
+  _membros.value = [...data]
+}
+
+export const tasks   = computed(() => _tasks.value)
+export const membros = computed(() => _membros.value)
+
+// ── Membros ───────────────────────────────────────────────
+
+export function addMembro(nome) {
+  const membro = {
+    id:    crypto.randomUUID(),
+    nome:  nome.trim(),
+    token: crypto.randomUUID(),
+  }
+  persistMembros([..._membros.value, membro])
+  return membro
+}
+
+export function removeMembro(id) {
+  persistMembros(_membros.value.filter(m => m.id !== id))
+  persistTasks(_tasks.value.map(t => ({
+    ...t,
+    alocados: t.alocados.filter(a => a !== id),
+  })))
+}
+
+export function getMembroByToken(token) {
+  return _membros.value.find(m => m.token === token) || null
+}
+
+// ── Tasks ─────────────────────────────────────────────────
 
 export function criarTask(dados) {
   const task = {
-    id: Date.now().toString(),
+    id:        Date.now().toString(),
     titulo:    dados.titulo,
     descricao: dados.descricao || '',
     prioridade: dados.prioridade,
@@ -25,61 +58,22 @@ export function criarTask(dados) {
     categoria: dados.categoria,
     status:    'pendente',
     alocados:  dados.alocados || [],
-    solicitacoes: [],
     criadoEm: new Date().toISOString(),
   }
-  persist([..._tasks.value, task])
-
+  persistTasks([..._tasks.value, task])
   return task
 }
 
 export function editarTask(id, dados) {
-  let novosAlocados = []
-  const updated = _tasks.value.map(t => {
-    if (t.id !== id) return t
-    novosAlocados = (dados.alocados || []).filter(e => !t.alocados.includes(e))
-    return { ...t, ...dados }
-  })
-  persist(updated)
-
-  const task = updated.find(t => t.id === id)
+  persistTasks(_tasks.value.map(t =>
+    t.id === id ? { ...t, ...dados } : t
+  ))
 }
 
 export function excluirTask(id) {
-  persist(_tasks.value.filter(t => t.id !== id))
+  persistTasks(_tasks.value.filter(t => t.id !== id))
 }
 
 export function atualizarStatus(id, status) {
-  persist(_tasks.value.map(t => t.id === id ? { ...t, status } : t))
-}
-
-export function solicitarParticipacao(id, adminEmail, adminNome) {
-  const task = _tasks.value.find(t => t.id === id)
-  if (!task) return
-  if (task.solicitacoes.includes(adminEmail) || task.alocados.includes(adminEmail)) return
-
-  persist(_tasks.value.map(t =>
-    t.id === id ? { ...t, solicitacoes: [...t.solicitacoes, adminEmail] } : t
-  ))
-
-}
-
-export function aprovarParticipacao(id, adminEmail) {
-  const task = _tasks.value.find(t => t.id === id)
-  if (!task) return
-  persist(_tasks.value.map(t =>
-    t.id === id ? {
-      ...t,
-      alocados:     [...t.alocados, adminEmail],
-      solicitacoes: t.solicitacoes.filter(e => e !== adminEmail),
-    } : t
-  ))
-}
-
-export function rejeitarParticipacao(id, adminEmail) {
-  const task = _tasks.value.find(t => t.id === id)
-  if (!task) return
-  persist(_tasks.value.map(t =>
-    t.id === id ? { ...t, solicitacoes: t.solicitacoes.filter(e => e !== adminEmail) } : t
-  ))
+  persistTasks(_tasks.value.map(t => t.id === id ? { ...t, status } : t))
 }
