@@ -148,7 +148,7 @@ const posts = [
             <div class="protocolo-value">{{ protocolo }}</div>
           </div>
           <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:1.2rem;">
-            <RouterLink to="/ouvidoria/consulta" class="btn btn-primary btn-sm">Consultar status →</RouterLink>
+            <RouterLink :to="`/ouvidoria/consulta?protocolo=${encodeURIComponent(protocolo)}`" class="btn btn-primary btn-sm">Consultar status →</RouterLink>
             <button class="btn btn-outline btn-sm" @click="resetForm">Enviar outra mensagem</button>
           </div>
         </div>
