@@ -1,31 +1,17 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { isLoggedIn, isAdmin, user, logout } from '../stores/auth.js'
-import { notificacoes } from '../stores/notificacoes.js'
+import { isAdmin, logout } from '../stores/auth.js'
 import { tasks } from '../stores/tasks.js'
-import UserDropdown from './UserDropdown.vue'
-import NotifBell from './NotifBell.vue'
+import { computed } from 'vue'
 
 const menuOpen = ref(false)
 const route    = useRoute()
 const router   = useRouter()
 
-const avatar = computed(() => (user.value?.nome ?? 'U').charAt(0).toUpperCase())
-
-const unreadCount = computed(() => {
-  if (!user.value || isAdmin.value) return 0
-  return notificacoes.value.filter(n => n.userEmail === user.value?.email && !n.lida).length
-})
-
 const tasksBadge = computed(() => {
-  if (!user.value || !isAdmin.value) return 0
-  if (user.value.email === 'admin') {
-    return tasks.value.reduce((acc, t) => acc + t.solicitacoes.length, 0)
-  }
-  return tasks.value.filter(
-    t => t.alocados.includes(user.value.email) && t.status !== 'concluida'
-  ).length
+  if (!isAdmin.value) return 0
+  return tasks.value.reduce((acc, t) => acc + t.solicitacoes.length, 0)
 })
 
 function handleLogout() {
@@ -36,11 +22,6 @@ function handleLogout() {
 
 function ariaCurrent(path) {
   return route.path === path || route.path.startsWith(path + '/') ? 'page' : undefined
-}
-
-function ariaCurrentFormularios() {
-  return route.path.startsWith('/aluno/formularios') || route.path.startsWith('/admin/formularios')
-    ? 'page' : undefined
 }
 </script>
 
@@ -61,61 +42,30 @@ function ariaCurrentFormularios() {
     </button>
 
     <div class="navbar-actions" id="navbar-menu" :class="{ open: menuOpen }">
-      <RouterLink to="/sobre"    class="nav-link" :aria-current="ariaCurrent('/sobre')"    @click="menuOpen = false">Sobre</RouterLink>
-      <RouterLink to="/estatuto" class="nav-link" :aria-current="ariaCurrent('/estatuto')" @click="menuOpen = false">Estatuto</RouterLink>
-      <RouterLink to="/contato"  class="nav-link" :aria-current="ariaCurrent('/contato')"  @click="menuOpen = false">Contato</RouterLink>
-
-      <!-- Visitante -->
-      <template v-if="!isLoggedIn">
-        <RouterLink to="/aluno/formularios" class="nav-link" :aria-current="ariaCurrentFormularios()" @click="menuOpen = false">Formulários</RouterLink>
-        <RouterLink to="/login" class="btn btn-amarelo btn-sm" @click="menuOpen = false">Fazer login</RouterLink>
-      </template>
 
       <!-- Admin -->
-      <template v-else-if="isAdmin">
-        <span class="nav-separator" />
+      <template v-if="isAdmin">
         <RouterLink to="/admin/painel"      class="nav-link" :aria-current="ariaCurrent('/admin/painel')"      @click="menuOpen = false">Painel</RouterLink>
         <RouterLink to="/admin/mensagens"   class="nav-link" :aria-current="ariaCurrent('/admin/mensagens')"   @click="menuOpen = false">Mensagens</RouterLink>
-        <RouterLink to="/admin/usuarios"    class="nav-link" :aria-current="ariaCurrent('/admin/usuarios')"    @click="menuOpen = false">Usuários</RouterLink>
         <RouterLink to="/admin/equipe"      class="nav-link" :aria-current="ariaCurrent('/admin/equipe')"      @click="menuOpen = false">Equipe</RouterLink>
+        <RouterLink to="/admin/formularios" class="nav-link" :aria-current="ariaCurrent('/admin/formularios')" @click="menuOpen = false">Formulários</RouterLink>
         <RouterLink to="/admin/tasks" class="nav-link nav-link--badge" :aria-current="ariaCurrent('/admin/tasks')" @click="menuOpen = false">
           Tasks
           <span v-if="tasksBadge > 0" class="nav-badge">{{ tasksBadge > 9 ? '9+' : tasksBadge }}</span>
         </RouterLink>
-        <RouterLink to="/admin/formularios" class="nav-link" :aria-current="ariaCurrentFormularios()"         @click="menuOpen = false">Formulários</RouterLink>
-        <div class="navbar-desktop-user">
-          <UserDropdown :admin="true" />
-        </div>
-      </template>
-
-      <!-- Aluno -->
-      <template v-else>
-        <RouterLink to="/aluno/formularios" class="nav-link" :aria-current="ariaCurrentFormularios()" @click="menuOpen = false">Formulários</RouterLink>
         <span class="nav-separator" />
-        <RouterLink to="/aluno/mensagens"  class="nav-link" :aria-current="ariaCurrent('/aluno/mensagens')"  @click="menuOpen = false">Mensagens</RouterLink>
-        <RouterLink to="/aluno/inscricoes" class="nav-link" :aria-current="ariaCurrent('/aluno/inscricoes')" @click="menuOpen = false">Inscrições</RouterLink>
-        <div class="navbar-desktop-user">
-          <NotifBell />
-          <UserDropdown :admin="false" />
-        </div>
+        <button class="nav-link nav-link-btn" @click="handleLogout">Sair</button>
       </template>
 
-      <!-- Seção do usuário — só aparece no mobile via CSS -->
-      <template v-if="isLoggedIn">
-        <span class="nav-separator nav-separator--mobile" />
-        <div class="mobile-user-header">
-          <div class="mobile-user-avatar">{{ avatar }}</div>
-          <div class="mobile-user-info">
-            <div class="mobile-user-name">
-              {{ user?.nome }}
-              <span v-if="unreadCount > 0" class="mobile-notif-badge">{{ unreadCount > 9 ? '9+' : unreadCount }}</span>
-            </div>
-            <div class="mobile-user-role">{{ isAdmin ? 'Administrador' : 'Aluno' }}</div>
-          </div>
-        </div>
-        <RouterLink to="/perfil" class="mobile-action-link" @click="menuOpen = false">Ver perfil</RouterLink>
-        <button class="mobile-action-link mobile-action-sair" @click="handleLogout">Sair</button>
+      <!-- Público -->
+      <template v-else>
+        <RouterLink to="/sobre"       class="nav-link" :aria-current="ariaCurrent('/sobre')"       @click="menuOpen = false">Sobre</RouterLink>
+        <RouterLink to="/estatuto"    class="nav-link" :aria-current="ariaCurrent('/estatuto')"    @click="menuOpen = false">Estatuto</RouterLink>
+        <RouterLink to="/contato"     class="nav-link" :aria-current="ariaCurrent('/contato')"     @click="menuOpen = false">Contato</RouterLink>
+        <RouterLink to="/ouvidoria"   class="nav-link" :aria-current="ariaCurrent('/ouvidoria')"   @click="menuOpen = false">Ouvidoria</RouterLink>
+        <RouterLink to="/formularios" class="nav-link" :aria-current="ariaCurrent('/formularios')" @click="menuOpen = false">Formulários</RouterLink>
       </template>
+
     </div>
   </nav>
 </template>

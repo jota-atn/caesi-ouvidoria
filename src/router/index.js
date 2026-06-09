@@ -1,32 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { user } from '../stores/auth.js'
+import { isAdmin } from '../stores/auth.js'
 
 const routes = [
   { path: '/',                       component: () => import('../views/HomeView.vue') },
   { path: '/sobre',                  component: () => import('../views/SobreView.vue') },
   { path: '/estatuto',               component: () => import('../views/EstatutoView.vue') },
   { path: '/contato',                component: () => import('../views/ContatoView.vue') },
-  { path: '/login',                  component: () => import('../views/LoginView.vue') },
-  { path: '/cadastro',               component: () => import('../views/CadastroView.vue') },
-  { path: '/esqueci-senha',          component: () => import('../views/EsqueciSenhaView.vue') },
-  { path: '/perfil',                 component: () => import('../views/PerfilView.vue'),                    meta: { auth: true } },
-  { path: '/aluno/mensagens',        component: () => import('../views/aluno/MensagensView.vue'),           meta: { auth: true, aluno: true } },
-  { path: '/aluno/nova-mensagem',    component: () => import('../views/aluno/NovaMensagemView.vue'),        meta: { auth: true, aluno: true } },
-  { path: '/aluno/enviada',          component: () => import('../views/aluno/MensagemEnviadaView.vue'),     meta: { auth: true, aluno: true } },
-  { path: '/aluno/mensagem/:id',     component: () => import('../views/aluno/DetalheView.vue'),             meta: { auth: true, aluno: true } },
-  { path: '/aluno/formularios',      component: () => import('../views/aluno/FormulariosView.vue'),          meta: { auth: true, aluno: true } },
-  { path: '/aluno/formularios/:id',  component: () => import('../views/aluno/FormularioDetalheView.vue'),    meta: { auth: true, aluno: true } },
-  { path: '/aluno/inscricoes',       component: () => import('../views/aluno/InscricoesView.vue'),           meta: { auth: true, aluno: true } },
-  { path: '/admin',                  redirect: '/admin/painel' },
-  { path: '/admin/painel',           component: () => import('../views/admin/PainelView.vue'),              meta: { auth: true, admin: true } },
-  { path: '/admin/mensagens',        component: () => import('../views/admin/MensagensView.vue'),           meta: { auth: true, admin: true } },
-  { path: '/admin/mensagens/:id',    component: () => import('../views/admin/DetalheView.vue'),             meta: { auth: true, admin: true } },
-  { path: '/admin/usuarios',         component: () => import('../views/admin/UsuariosView.vue'),            meta: { auth: true, admin: true } },
-  { path: '/admin/equipe',           component: () => import('../views/admin/EquipeView.vue'),              meta: { auth: true, admin: true } },
-  { path: '/admin/formularios',      component: () => import('../views/admin/FormulariosView.vue'),          meta: { auth: true, admin: true } },
-  { path: '/admin/formularios/:id',  component: () => import('../views/admin/FormularioDetalheView.vue'),    meta: { auth: true, admin: true } },
-  { path: '/admin/tasks',            component: () => import('../views/admin/TasksView.vue'),                meta: { auth: true, admin: true } },
-  { path: '/aluno/certificado/:id',  component: () => import('../views/aluno/CertificadoView.vue'),            meta: { auth: true } },
+  { path: '/ouvidoria',              component: () => import('../views/OuvidoriaView.vue') },
+  { path: '/ouvidoria/consulta',     component: () => import('../views/OuvidoriaConsultaView.vue') },
+  { path: '/formularios',            component: () => import('../views/aluno/FormulariosView.vue') },
+  { path: '/formularios/:id',        component: () => import('../views/aluno/FormularioDetalheView.vue') },
+  { path: '/admin',                  component: () => import('../views/admin/LoginView.vue') },
+  { path: '/admin/painel',           component: () => import('../views/admin/PainelView.vue'),              meta: { admin: true } },
+  { path: '/admin/mensagens',        component: () => import('../views/admin/MensagensView.vue'),           meta: { admin: true } },
+  { path: '/admin/mensagens/:id',    component: () => import('../views/admin/DetalheView.vue'),             meta: { admin: true } },
+  { path: '/admin/equipe',           component: () => import('../views/admin/EquipeView.vue'),              meta: { admin: true } },
+  { path: '/admin/formularios',      component: () => import('../views/admin/FormulariosView.vue'),         meta: { admin: true } },
+  { path: '/admin/formularios/:id',  component: () => import('../views/admin/FormularioDetalheView.vue'),   meta: { admin: true } },
+  { path: '/admin/tasks',            component: () => import('../views/admin/TasksView.vue'),               meta: { admin: true } },
   { path: '/:pathMatch(.*)*',        component: () => import('../views/NotFoundView.vue') },
 ]
 
@@ -36,14 +27,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  const u = user.value
-
-  if (to.meta.auth && !u) return '/login'
-  if (to.meta.admin && u?.role !== 'admin') return '/aluno/mensagens'
-  if (to.meta.aluno && u?.role === 'admin') return '/admin/painel'
-  if ((to.path === '/login' || to.path === '/cadastro' || to.path === '/esqueci-senha') && u) {
-    return u.role === 'admin' ? '/admin/painel' : '/aluno/mensagens'
-  }
+  if (to.meta.admin && !isAdmin.value) return '/admin'
+  if (to.path === '/admin' && isAdmin.value) return '/admin/painel'
 })
 
 export default router
