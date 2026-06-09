@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import { addMensagem } from '../stores/mensagens.js'
-import { isAdmin } from '../stores/auth.js'
 
 const form = ref({ assunto: '', categoria: '', mensagem: '', email: '' })
 const errors = ref({})
@@ -71,19 +70,8 @@ const posts = [
       </p>
       <div class="hero-actions">
         <a href="#enviar" class="btn btn-amarelo">Enviar mensagem →</a>
-        <RouterLink
-          v-if="isAdmin"
-          to="/admin/painel"
-          class="btn btn-outline btn-outline-creme"
-        >
-          Painel admin
-        </RouterLink>
-        <RouterLink
-          v-else
-          to="/ouvidoria/consulta"
-          class="btn btn-outline btn-outline-creme"
-        >
-          Consultar protocolo
+        <RouterLink to="/ouvidoria/consulta" class="btn btn-outline btn-outline-creme">
+          Consultar protocolo →
         </RouterLink>
       </div>
     </section>
