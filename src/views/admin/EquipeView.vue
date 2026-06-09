@@ -209,7 +209,7 @@ function salvar() {
   border: 2px solid var(--creme-escuro);
 }
 .avatar-placeholder span {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.4rem;
   color: var(--creme);
@@ -223,7 +223,7 @@ function salvar() {
 .btn-foto {
   font-size: 0.72rem;
   font-weight: 600;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   padding: 3px 8px;
   border: 1.5px solid var(--roxo);
   border-radius: 2px;
@@ -279,7 +279,7 @@ function salvar() {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--cinza);
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
 }
 
 .periodo-selects {
@@ -322,7 +322,7 @@ function salvar() {
 }
 
 .secao-sep {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.12em;

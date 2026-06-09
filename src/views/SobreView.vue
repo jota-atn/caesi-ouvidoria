@@ -126,7 +126,7 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
 }
 
 .membro-inicial {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.6rem;
   color: var(--creme);
@@ -149,7 +149,7 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
 }
 
 .chapa-nome {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-size: 1.1rem;
   font-weight: 800;
   color: var(--roxo);

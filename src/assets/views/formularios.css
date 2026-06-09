@@ -1,6 +1,6 @@
 /* ── Tipo do formulário ─────────────────────────────────── */
 .tipo-tag {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.7rem;
   padding: 3px 9px;
@@ -17,7 +17,7 @@
 
 /* ── Status do formulário ───────────────────────────────── */
 .form-status-badge {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.7rem;
   padding: 3px 9px;
@@ -33,7 +33,7 @@
 
 /* ── Status do comprovante ──────────────────────────────── */
 .comp-badge {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.68rem;
   padding: 3px 8px;
@@ -73,7 +73,7 @@
 .form-card-info { flex: 1; min-width: 0; }
 .form-card-tags { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; }
 .form-card-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 1rem;
   margin-bottom: 4px;
@@ -112,7 +112,7 @@
 
 .inscricao-info { flex: 1; min-width: 0; }
 .inscricao-nome {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.92rem;
   color: var(--preto);
@@ -154,7 +154,7 @@
   background: var(--branco);
   border: 2px solid var(--creme-escuro);
   border-radius: 2px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.88rem;
   color: var(--preto);
   outline: none;
@@ -199,7 +199,7 @@
   background: rgba(255,255,255,0.7);
   border: 1.5px dashed var(--creme-escuro);
   border-radius: 2px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.84rem;
   color: var(--preto);
   outline: none;
@@ -224,7 +224,7 @@
 .comprovante-area.has-file { border-color: var(--verde); background: rgba(78,170,119,0.08); }
 .comprovante-area p        { font-size: 0.87rem; color: var(--cinza); margin: 0; }
 .comprovante-filename {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.9rem;
   color: var(--verde);
@@ -244,7 +244,7 @@
 }
 .total-estimado-label { font-size: 0.84rem; color: var(--cinza); }
 .total-estimado-valor {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.1rem;
   color: var(--roxo-escuro);
@@ -252,7 +252,7 @@
 
 /* ── Prazo urgente ──────────────────────────────────────── */
 .prazo-urgente-badge {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.68rem;
   padding: 3px 8px;
@@ -273,7 +273,7 @@
 
 /* ── Solicitação de cancelamento ────────────────────────── */
 .cancelamento-badge {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.68rem;
   padding: 3px 8px;
@@ -308,7 +308,7 @@
   border: 2px solid var(--preto);
 }
 .modal-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.1rem;
   color: var(--preto);

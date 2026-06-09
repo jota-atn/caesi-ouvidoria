@@ -185,7 +185,7 @@ function confirmarExcluir() {
           placeholder="Escreva uma resposta para o aluno…"
           rows="4"
           class="internal-note textarea"
-          style="width:100%;padding:10px 12px;background:var(--branco);border:2px solid var(--creme-escuro);border-radius:2px;font-family:'Inter',sans-serif;font-size:0.9rem;color:var(--preto);resize:vertical;outline:none;transition:border-color 0.2s;"
+          style="width:100%;padding:10px 12px;background:var(--branco);border:2px solid var(--creme-escuro);border-radius:2px;font-family:'Archivo',sans-serif;font-size:0.9rem;color:var(--preto);resize:vertical;outline:none;transition:border-color 0.2s;"
           @focus="$event.target.style.borderColor='var(--roxo)'"
           @blur="$event.target.style.borderColor='var(--creme-escuro)'"
         ></textarea>

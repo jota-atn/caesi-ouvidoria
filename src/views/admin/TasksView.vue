@@ -470,7 +470,7 @@ useEscapeKey(() => {
 .tasks-stat-chip.ativo { border-color: var(--roxo-escuro); background: var(--creme); }
 .tasks-stat-chip.ativo { box-shadow: 2px 2px 0 var(--roxo-escuro); }
 .tasks-stat-num {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.5rem;
   line-height: 1;
@@ -530,7 +530,7 @@ useEscapeKey(() => {
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 2px;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -553,7 +553,7 @@ useEscapeKey(() => {
 /* ── Conteúdo do card ────────────────────────────────────── */
 .task-card-body { flex: 1; }
 .task-titulo {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--preto);
@@ -596,7 +596,7 @@ useEscapeKey(() => {
   color: var(--creme);
   font-size: 0.6rem;
   font-weight: 700;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -611,7 +611,7 @@ useEscapeKey(() => {
   color: #8a6a00;
   padding: 2px 8px;
   border-radius: 2px;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
 }
 
 /* ── Ações do card ───────────────────────────────────────── */
@@ -628,7 +628,7 @@ useEscapeKey(() => {
   min-width: 130px;
   padding: 5px 32px 5px 8px;
   font-size: 0.82rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Archivo', sans-serif;
   color: var(--preto);
   background: var(--branco);
   border: 2px solid var(--creme-escuro);
@@ -683,7 +683,7 @@ useEscapeKey(() => {
   border-radius: 999px;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s, color 0.15s;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Archivo', sans-serif;
 }
 .alocado-chip:hover {
   border-color: var(--roxo);
@@ -700,7 +700,7 @@ useEscapeKey(() => {
   color: var(--roxo-escuro);
   font-size: 0.6rem;
   font-weight: 700;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;

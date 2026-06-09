@@ -60,7 +60,7 @@
   margin-bottom: 1.5rem;
 }
 .page-heading h2 {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.8rem;
   color: var(--creme);
@@ -72,7 +72,7 @@
   align-items: center;
   gap: 6px;
   color: var(--creme);
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 600;
   font-size: 0.9rem;
   text-decoration: none;
@@ -110,7 +110,7 @@
   padding: 1rem;
 }
 .internal-note-label {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.75rem;
   color: var(--roxo-escuro);
@@ -127,7 +127,7 @@
   background: rgba(255,255,255,0.7);
   border: 1.5px solid var(--creme-escuro);
   border-radius: 2px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.88rem;
   color: var(--preto);
   resize: vertical;
@@ -144,7 +144,7 @@
 
 /* ── Tipografia interna ─────────────────────────────────── */
 .label-sm {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.76rem;
   color: var(--roxo-escuro);
@@ -153,7 +153,7 @@
 }
 
 .paper-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.1rem;
   color: var(--roxo-escuro);
@@ -161,7 +161,7 @@
 }
 
 .paper-subtitle {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 1rem;
   color: var(--roxo-escuro);
@@ -171,7 +171,7 @@
 }
 
 .msg-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.4rem;
   color: var(--roxo-escuro);
@@ -229,7 +229,7 @@
   gap: 12px;
   margin-bottom: 1rem;
 }
-.alert-atendida-title { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--verde); font-size: 0.95rem; }
+.alert-atendida-title { font-family: 'Archivo Black', sans-serif; font-weight: 700; color: var(--verde); font-size: 0.95rem; }
 .alert-atendida-sub   { font-size: 0.81rem; color: var(--cinza); margin-top: 2px; }
 
 .alert-resposta {
@@ -255,11 +255,11 @@
   color: var(--roxo-escuro);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   margin-bottom: 3px;
 }
 .protocolo-value {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.1rem;
   color: var(--preto);

@@ -16,7 +16,7 @@ const protocolo = route.query.protocolo || `#${new Date().getFullYear()}-????`
     <Navbar />
 
     <div class="success-page">
-      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--amarelo);letter-spacing:0.08em;margin-bottom:0.5rem;opacity:0.9;">
+      <div style="font-family:'Archivo Black',sans-serif;font-weight:800;font-size:1.1rem;color:var(--amarelo);letter-spacing:0.08em;margin-bottom:0.5rem;opacity:0.9;">
         ✦ &nbsp; ✦ &nbsp; ✦
       </div>
 
@@ -30,7 +30,7 @@ const protocolo = route.query.protocolo || `#${new Date().getFullYear()}-????`
           box-shadow:3px 3px 0 var(--roxo-escuro);
         ">✓</div>
 
-        <h1 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;color:var(--roxo-escuro);margin-bottom:0.6rem;line-height:1.2;">
+        <h1 style="font-family:'Archivo Black',sans-serif;font-weight:800;font-size:1.6rem;color:var(--roxo-escuro);margin-bottom:0.6rem;line-height:1.2;">
           Mensagem enviada!
         </h1>
 
@@ -54,7 +54,7 @@ const protocolo = route.query.protocolo || `#${new Date().getFullYear()}-????`
         </div>
       </div>
 
-      <div style="margin-top:2.5rem;font-family:'Syne',sans-serif;font-weight:800;font-size:0.9rem;color:var(--amarelo);opacity:0.6;letter-spacing:0.08em;">
+      <div style="margin-top:2.5rem;font-family:'Archivo Black',sans-serif;font-weight:800;font-size:0.9rem;color:var(--amarelo);opacity:0.6;letter-spacing:0.08em;">
         ✦ &nbsp; ✦
       </div>
     </div>

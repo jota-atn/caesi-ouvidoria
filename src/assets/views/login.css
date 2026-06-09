@@ -26,7 +26,7 @@
 }
 
 .login-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 2.2rem;
   color: var(--creme);
@@ -39,7 +39,7 @@
 .login-badge {
   display: inline-block;
   margin-top: 10px;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.78rem;
   background: var(--amarelo);

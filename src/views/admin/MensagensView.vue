@@ -101,7 +101,7 @@ const donutOptions = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { position: 'right', labels: { font: { family: 'Inter', size: 12 }, padding: 16 } },
+    legend: { position: 'right', labels: { font: { family: 'Archivo', size: 12 }, padding: 16 } },
   },
 }
 
@@ -140,8 +140,8 @@ const barOptions = {
     legend: { display: false },
   },
   scales: {
-    y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { color: 'rgba(0,0,0,0.06)' } },
-    x: { ticks: { font: { family: 'Inter' } }, grid: { display: false } },
+    y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Archivo' } }, grid: { color: 'rgba(0,0,0,0.06)' } },
+    x: { ticks: { font: { family: 'Archivo' } }, grid: { display: false } },
   },
 }
 </script>

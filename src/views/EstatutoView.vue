@@ -645,7 +645,7 @@ onBeforeUnmount(() => observer?.disconnect())
   color: var(--creme);
   padding: 2px 7px;
   border-radius: 2px;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -680,7 +680,7 @@ onBeforeUnmount(() => observer?.disconnect())
   overflow: hidden;
 }
 .est-titulo-num {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 0.65rem;
   letter-spacing: 0.15em;
@@ -689,14 +689,14 @@ onBeforeUnmount(() => observer?.disconnect())
   margin-bottom: 4px;
 }
 .est-titulo-texto {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 1rem;
   line-height: 1.35;
   color: var(--roxo-escuro);
 }
 .est-titulo-deco {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-size: 4rem;
   font-weight: 900;
   color: rgba(80, 64, 160, 0.12);
@@ -715,7 +715,7 @@ onBeforeUnmount(() => observer?.disconnect())
 
 /* ── Capítulo / Seção ────────────────────────────────────── */
 .est-cap {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.8rem;
   color: var(--roxo-escuro);
@@ -724,7 +724,7 @@ onBeforeUnmount(() => observer?.disconnect())
   margin-bottom: 1.2rem;
 }
 .est-secao {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.75rem;
   color: var(--roxo);
@@ -786,7 +786,7 @@ onBeforeUnmount(() => observer?.disconnect())
   color: var(--creme);
   padding: 8px 14px;
   text-align: left;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.74rem;
   letter-spacing: 0.05em;

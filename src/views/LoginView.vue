@@ -46,7 +46,7 @@ function submit() {
 
     <div class="login-card">
       <div class="paper">
-        <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:var(--roxo-escuro);margin-bottom:1.5rem;">
+        <h2 style="font-family:'Archivo Black',sans-serif;font-weight:800;font-size:1.3rem;color:var(--roxo-escuro);margin-bottom:1.5rem;">
           Entrar na sua conta
         </h2>
 

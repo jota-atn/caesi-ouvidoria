@@ -12,7 +12,7 @@
   box-shadow: 4px 4px 0 var(--roxo-escuro);
 }
 .stat-number {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 2.6rem;
   color: var(--roxo-escuro);
@@ -41,7 +41,7 @@
   background: var(--creme);
   border: 2px solid var(--creme-escuro);
   border-radius: 2px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 0.9rem;
   color: var(--preto);
   outline: none;
@@ -49,7 +49,7 @@
 .filter-bar input:focus { border-color: var(--amarelo); }
 
 .filter-btn {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.79rem;
   padding: 8px 16px;

@@ -15,7 +15,7 @@
   background: var(--creme);
 }
 .hero-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: clamp(2rem, 5vw, 3rem);
   color: var(--creme);
@@ -44,7 +44,7 @@
   width: 100%;
 }
 .section-label {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.74rem;
   color: var(--amarelo);
@@ -53,7 +53,7 @@
   margin-bottom: 0.4rem;
 }
 .section-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.75rem;
   color: var(--creme);
@@ -76,7 +76,7 @@
   text-align: center;
 }
 .step-number {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 3.5rem;
   color: var(--roxo-escuro);
@@ -93,7 +93,7 @@
   color: var(--roxo-escuro);
 }
 .step-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 1rem;
   color: var(--roxo-escuro);
@@ -177,7 +177,7 @@
   padding: 0.4rem 0;
 }
 .admin-no-msg-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--roxo-escuro);

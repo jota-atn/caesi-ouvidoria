@@ -14,7 +14,7 @@
   flex-wrap: wrap;
 }
 .footer-brand {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   color: var(--creme);
   font-size: 1.05rem;
@@ -36,7 +36,7 @@
   color: rgba(242,230,196,0.6);
   font-size: 0.85rem;
   text-decoration: none;
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 600;
   transition: color 0.15s;
 }

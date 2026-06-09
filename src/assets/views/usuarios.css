@@ -12,7 +12,7 @@
   border-radius: 50%;
   background: var(--roxo);
   color: var(--branco);
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.1rem;
   display: flex;
@@ -22,7 +22,7 @@
 }
 .user-info { flex: 1; min-width: 0; }
 .user-name {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.95rem;
   color: var(--preto);

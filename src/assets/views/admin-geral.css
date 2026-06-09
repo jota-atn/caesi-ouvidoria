@@ -35,7 +35,7 @@
 }
 
 .geral-row-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1rem;
   color: var(--roxo-escuro);
@@ -66,7 +66,7 @@
 }
 
 .geral-mini-num {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.7rem;
   color: var(--preto);
@@ -119,7 +119,7 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--roxo-escuro);
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
 }
 
 .geral-chip-nome {

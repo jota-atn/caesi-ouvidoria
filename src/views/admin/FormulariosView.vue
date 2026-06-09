@@ -158,7 +158,7 @@ function submitNovoForm() {
 
         <div v-if="novoFormSuccess" style="text-align:center;padding:1.2rem 0;">
           <div style="font-size:2rem;margin-bottom:0.5rem;">✓</div>
-          <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--verde);">Formulário criado!</div>
+          <div style="font-family:'Archivo Black',sans-serif;font-weight:700;color:var(--verde);">Formulário criado!</div>
         </div>
 
         <form v-else @submit.prevent="submitNovoForm" novalidate>

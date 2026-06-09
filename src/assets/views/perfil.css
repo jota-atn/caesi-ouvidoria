@@ -4,7 +4,7 @@
   border-radius: 50%;
   background: var(--roxo-escuro);
   color: var(--creme);
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.8rem;
   display: flex;
@@ -38,7 +38,7 @@
 }
 
 .perfil-info-label {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;

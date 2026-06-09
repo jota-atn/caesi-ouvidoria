@@ -71,7 +71,7 @@ function redefinir() {
 
       <!-- Step 1: identificar -->
       <div v-if="step === 'identificar'" class="paper">
-        <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:var(--roxo-escuro);margin-bottom:0.5rem;">
+        <h2 style="font-family:'Archivo Black',sans-serif;font-weight:800;font-size:1.3rem;color:var(--roxo-escuro);margin-bottom:0.5rem;">
           Esqueceu sua senha?
         </h2>
         <p style="font-size:0.87rem;color:var(--cinza);margin-bottom:1.5rem;line-height:1.6;">
@@ -100,7 +100,7 @@ function redefinir() {
 
       <!-- Step 2: redefinir senha -->
       <div v-else-if="step === 'redefinir'" class="paper">
-        <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:var(--roxo-escuro);margin-bottom:0.5rem;">
+        <h2 style="font-family:'Archivo Black',sans-serif;font-weight:800;font-size:1.3rem;color:var(--roxo-escuro);margin-bottom:0.5rem;">
           Redefinir senha
         </h2>
         <p style="font-size:0.87rem;color:var(--cinza);margin-bottom:1.5rem;line-height:1.6;">
@@ -147,7 +147,7 @@ function redefinir() {
       <div v-else class="paper">
         <div class="anon-success">
           <div class="check-circle">✓</div>
-          <h3 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;color:var(--roxo-escuro);margin-bottom:0.5rem;">
+          <h3 style="font-family:'Archivo Black',sans-serif;font-weight:800;font-size:1.25rem;color:var(--roxo-escuro);margin-bottom:0.5rem;">
             Senha redefinida!
           </h3>
           <p style="font-size:0.9rem;color:var(--cinza);line-height:1.6;">

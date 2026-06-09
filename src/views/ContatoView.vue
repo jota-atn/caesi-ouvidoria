@@ -38,7 +38,7 @@ function submit() {
 
         <div v-if="enviado" class="anon-success">
           <div class="check-circle">✓</div>
-          <h3 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;color:var(--roxo-escuro);margin-bottom:0.5rem;">
+          <h3 style="font-family:'Archivo Black',sans-serif;font-weight:800;font-size:1.25rem;color:var(--roxo-escuro);margin-bottom:0.5rem;">
             Mensagem enviada!
           </h3>
           <p style="font-size:0.9rem;color:var(--cinza);line-height:1.6;margin-bottom:1.2rem;">

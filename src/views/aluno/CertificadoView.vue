@@ -120,7 +120,7 @@ function imprimir() { window.print() }
 }
 
 .cert-logo {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 2rem;
   color: var(--roxo-escuro);
@@ -135,7 +135,7 @@ function imprimir() { window.print() }
 }
 
 .cert-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 1.8rem;
   color: var(--roxo-escuro);
@@ -152,7 +152,7 @@ function imprimir() { window.print() }
 }
 
 .cert-nome {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 800;
   font-size: 2.2rem;
   color: var(--preto);
@@ -161,7 +161,7 @@ function imprimir() { window.print() }
 }
 
 .cert-evento {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 1.3rem;
   color: var(--roxo-escuro);
@@ -195,7 +195,7 @@ function imprimir() { window.print() }
 }
 
 .cert-assinatura-nome {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Archivo Black', sans-serif;
   font-size: 0.78rem;
   font-weight: 700;
   color: var(--preto);

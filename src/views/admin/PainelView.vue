@@ -96,8 +96,8 @@ const barOptions = {
   maintainAspectRatio: false,
   plugins: { legend: { display: false } },
   scales: {
-    y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, grid: { color: 'rgba(0,0,0,0.06)' } },
-    x: { ticks: { font: { family: 'Inter' } }, grid: { display: false } },
+    y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Archivo' } }, grid: { color: 'rgba(0,0,0,0.06)' } },
+    x: { ticks: { font: { family: 'Archivo' } }, grid: { display: false } },
   },
 }
 
@@ -144,7 +144,7 @@ const donutOptions = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { position: 'bottom', labels: { font: { family: 'Inter', size: 11 }, padding: 10 } },
+    legend: { position: 'bottom', labels: { font: { family: 'Archivo', size: 11 }, padding: 10 } },
   },
 }
 

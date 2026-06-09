@@ -81,7 +81,7 @@ function voltar() {
         <div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;">
           <div class="perfil-avatar-grande">{{ avatar }}</div>
           <div>
-            <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--roxo-escuro);margin-bottom:4px;">
+            <h2 style="font-family:'Archivo Black',sans-serif;font-weight:800;font-size:1.4rem;color:var(--roxo-escuro);margin-bottom:4px;">
               {{ user.nome }}
             </h2>
             <span class="perfil-role-badge" :class="isAdmin ? 'admin' : 'aluno'">
