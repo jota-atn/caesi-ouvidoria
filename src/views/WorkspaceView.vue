@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { tasks, membros, atualizarStatus, salvarAnotacao, autoAlocar } from '../stores/tasks.js'
 import { showToast } from '../stores/toast.js'
@@ -26,6 +26,16 @@ const progresso  = computed(() => {
   const total = minhasTasks.value.length
   return total === 0 ? 0 : Math.round((concluidas.value / total) * 100)
 })
+
+const loading       = ref(true)
+const progressoAnim = ref(0)
+
+onMounted(async () => {
+  loading.value = false
+  await nextTick()
+  progressoAnim.value = progresso.value
+})
+watch(progresso, val => { progressoAnim.value = val })
 
 const contagem = computed(() => ({
   pendente:       minhasTasks.value.filter(t => t.status === 'pendente').length,
@@ -102,8 +112,13 @@ function diasRestantes(prazo) {
 </script>
 
 <template>
+  <!-- ── Carregando ────────────────────────────────────── -->
+  <div v-if="loading" class="ws-loading-page">
+    <div class="ws-loading-spin"></div>
+  </div>
+
   <!-- ── Link inválido ──────────────────────────────────── -->
-  <div v-if="!membro" class="ws-invalido-page">
+  <div v-else-if="!membro" class="ws-invalido-page">
     <div class="ws-inv-content">
       <div class="ws-inv-logo">
         <img src="/logo_caesi.png" alt="CAESI" />
@@ -138,7 +153,7 @@ function diasRestantes(prazo) {
 
     <!-- Progress bar -->
     <div class="ws-progress-track">
-      <div class="ws-progress-fill" :style="{ width: progresso + '%' }"></div>
+      <div class="ws-progress-fill" :style="{ width: progressoAnim + '%' }"></div>
     </div>
 
     <!-- Hero / summary -->
@@ -188,10 +203,11 @@ function diasRestantes(prazo) {
       <!-- Grid -->
       <div v-else class="ws-grid">
         <div
-          v-for="t in minhasTasks"
+          v-for="(t, i) in minhasTasks"
           :key="t.id"
           class="ws-card"
           :class="['prio-' + t.prioridade, t.status === 'concluida' ? 'ws-card--done' : '']"
+          :style="{ animationDelay: i * 0.07 + 's' }"
         >
           <!-- Top badges -->
           <div class="ws-card-top">
@@ -274,7 +290,7 @@ function diasRestantes(prazo) {
           <p class="ws-disp-sub">O administrador abriu essas tasks para seleção — clique em "Pegar task" para adicioná-la ao seu workspace.</p>
         </div>
         <div class="ws-disp-grid">
-          <div v-for="t in tasksDisponiveis" :key="t.id" class="ws-disp-card">
+          <div v-for="(t, j) in tasksDisponiveis" :key="t.id" class="ws-disp-card" :style="{ animationDelay: (minhasTasks.length + j) * 0.07 + 's' }">
             <div class="ws-card-top">
               <span class="ws-badge-prio" :class="t.prioridade">{{ labelPrioridade[t.prioridade] }}</span>
               <span class="ws-badge-cat"  :class="t.categoria">{{ labelCategoria[t.categoria] }}</span>
@@ -300,6 +316,25 @@ function diasRestantes(prazo) {
 </template>
 
 <style scoped>
+/* ── Loading ─────────────────────────────────────────────── */
+.ws-loading-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@keyframes wsSpin {
+  to { transform: rotate(360deg); }
+}
+.ws-loading-spin {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(242,230,196,0.12);
+  border-top-color: var(--amarelo);
+  border-radius: 50%;
+  animation: wsSpin 0.7s linear infinite;
+}
+
 /* ── Inválido ────────────────────────────────────────────── */
 .ws-invalido-page {
   min-height: 100vh;
@@ -510,6 +545,10 @@ function diasRestantes(prazo) {
 }
 
 /* ── Card ────────────────────────────────────────────────── */
+@keyframes wsCardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 .ws-card {
   background: var(--creme);
   border-radius: 2px;
@@ -521,6 +560,7 @@ function diasRestantes(prazo) {
   gap: 0.8rem;
   padding: 1.2rem;
   transition: box-shadow 0.15s, transform 0.15s;
+  animation: wsCardIn 0.35s ease both;
 }
 .ws-card:hover {
   box-shadow: 6px 6px 0 rgba(0,0,0,0.35);
@@ -743,6 +783,7 @@ function diasRestantes(prazo) {
 }
 
 .ws-disp-card {
+  animation: wsCardIn 0.35s ease both;
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.1);
   border-left: 3px solid var(--amarelo);

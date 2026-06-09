@@ -201,6 +201,10 @@ function totalAnotacoes(task) {
   return Object.keys(task.anotacoes || {}).length
 }
 
+function tasksPorMembro(id) {
+  return tasks.value.filter(t => t.alocados.includes(id)).length
+}
+
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
 }
@@ -260,6 +264,7 @@ useEscapeKey(() => {
           <div v-for="m in membros" :key="m.id" class="membro-item">
             <span class="membro-avatar">{{ iniciaisNome(m.nome) }}</span>
             <span class="membro-nome">{{ m.nome }}</span>
+            <span v-if="tasksPorMembro(m.id)" class="membro-task-count">{{ tasksPorMembro(m.id) }} task{{ tasksPorMembro(m.id) !== 1 ? 's' : '' }}</span>
             <div class="membro-acoes">
               <button class="btn btn-sm btn-outline" @click="copiarLink(m.token)">Copiar link</button>
               <button class="btn btn-sm btn-vermelho-outline" @click="confirmarRemover(m)">Remover</button>
@@ -307,7 +312,7 @@ useEscapeKey(() => {
             <span class="kanban-col-label">Pendente</span>
             <span class="kanban-col-count">{{ contagem.pendente }}</span>
           </div>
-          <div class="kanban-cards">
+          <TransitionGroup tag="div" name="kc-list" class="kanban-cards">
             <div v-for="t in kanbanCols.pendente" :key="t.id" class="kanban-card" :class="'prio-' + t.prioridade">
               <div class="kc-top">
                 <span class="kc-badge-prio" :class="t.prioridade">{{ labelPrioridade[t.prioridade] }}</span>
@@ -336,8 +341,8 @@ useEscapeKey(() => {
                 </span>
               </div>
             </div>
-            <div v-if="!kanbanCols.pendente.length" class="kc-empty">Sem tasks pendentes</div>
-          </div>
+            <div v-if="!kanbanCols.pendente.length" key="empty" class="kc-empty">Sem tasks pendentes</div>
+          </TransitionGroup>
         </div>
 
         <!-- Coluna: Em andamento -->
@@ -346,7 +351,7 @@ useEscapeKey(() => {
             <span class="kanban-col-label">Em andamento</span>
             <span class="kanban-col-count">{{ contagem['em-andamento'] }}</span>
           </div>
-          <div class="kanban-cards">
+          <TransitionGroup tag="div" name="kc-list" class="kanban-cards">
             <div v-for="t in kanbanCols['em-andamento']" :key="t.id" class="kanban-card" :class="'prio-' + t.prioridade">
               <div class="kc-top">
                 <span class="kc-badge-prio" :class="t.prioridade">{{ labelPrioridade[t.prioridade] }}</span>
@@ -376,8 +381,8 @@ useEscapeKey(() => {
                 </span>
               </div>
             </div>
-            <div v-if="!kanbanCols['em-andamento'].length" class="kc-empty">Sem tasks em andamento</div>
-          </div>
+            <div v-if="!kanbanCols['em-andamento'].length" key="empty" class="kc-empty">Sem tasks em andamento</div>
+          </TransitionGroup>
         </div>
 
         <!-- Coluna: Concluída -->
@@ -386,7 +391,7 @@ useEscapeKey(() => {
             <span class="kanban-col-label">Concluída</span>
             <span class="kanban-col-count">{{ contagem.concluida }}</span>
           </div>
-          <div class="kanban-cards">
+          <TransitionGroup tag="div" name="kc-list" class="kanban-cards">
             <div v-for="t in kanbanCols.concluida" :key="t.id" class="kanban-card kanban-card--done" :class="'prio-' + t.prioridade">
               <div class="kc-top">
                 <span class="kc-badge-prio" :class="t.prioridade">{{ labelPrioridade[t.prioridade] }}</span>
@@ -414,8 +419,8 @@ useEscapeKey(() => {
                 </span>
               </div>
             </div>
-            <div v-if="!kanbanCols.concluida.length" class="kc-empty">Sem tasks concluídas</div>
-          </div>
+            <div v-if="!kanbanCols.concluida.length" key="empty" class="kc-empty">Sem tasks concluídas</div>
+          </TransitionGroup>
         </div>
 
       </div>
@@ -435,6 +440,7 @@ useEscapeKey(() => {
         <div class="field">
           <label>Título <span class="obrig">*</span></label>
           <input v-model="form.titulo" placeholder="Descreva a task brevemente" maxlength="80" />
+          <span class="field-counter" :class="{ 'field-counter--warn': form.titulo.length > 65 }">{{ form.titulo.length }}/80</span>
         </div>
 
         <div class="field">
@@ -591,6 +597,17 @@ useEscapeKey(() => {
 .membro-acoes { display: flex; gap: 0.4rem; margin-left: auto; }
 .membro-empty { font-size: 0.85rem; color: var(--cinza); font-style: italic; margin: 0; }
 
+.membro-task-count {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--cinza);
+  background: var(--creme-escuro);
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 /* ── Toolbar ─────────────────────────────────────────────── */
 .kanban-toolbar { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
 
@@ -656,7 +673,12 @@ useEscapeKey(() => {
   flex-direction: column;
   gap: 0.6rem;
   min-height: 120px;
+  max-height: 520px;
+  overflow-y: auto;
 }
+.kanban-cards::-webkit-scrollbar       { width: 4px; }
+.kanban-cards::-webkit-scrollbar-track { background: transparent; }
+.kanban-cards::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 2px; }
 
 .kc-empty {
   text-align: center;
@@ -915,6 +937,23 @@ useEscapeKey(() => {
 .btn-vermelho:hover  { opacity: 0.88; }
 .btn-vermelho-outline       { background: none; color: var(--vermelho); border: 2px solid var(--vermelho); }
 .btn-vermelho-outline:hover { background: rgba(217,85,85,0.08); }
+
+/* ── TransitionGroup ─────────────────────────────────────── */
+.kc-list-move,
+.kc-list-enter-active { transition: opacity 0.22s ease, transform 0.22s ease; }
+.kc-list-leave-active  { transition: opacity 0.18s ease; }
+.kc-list-enter-from    { opacity: 0; transform: translateY(8px); }
+.kc-list-leave-to      { opacity: 0; }
+
+/* ── Char counter ────────────────────────────────────────── */
+.field-counter {
+  display: block;
+  text-align: right;
+  font-size: 0.68rem;
+  color: var(--cinza);
+  margin-top: 3px;
+}
+.field-counter--warn { color: var(--vermelho); }
 
 /* ── Mobile ──────────────────────────────────────────────── */
 @media (max-width: 860px) {
