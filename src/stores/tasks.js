@@ -77,3 +77,16 @@ export function excluirTask(id) {
 export function atualizarStatus(id, status) {
   persistTasks(_tasks.value.map(t => t.id === id ? { ...t, status } : t))
 }
+
+export function salvarAnotacao(taskId, membroId, texto) {
+  persistTasks(_tasks.value.map(t => {
+    if (t.id !== taskId) return t
+    const anotacoes = { ...(t.anotacoes || {}) }
+    if (texto.trim()) {
+      anotacoes[membroId] = { texto: texto.trim(), updatedAt: new Date().toISOString() }
+    } else {
+      delete anotacoes[membroId]
+    }
+    return { ...t, anotacoes }
+  }))
+}
