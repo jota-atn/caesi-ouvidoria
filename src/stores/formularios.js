@@ -47,7 +47,7 @@ export function getInscricoesByFormulario(formularioId) {
   return _inscricoes.value.filter(i => i.formularioId === formularioId)
 }
 
-export function addInscricao(formularioId, userEmail, respostas, comprovante = null) {
+export function addInscricao(formularioId, respostas, comprovante = null) {
   const formulario = _forms.value.find(f => f.id === formularioId)
   if (!formulario)                    return { error: 'Formulário não encontrado.' }
   if (formulario.status !== 'aberto') return { error: 'Este formulário está encerrado.' }
@@ -58,13 +58,14 @@ export function addInscricao(formularioId, userEmail, respostas, comprovante = n
     const inscritos = _inscricoes.value.filter(i => i.formularioId === formularioId).length
     if (inscritos >= formulario.limiteVagas) return { error: 'As vagas já foram preenchidas.' }
   }
-  if (userEmail && _inscricoes.value.find(i => i.formularioId === formularioId && i.userEmail === userEmail)) {
-    return { error: 'Você já se inscreveu neste formulário.' }
+  const email = respostas._email?.trim() || null
+  if (email && _inscricoes.value.find(i => i.formularioId === formularioId && i.userEmail === email)) {
+    return { error: 'Este e-mail já foi utilizado para se inscrever neste formulário.' }
   }
   const nova = {
     id: Date.now(),
     formularioId,
-    userEmail: userEmail || null,
+    userEmail: email,
     respostas,
     comprovante: comprovante ? { ...comprovante, status: 'pendente' } : null,
     criadoEm: new Date().toISOString().split('T')[0],

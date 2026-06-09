@@ -139,7 +139,11 @@ function exportarCSV() {
 }
 
 function dadosInscrito(inscricao) {
-  return inscricao.userEmail ? { nome: inscricao.userEmail } : null
+  return {
+    nome:      inscricao.respostas?._nome      ?? inscricao.userEmail ?? '—',
+    email:     inscricao.respostas?._email     ?? inscricao.userEmail ?? '—',
+    matricula: inscricao.respostas?._matricula ?? null,
+  }
 }
 
 function avancarStatus(inscricaoId, statusAtual) {

@@ -1,31 +1,26 @@
 <script setup>
 import { ref, computed } from 'vue'
-import Navbar from '../../components/Navbar.vue'
-import { formularios, inscricoes } from '../../stores/formularios.js'
-import { user } from '../../stores/auth.js'
-import { usePersistedFilter } from '../../composables/usePersistedFilter.js'
+import Navbar from '../components/Navbar.vue'
+import SiteFooter from '../components/SiteFooter.vue'
+import { formularios, inscricoes } from '../stores/formularios.js'
+import { usePersistedFilter } from '../composables/usePersistedFilter.js'
 
-const filtro = usePersistedFilter('caesi-aluno-forms-filtro', 'todos')
-const busca  = usePersistedFilter('caesi-aluno-forms-busca', '')
+const filtro = usePersistedFilter('caesi-forms-filtro', 'todos')
+const busca  = usePersistedFilter('caesi-forms-busca', '')
 
 const TIPO_LABEL = {
   'evento-com-certificado': 'Evento c/ Certificado',
   'evento-sem-certificado': 'Evento s/ Certificado',
-  venda: 'Venda',
+  venda:       'Venda',
   arrecadacao: 'Arrecadação',
 }
 
 function prazoExpirado(prazo) {
-  if (!prazo) return false
-  return new Date(prazo + 'T23:59:59') < new Date()
+  return prazo ? new Date(prazo + 'T23:59:59') < new Date() : false
 }
 
-function estaInscrito(formularioId) {
-  return inscricoes.value.some(i => i.formularioId === formularioId && i.userEmail === user.value?.email)
-}
-
-function inscricoesCount(formularioId) {
-  return inscricoes.value.filter(i => i.formularioId === formularioId).length
+function inscricoesCount(id) {
+  return inscricoes.value.filter(i => i.formularioId === id).length
 }
 
 function vagasEsgotadas(f) {
@@ -37,9 +32,9 @@ function disponivel(f) {
 }
 
 function badgeIndisponivel(f) {
-  if (f.status !== 'aberto') return 'Encerrado'
+  if (f.status !== 'aberto')          return 'Encerrado'
   if (prazoExpirado(f.prazoInscricao)) return 'Prazo esgotado'
-  if (vagasEsgotadas(f)) return 'Vagas esgotadas'
+  if (vagasEsgotadas(f))               return 'Vagas esgotadas'
   return null
 }
 
@@ -69,10 +64,6 @@ const formulariosFiltrados = computed(() =>
     })
     .sort((a, b) => (a.status === 'aberto' ? -1 : 1) - (b.status === 'aberto' ? -1 : 1))
 )
-
-const totalInscritos = computed(() =>
-  formularios.value.filter(f => estaInscrito(f.id)).length
-)
 </script>
 
 <template>
@@ -90,11 +81,11 @@ const totalInscritos = computed(() =>
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-number">{{ formularios.length }}</div>
-          <div class="stat-label">Disponíveis</div>
+          <div class="stat-label">Total</div>
         </div>
         <div class="stat-card stat-card--verde">
-          <div class="stat-number stat-number--verde">{{ totalInscritos }}</div>
-          <div class="stat-label">Inscrito em</div>
+          <div class="stat-number stat-number--verde">{{ formularios.filter(f => f.status === 'aberto').length }}</div>
+          <div class="stat-label">Abertos</div>
         </div>
         <div class="stat-card">
           <div class="stat-number">{{ formularios.filter(f => f.pago).length }}</div>
@@ -112,7 +103,7 @@ const totalInscritos = computed(() =>
       <RouterLink
         v-for="f in formulariosFiltrados"
         :key="f.id"
-        :to="`/aluno/formularios/${f.id}`"
+        :to="`/formularios/${f.id}`"
         class="form-card"
         :class="disponivel(f) ? 'aberto' : 'encerrado'"
       >
@@ -122,7 +113,6 @@ const totalInscritos = computed(() =>
             <span v-if="badgeIndisponivel(f)" class="form-status-badge form-status-encerrado">
               {{ badgeIndisponivel(f) }}
             </span>
-            <span v-if="estaInscrito(f.id)" class="comp-badge comp-validado">Inscrito</span>
             <span
               v-if="disponivel(f) && diasParaFechamento(f.prazoInscricao) !== null && diasParaFechamento(f.prazoInscricao) <= 3"
               class="prazo-urgente-badge"
@@ -153,5 +143,7 @@ const totalInscritos = computed(() =>
         <p>{{ formularios.length === 0 ? 'Nenhum formulário disponível ainda.' : 'Nenhum resultado para este filtro.' }}</p>
       </div>
     </div>
+
+    <SiteFooter />
   </div>
 </template>

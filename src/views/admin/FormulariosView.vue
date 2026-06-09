@@ -51,7 +51,7 @@ const novoFormErrors  = ref({})
 const novoForm = ref({
   titulo: '', tipo: '', descricao: '',
   pago: false, valor: '', prazoInscricao: '',
-  limiteVagas: '',
+  limiteVagas: '', requerMatricula: false,
   campos: [],
 })
 
@@ -59,7 +59,7 @@ function cancelNovoForm() {
   showNovoForm.value = false
   novoFormSuccess.value = false
   novoFormErrors.value = {}
-  novoForm.value = { titulo: '', tipo: '', descricao: '', pago: false, valor: '', prazoInscricao: '', limiteVagas: '', campos: [] }
+  novoForm.value = { titulo: '', tipo: '', descricao: '', pago: false, valor: '', prazoInscricao: '', limiteVagas: '', requerMatricula: false, campos: [] }
 }
 
 watch(() => novoForm.value.tipo, (tipo) => {
@@ -112,8 +112,9 @@ function submitNovoForm() {
     descricao: novoForm.value.descricao.trim(),
     pago: novoForm.value.pago,
     valor: novoForm.value.pago ? Number(novoForm.value.valor) : null,
-    prazoInscricao: novoForm.value.prazoInscricao || null,
-    limiteVagas: novoForm.value.limiteVagas ? Number(novoForm.value.limiteVagas) : null,
+    prazoInscricao:  novoForm.value.prazoInscricao || null,
+    limiteVagas:     novoForm.value.limiteVagas ? Number(novoForm.value.limiteVagas) : null,
+    requerMatricula: novoForm.value.requerMatricula,
     campos,
   })
 
@@ -219,6 +220,13 @@ function submitNovoForm() {
               <input v-model="novoForm.limiteVagas" type="number" min="1" step="1" placeholder="Ilimitado">
             </div>
           </div>
+
+          <label class="check-anon" style="margin-top:1rem;margin-bottom:0;">
+            <input v-model="novoForm.requerMatricula" type="checkbox">
+            <span class="check-anon-label">
+              <strong>Exigir matrícula</strong> — formulário destinado a alunos da UFCG
+            </span>
+          </label>
 
           <hr class="divider">
 
