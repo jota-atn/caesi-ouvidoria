@@ -17,6 +17,7 @@ const routes = [
   { path: '/admin/formularios',      component: () => import('../views/admin/FormulariosView.vue'),         meta: { admin: true } },
   { path: '/admin/formularios/:id',  component: () => import('../views/admin/FormularioDetalheView.vue'),   meta: { admin: true } },
   { path: '/admin/tasks',            component: () => import('../views/admin/TasksView.vue'),               meta: { admin: true } },
+  { path: '/workspace/:token',       component: () => import('../views/WorkspaceView.vue') },
   { path: '/:pathMatch(.*)*',        component: () => import('../views/NotFoundView.vue') },
 ]
 
