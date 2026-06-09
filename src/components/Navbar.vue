@@ -62,7 +62,6 @@ function ariaCurrent(path) {
         <RouterLink to="/sobre"       class="nav-link" :aria-current="ariaCurrent('/sobre')"       @click="menuOpen = false">Sobre</RouterLink>
         <RouterLink to="/estatuto"    class="nav-link" :aria-current="ariaCurrent('/estatuto')"    @click="menuOpen = false">Estatuto</RouterLink>
         <RouterLink to="/contato"     class="nav-link" :aria-current="ariaCurrent('/contato')"     @click="menuOpen = false">Contato</RouterLink>
-        <RouterLink to="/ouvidoria"   class="nav-link" :aria-current="ariaCurrent('/ouvidoria')"   @click="menuOpen = false">Ouvidoria</RouterLink>
         <RouterLink to="/formularios" class="nav-link" :aria-current="ariaCurrent('/formularios')" @click="menuOpen = false">Formulários</RouterLink>
       </template>
 
