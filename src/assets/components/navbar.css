@@ -81,6 +81,16 @@
   border-bottom-color: var(--amarelo);
 }
 
+.nav-link--pub {
+  color: rgba(242,230,196,0.42);
+  font-size: 0.82rem;
+}
+.nav-link--pub:hover,
+.nav-link--pub.router-link-active {
+  color: rgba(242,230,196,0.85);
+  border-bottom-color: rgba(242,230,196,0.4);
+}
+
 .nav-link--badge {
   display: inline-flex;
   align-items: center;

@@ -42,7 +42,11 @@ function ariaCurrent(path) {
         <RouterLink to="/admin/mensagens"   class="nav-link" :aria-current="ariaCurrent('/admin/mensagens')"   @click="menuOpen = false">Mensagens</RouterLink>
         <RouterLink to="/admin/equipe"      class="nav-link" :aria-current="ariaCurrent('/admin/equipe')"      @click="menuOpen = false">Equipe</RouterLink>
         <RouterLink to="/admin/formularios" class="nav-link" :aria-current="ariaCurrent('/admin/formularios')" @click="menuOpen = false">Formulários</RouterLink>
-        <RouterLink to="/admin/tasks" class="nav-link" :aria-current="ariaCurrent('/admin/tasks')" @click="menuOpen = false">Tasks</RouterLink>
+        <RouterLink to="/admin/tasks"       class="nav-link" :aria-current="ariaCurrent('/admin/tasks')"       @click="menuOpen = false">Tasks</RouterLink>
+        <span class="nav-separator" />
+        <RouterLink to="/sobre"    class="nav-link nav-link--pub" :aria-current="ariaCurrent('/sobre')"    @click="menuOpen = false">Sobre</RouterLink>
+        <RouterLink to="/estatuto" class="nav-link nav-link--pub" :aria-current="ariaCurrent('/estatuto')" @click="menuOpen = false">Estatuto</RouterLink>
+        <RouterLink to="/contato"  class="nav-link nav-link--pub" :aria-current="ariaCurrent('/contato')"  @click="menuOpen = false">Contato</RouterLink>
         <span class="nav-separator" />
         <button class="nav-link nav-link-btn" @click="handleLogout">Sair</button>
       </template>
