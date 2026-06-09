@@ -31,9 +31,6 @@ function formatValorCompacto(valor) {
 const tasksPendentes  = computed(() => tasks.value.filter(t => t.status === 'pendente').length)
 const tasksAndamento  = computed(() => tasks.value.filter(t => t.status === 'em-andamento').length)
 const tasksConcluidas = computed(() => tasks.value.filter(t => t.status === 'concluida').length)
-const solicitacoesPendentes = computed(() =>
-  tasks.value.reduce((acc, t) => acc + t.solicitacoes.length, 0)
-)
 
 const receitaTotal = computed(() => {
   return formularios.value
@@ -252,13 +249,8 @@ const temDados = computed(() => mensagens.value.length > 0 || inscricoes.value.l
         <div class="geral-row">
           <div class="geral-row-left">
             <span class="geral-row-title">Tasks</span>
-            <span class="geral-row-badge" :class="solicitacoesPendentes > 0 ? 'alerta' : 'ok'">
-              <template v-if="solicitacoesPendentes > 0">
-                {{ solicitacoesPendentes }} solicitação{{ solicitacoesPendentes > 1 ? 'ões' : '' }}
-              </template>
-              <template v-else>
-                {{ tasksAndamento > 0 ? `${tasksAndamento} em andamento` : 'Nenhuma em andamento' }}
-              </template>
+            <span class="geral-row-badge" :class="tasksAndamento > 0 ? 'ok' : 'ok'">
+              {{ tasksAndamento > 0 ? `${tasksAndamento} em andamento` : 'Nenhuma em andamento' }}
             </span>
           </div>
           <div class="geral-row-stats">
