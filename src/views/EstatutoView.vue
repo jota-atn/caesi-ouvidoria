@@ -21,7 +21,8 @@ function ir(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
-const activeId = ref('titulo-1')
+const activeId   = ref('titulo-1')
+const tocAberto  = ref(true)
 let observer
 
 onMounted(() => {
@@ -582,19 +583,24 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- Sumário flutuante -->
-    <nav class="toc-sidebar" aria-label="Sumário">
-      <div class="toc-sidebar-title">Sumário</div>
-      <div class="toc-sidebar-body">
-        <button
-          v-for="t in titulos" :key="t.id"
-          class="toc-sidebar-item"
-          :class="{ 'toc-sidebar-ativo': activeId === t.id }"
-          @click="ir(t.id)"
-        >
-          <span class="toc-sidebar-num" :class="{ 'toc-sidebar-num-ativo': activeId === t.id }">{{ t.num }}</span>
-          <span class="toc-sidebar-texto">{{ t.texto }}</span>
-        </button>
-      </div>
+    <nav class="toc-sidebar" :class="{ 'toc-sidebar--fechado': !tocAberto }" aria-label="Sumário">
+      <button class="toc-sidebar-title" @click="tocAberto = !tocAberto" :aria-expanded="tocAberto">
+        Sumário
+        <span class="toc-chevron" :class="{ 'toc-chevron--aberto': tocAberto }">▾</span>
+      </button>
+      <Transition name="toc-slide">
+        <div v-show="tocAberto" class="toc-sidebar-body">
+          <button
+            v-for="t in titulos" :key="t.id"
+            class="toc-sidebar-item"
+            :class="{ 'toc-sidebar-ativo': activeId === t.id }"
+            @click="ir(t.id)"
+          >
+            <span class="toc-sidebar-num" :class="{ 'toc-sidebar-num-ativo': activeId === t.id }">{{ t.num }}</span>
+            <span class="toc-sidebar-texto">{{ t.texto }}</span>
+          </button>
+        </div>
+      </Transition>
     </nav>
 
     <SiteFooter />
@@ -792,6 +798,33 @@ onBeforeUnmount(() => {
   color: var(--roxo-escuro);
   padding: 0.7rem 0.9rem 0.6rem;
   background: var(--amarelo);
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.15s;
+}
+.toc-sidebar-title:hover { background: var(--kraft); }
+
+.toc-chevron {
+  font-size: 0.9rem;
+  line-height: 1;
+  transition: transform 0.22s;
+  transform: rotate(-90deg);
+}
+.toc-chevron--aberto { transform: rotate(0deg); }
+
+.toc-slide-enter-active,
+.toc-slide-leave-active {
+  transition: opacity 0.2s, transform 0.2s;
+  transform-origin: top;
+}
+.toc-slide-enter-from,
+.toc-slide-leave-to {
+  opacity: 0;
+  transform: scaleY(0.92);
 }
 
 .toc-sidebar-body {
