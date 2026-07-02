@@ -62,8 +62,14 @@ function cancelNovoForm() {
   novoForm.value = { titulo: '', tipo: '', descricao: '', pago: false, valor: '', prazoInscricao: '', dataEvento: '', limiteVagas: '', requerMatricula: false, campos: [] }
 }
 
+const TIPOS_EVENTO = ['evento-com-certificado', 'evento-sem-certificado']
+function ehTipoEvento(tipo) {
+  return TIPOS_EVENTO.includes(tipo)
+}
+
 watch(() => novoForm.value.tipo, (tipo) => {
   if (tipo === 'venda') novoForm.value.pago = true
+  if (!ehTipoEvento(tipo)) novoForm.value.dataEvento = ''
 })
 
 function addCampo() {
@@ -222,7 +228,7 @@ function submitNovoForm() {
             </div>
           </div>
 
-          <div class="field">
+          <div v-if="ehTipoEvento(novoForm.tipo)" class="field">
             <label>Data do evento <span class="field-hint">(opcional — adiciona ao calendário público)</span></label>
             <input v-model="novoForm.dataEvento" type="date">
           </div>

@@ -71,6 +71,9 @@ const receitaPendente = computed(() => {
   return receitaEsperada.value - (receitaConfirmada.value ?? 0)
 })
 
+const TIPOS_EVENTO = ['evento-com-certificado', 'evento-sem-certificado']
+const ehTipoEvento = computed(() => TIPOS_EVENTO.includes(formulario.value?.tipo))
+
 const TIPO_LABEL = {
   'evento-com-certificado': 'Evento c/ Certificado',
   'evento-sem-certificado': 'Evento s/ Certificado',
@@ -327,7 +330,7 @@ function excluirFormulario() {
               <input v-model="editForm.prazoInscricao" type="date">
             </div>
           </div>
-          <div class="field">
+          <div v-if="ehTipoEvento" class="field">
             <label>Data do evento <span class="field-hint">(opcional — adiciona ao calendário público)</span></label>
             <input v-model="editForm.dataEvento" type="date">
           </div>
