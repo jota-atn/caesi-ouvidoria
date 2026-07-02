@@ -10,6 +10,8 @@ const routes = [
   { path: '/mural',                   component: () => import('../views/MuralView.vue') },
   { path: '/mural/:id',              component: () => import('../views/MuralDetalheView.vue') },
   { path: '/calendario',             component: () => import('../views/CalendarioView.vue') },
+  { path: '/portal',                 component: () => import('../views/PortalView.vue') },
+  { path: '/portal/:id',             component: () => import('../views/PortalDetalheView.vue') },
   { path: '/formularios',            component: () => import('../views/FormulariosView.vue') },
   { path: '/formularios/:id',        component: () => import('../views/FormularioDetalheView.vue') },
   { path: '/admin',                  component: () => import('../views/admin/LoginView.vue') },
@@ -22,6 +24,7 @@ const routes = [
   { path: '/admin/tasks',            component: () => import('../views/admin/TasksView.vue'),               meta: { admin: true } },
   { path: '/admin/mural',           component: () => import('../views/admin/MuralView.vue'),               meta: { admin: true } },
   { path: '/admin/calendario',      component: () => import('../views/admin/CalendarioView.vue'),          meta: { admin: true } },
+  { path: '/admin/portal',          component: () => import('../views/admin/PortalView.vue'),               meta: { admin: true } },
   { path: '/workspace/:token',       component: () => import('../views/WorkspaceView.vue') },
   { path: '/:pathMatch(.*)*',        component: () => import('../views/NotFoundView.vue') },
 ]

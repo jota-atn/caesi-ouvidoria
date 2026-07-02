@@ -45,6 +45,7 @@ function ariaCurrent(path) {
         <RouterLink to="/admin/tasks"       class="nav-link" :aria-current="ariaCurrent('/admin/tasks')"       @click="menuOpen = false">Tasks</RouterLink>
         <RouterLink to="/admin/mural"      class="nav-link" :aria-current="ariaCurrent('/admin/mural')"      @click="menuOpen = false">Mural</RouterLink>
         <RouterLink to="/admin/calendario" class="nav-link" :aria-current="ariaCurrent('/admin/calendario')" @click="menuOpen = false">Calendário</RouterLink>
+        <RouterLink to="/admin/portal"     class="nav-link" :aria-current="ariaCurrent('/admin/portal')"     @click="menuOpen = false">Portal</RouterLink>
         <span class="nav-separator" />
         <RouterLink to="/sobre"    class="nav-link nav-link--pub" :aria-current="ariaCurrent('/sobre')"    @click="menuOpen = false">Sobre</RouterLink>
         <RouterLink to="/estatuto" class="nav-link nav-link--pub" :aria-current="ariaCurrent('/estatuto')" @click="menuOpen = false">Estatuto</RouterLink>
@@ -60,6 +61,7 @@ function ariaCurrent(path) {
         <RouterLink to="/contato"     class="nav-link" :aria-current="ariaCurrent('/contato')"     @click="menuOpen = false">Contato</RouterLink>
         <RouterLink to="/mural"       class="nav-link" :aria-current="ariaCurrent('/mural')"       @click="menuOpen = false">Mural</RouterLink>
         <RouterLink to="/calendario"  class="nav-link" :aria-current="ariaCurrent('/calendario')"  @click="menuOpen = false">Calendário</RouterLink>
+        <RouterLink to="/portal"      class="nav-link" :aria-current="ariaCurrent('/portal')"      @click="menuOpen = false">Portal</RouterLink>
         <RouterLink to="/formularios" class="nav-link" :aria-current="ariaCurrent('/formularios')" @click="menuOpen = false">Formulários</RouterLink>
       </template>
 
