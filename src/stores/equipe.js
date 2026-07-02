@@ -62,13 +62,20 @@ export function setHistoricoVisivel(val) {
   localStorage.setItem(KEY_HIST_VIS, String(val))
 }
 
+export function adicionarGestaoManual({ nomeChapa, periodo, descricao, membros }) {
+  const entrada = { id: Date.now(), nomeChapa, periodo, descricao, membros: membros ?? [] }
+  const nova = [entrada, ..._historico.value]
+  localStorage.setItem(KEY_HIST, JSON.stringify(nova))
+  _historico.value = nova
+}
+
 export function arquivarGestaoAtual() {
   const entrada = {
     id:       Date.now(),
     nomeChapa: _info.value.nomeChapa,
     periodo:  periodoFormatado.value,
     descricao: _descricao.value,
-    membros:  _admins.value.map(({ nome, diretoria, periodo }) => ({ nome, diretoria, periodo })),
+    membros:  _admins.value.map(({ nome, diretoria, periodo, foto }) => ({ nome, diretoria, periodo, foto: foto ?? '' })),
   }
   const nova = [entrada, ..._historico.value]
   localStorage.setItem(KEY_HIST, JSON.stringify(nova))

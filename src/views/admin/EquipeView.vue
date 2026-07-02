@@ -6,7 +6,7 @@ import {
   admins, addAdmin, removeAdmin, updateAdmin,
   descricaoGestao, saveDescricao, gestaoInfo, saveInfo, MESES,
   historicoGestoes, historicoVisivel, setHistoricoVisivel,
-  arquivarGestaoAtual, removerGestaoHistorico,
+  arquivarGestaoAtual, removerGestaoHistorico, adicionarGestaoManual,
 } from '../../stores/equipe.js'
 import { showToast } from '../../stores/toast.js'
 import pencilIcon from '../../assets/icons/pencil.svg?raw'
@@ -110,6 +110,47 @@ function cadastrarAdmin() {
 
 // --- Gestões anteriores ---
 const confirmandoArquivar = ref(false)
+const mostraFormManual    = ref(false)
+
+const formManual = ref({ nomeChapa: '', periodo: '', descricao: '' })
+const membrosManual = ref([])
+
+function addMembroManual() {
+  membrosManual.value.push({ nome: '', diretoria: '', periodo: '', foto: '' })
+}
+
+async function onFotoMembroManual(e, i) {
+  const file = e.target.files[0]
+  if (!file) return
+  membrosManual.value[i].foto = await comprimirImagem(file)
+  e.target.value = ''
+}
+
+function removerFotoMembroManual(i) {
+  membrosManual.value[i].foto = ''
+}
+function removeMembroManual(i) {
+  membrosManual.value.splice(i, 1)
+}
+
+function salvarManual() {
+  if (!formManual.value.nomeChapa.trim()) {
+    showToast('Informe o nome da chapa.', 'error')
+    return
+  }
+  adicionarGestaoManual({
+    nomeChapa: formManual.value.nomeChapa.trim(),
+    periodo:   formManual.value.periodo.trim(),
+    descricao: formManual.value.descricao.trim(),
+    membros:   membrosManual.value
+      .map(m => ({ nome: m.nome.trim(), diretoria: m.diretoria.trim(), periodo: m.periodo.trim() }))
+      .filter(m => m.nome),
+  })
+  formManual.value = { nomeChapa: '', periodo: '', descricao: '' }
+  membrosManual.value = []
+  mostraFormManual.value = false
+  showToast('Gestão adicionada ao histórico.', 'success')
+}
 
 function arquivar() {
   arquivarGestaoAtual()
@@ -395,12 +436,61 @@ function comprimirImagem(file) {
               <input type="checkbox" :checked="historicoVisivel" @change="setHistoricoVisivel($event.target.checked)">
               Visível no Sobre
             </label>
+            <button class="btn btn-outline btn-sm" @click="mostraFormManual = !mostraFormManual">
+              {{ mostraFormManual ? '— Fechar' : '+ Adicionar' }}
+            </button>
             <button v-if="!confirmandoArquivar" class="btn btn-outline btn-sm" @click="confirmandoArquivar = true">
-              Arquivar gestão atual →
+              Arquivar atual →
             </button>
           </div>
         </div>
 
+        <!-- Formulário adição manual -->
+        <div v-if="mostraFormManual" class="hist-form">
+          <div class="label-sm" style="margin-bottom:0.8rem;">Nova gestão anterior</div>
+
+          <div class="field">
+            <label class="label">Nome da chapa *</label>
+            <input v-model="formManual.nomeChapa" type="text" class="input" placeholder="Ex.: Chapa Conexão">
+          </div>
+          <div class="field">
+            <label class="label">Período</label>
+            <input v-model="formManual.periodo" type="text" class="input" placeholder="Ex.: Jan 2023 – Dez 2023">
+          </div>
+          <div class="field">
+            <label class="label">Descrição</label>
+            <textarea v-model="formManual.descricao" class="input" rows="3" placeholder="Breve descrição da gestão…" style="resize:vertical;"></textarea>
+          </div>
+
+          <!-- Membros -->
+          <div class="field">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+              <label class="label" style="margin:0;">Membros</label>
+              <button type="button" class="btn btn-outline btn-sm" @click="addMembroManual">+ Membro</button>
+            </div>
+            <div v-if="membrosManual.length" class="hist-membros-form">
+              <div v-for="(m, i) in membrosManual" :key="i" class="hist-membro-row">
+                <label class="hist-avatar-btn" :title="m.foto ? 'Trocar foto' : 'Adicionar foto'">
+                  <img v-if="m.foto" :src="m.foto" class="hist-avatar-img" :alt="m.nome">
+                  <span v-else class="hist-avatar-inicial">{{ m.nome?.[0]?.toUpperCase() || '?' }}</span>
+                  <input type="file" accept="image/*" style="display:none" @change="onFotoMembroManual($event, i)">
+                </label>
+                <input v-model="m.nome"      type="text" class="input" placeholder="Nome">
+                <input v-model="m.diretoria" type="text" class="input" placeholder="Diretoria">
+                <input v-model="m.periodo"   type="text" class="input" placeholder="Período">
+                <button type="button" class="icon-btn icon-btn--danger" @click="removeMembroManual(i)" v-html="xIcon"></button>
+              </div>
+            </div>
+            <p v-else style="font-size:0.82rem;color:var(--cinza);margin:0;">Nenhum membro adicionado.</p>
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:0.4rem;">
+            <button class="btn btn-outline btn-sm" @click="mostraFormManual = false">Cancelar</button>
+            <button class="btn btn-primary btn-sm" @click="salvarManual">Salvar →</button>
+          </div>
+        </div>
+
+        <!-- Confirmação arquivar atual -->
         <div v-if="confirmandoArquivar" class="hist-confirm">
           <p style="font-size:0.88rem;margin:0 0 0.8rem;">
             Salva um snapshot da gestão <strong>{{ gestaoInfo.nomeChapa || 'atual' }}</strong> no histórico público. Confirma?
@@ -416,12 +506,12 @@ function comprimirImagem(file) {
             <div class="hist-item-info">
               <span class="hist-chapa">{{ g.nomeChapa || 'Sem nome' }}</span>
               <span v-if="g.periodo" class="hist-periodo">{{ g.periodo }}</span>
-              <span class="hist-membros-count">{{ g.membros?.length ?? 0 }} admin{{ (g.membros?.length ?? 0) !== 1 ? 's' : '' }}</span>
+              <span class="hist-membros-count">{{ g.membros?.length ?? 0 }} membro{{ (g.membros?.length ?? 0) !== 1 ? 's' : '' }}</span>
             </div>
             <button class="icon-btn icon-btn--danger" @click="removerGestaoHistorico(g.id)" title="Remover do histórico" v-html="xIcon"></button>
           </div>
         </div>
-        <p v-else-if="!confirmandoArquivar" style="font-size:0.85rem;color:var(--cinza);margin-top:1rem;">
+        <p v-else-if="!confirmandoArquivar && !mostraFormManual" style="font-size:0.85rem;color:var(--cinza);margin-top:1rem;">
           Nenhuma gestão arquivada ainda.
         </p>
       </div>
@@ -679,4 +769,66 @@ function comprimirImagem(file) {
 .hist-chapa { font-size: 0.9rem; font-weight: 700; color: var(--roxo-escuro); }
 .hist-periodo { font-size: 0.76rem; color: var(--cinza); }
 .hist-membros-count { font-size: 0.74rem; color: var(--cinza); }
+
+.hist-form {
+  background: var(--creme);
+  border: 1.5px solid var(--creme-escuro);
+  border-radius: 2px;
+  padding: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.hist-membros-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hist-membro-row {
+  display: grid;
+  grid-template-columns: 36px 1fr 1fr 1fr auto;
+  gap: 6px;
+  align-items: center;
+}
+
+.hist-avatar-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--roxo-escuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid var(--creme-escuro);
+  transition: opacity 0.15s;
+}
+.hist-avatar-btn:hover { opacity: 0.8; }
+
+.hist-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hist-avatar-inicial {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 0.85rem;
+  color: var(--creme);
+  line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .hist-membro-row {
+    grid-template-columns: 36px 1fr auto;
+    grid-template-rows: auto auto;
+  }
+  .hist-membro-row input:nth-child(3),
+  .hist-membro-row input:nth-child(4) {
+    grid-column: 2;
+  }
+}
 </style>
