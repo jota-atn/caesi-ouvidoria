@@ -4,6 +4,13 @@ import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import { addMensagem } from '../stores/mensagens.js'
 import { isAdmin } from '../stores/auth.js'
+import { proximosEventos } from '../stores/calendario.js'
+
+const MESES_ABREV = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
+function diaMes(data) {
+  const [, mes, dia] = data.split('-').map(Number)
+  return { dia, mes: MESES_ABREV[mes - 1] }
+}
 
 const form = ref({ tipo: '', periodo: '', mensagem: '', nome: '', email: '' })
 const errors = ref({})
@@ -228,6 +235,32 @@ const posts = [
             </div>
           </form>
         </template>
+      </div>
+    </section>
+
+    <!-- Próximos eventos -->
+    <section v-if="proximosEventos.length > 0" class="home-section">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div class="section-label">Agenda</div>
+          <h2 class="section-title" style="margin-bottom:0;">Próximos <span>eventos</span></h2>
+        </div>
+        <RouterLink to="/calendario" class="btn btn-outline btn-sm btn-outline-creme">
+          Ver calendário →
+        </RouterLink>
+      </div>
+      <div class="eventos-grid">
+        <RouterLink
+          v-for="e in proximosEventos.slice(0, 4)" :key="e.id"
+          to="/calendario"
+          class="evento-teaser"
+        >
+          <div class="evento-teaser-data">
+            <span class="evento-teaser-dia">{{ diaMes(e.data).dia }}</span>
+            <span class="evento-teaser-mes">{{ diaMes(e.data).mes }}</span>
+          </div>
+          <div class="evento-teaser-nome">{{ e.nome }}</div>
+        </RouterLink>
       </div>
     </section>
 
