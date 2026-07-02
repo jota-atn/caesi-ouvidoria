@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
-import { equipe, descricaoGestao, gestaoInfo, periodoFormatado } from '../stores/equipe.js'
+import { admins, descricaoGestao, gestaoInfo, periodoFormatado } from '../stores/equipe.js'
 
 const router = useRouter()
 function voltar() { window.history.state?.back ? router.back() : router.push('/') }
@@ -45,14 +45,25 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
           </div>
           <div v-if="periodoFormatado" class="chapa-periodo">{{ periodoFormatado }}</div>
         </div>
-        <div class="equipe-grid">
-          <div v-for="m in equipe" :key="m.diretoria" class="membro-card">
+        <div v-if="admins.length === 0" style="font-size:0.9rem;color:var(--cinza);padding:0.5rem 0;">
+          Nenhum administrador cadastrado ainda.
+        </div>
+        <div v-else class="equipe-carrossel">
+          <div v-for="a in admins" :key="a.id" class="membro-card">
             <div class="membro-avatar">
-              <img v-if="m.foto" :src="m.foto" :alt="m.presidente" class="membro-foto">
-              <span v-else class="membro-inicial">{{ m.presidente?.[0]?.toUpperCase() || '?' }}</span>
+              <img v-if="a.foto" :src="a.foto" :alt="a.nome" class="membro-foto">
+              <span v-else class="membro-inicial">{{ a.nome?.[0]?.toUpperCase() || '?' }}</span>
             </div>
-            <div class="label-sm" style="margin-bottom:3px;">Diretoria {{ m.diretoria }}</div>
-            <div class="membro-nome">{{ m.presidente || '—' }}</div>
+            <div class="membro-nome">{{ a.nome }}</div>
+            <div v-if="a.diretoria" class="membro-periodo">{{ a.diretoria }}</div>
+            <div v-else-if="a.periodo" class="membro-periodo">{{ a.periodo }}</div>
+            <div v-if="a.email" class="membro-email">{{ a.email }}</div>
+            <div v-if="a.descricao" class="membro-desc">{{ a.descricao }}</div>
+            <div v-if="a.linkedin || a.git || a.lattes" class="membro-links">
+              <a v-if="a.linkedin" :href="a.linkedin" target="_blank" rel="noopener" class="membro-link">LinkedIn</a>
+              <a v-if="a.git"      :href="a.git"      target="_blank" rel="noopener" class="membro-link">GitHub</a>
+              <a v-if="a.lattes"   :href="a.lattes"   target="_blank" rel="noopener" class="membro-link">Lattes</a>
+            </div>
           </div>
         </div>
 
@@ -88,11 +99,17 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
 </template>
 
 <style scoped>
-.equipe-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+.equipe-carrossel {
+  display: flex;
   gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.5rem;
 }
+.equipe-carrossel::-webkit-scrollbar { height: 4px; }
+.equipe-carrossel::-webkit-scrollbar-track { background: var(--creme-escuro); border-radius: 2px; }
+.equipe-carrossel::-webkit-scrollbar-thumb { background: var(--roxo); border-radius: 2px; }
 
 .membro-card {
   display: flex;
@@ -104,6 +121,8 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
   border-radius: 2px;
   padding: 1.2rem 0.8rem 1rem;
   gap: 0.35rem;
+  flex: 0 0 180px;
+  scroll-snap-align: start;
 }
 
 .membro-avatar {
@@ -139,6 +158,59 @@ import instagramIcon from '../assets/icons/instagram.svg?raw'
   color: var(--preto);
   line-height: 1.3;
 }
+
+.membro-periodo {
+  font-size: 0.69rem;
+  font-weight: 700;
+  font-family: 'Archivo Black', sans-serif;
+  padding: 2px 7px;
+  border-radius: 2px;
+  background: rgba(80,64,160,0.1);
+  color: var(--roxo-escuro);
+  border: 1px solid rgba(80,64,160,0.22);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+}
+
+.membro-email {
+  font-size: 0.76rem;
+  color: var(--cinza);
+  margin-top: 4px;
+  word-break: break-all;
+}
+
+.membro-desc {
+  font-size: 0.78rem;
+  color: var(--preto);
+  opacity: 0.65;
+  line-height: 1.5;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.membro-links {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.membro-link {
+  font-size: 0.67rem;
+  font-weight: 700;
+  font-family: 'Archivo Black', sans-serif;
+  padding: 2px 7px;
+  border-radius: 2px;
+  border: 1.5px solid var(--roxo);
+  color: var(--roxo-escuro);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, color 0.15s;
+}
+.membro-link:hover { background: var(--roxo); color: var(--creme); }
 
 .gestao-header {
   display: flex;
