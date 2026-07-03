@@ -123,6 +123,22 @@ function confirmarExcluir() {
 
         <p class="label-sm" style="margin-bottom:10px;">Mensagem</p>
         <div class="msg-body">{{ mensagem.corpo }}</div>
+
+        <template v-if="mensagem.complementos?.length">
+          <hr class="divider" style="margin-top:1.2rem;">
+          <p class="label-sm" style="margin-bottom:10px;">
+            Complementos do remetente
+            <span style="font-size:0.72rem;color:var(--cinza);text-transform:none;letter-spacing:0;font-weight:400;">
+              — adicionados depois do envio original
+            </span>
+          </p>
+          <div class="complementos-lista">
+            <div v-for="(c, i) in mensagem.complementos" :key="i" class="complemento-item">
+              <div class="complemento-data">{{ c.data }}</div>
+              <div class="complemento-texto">{{ c.texto }}</div>
+            </div>
+          </div>
+        </template>
       </div>
 
       <div class="paper paper-mb">

@@ -46,3 +46,11 @@ export function deleteMensagem(id) {
 export function marcarRespostaVista(id) {
   persist(_list.value.map(m => m.id === id ? { ...m, respostaVista: true } : m))
 }
+
+export function addComplemento(id, texto) {
+  const item = {
+    texto,
+    data: new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' }),
+  }
+  persist(_list.value.map(m => m.id === id ? { ...m, complementos: [...(m.complementos || []), item] } : m))
+}

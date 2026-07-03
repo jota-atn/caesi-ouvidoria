@@ -3,12 +3,14 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
-import { mensagens } from '../stores/mensagens.js'
+import { mensagens, addComplemento } from '../stores/mensagens.js'
 
 const route    = useRoute()
 const input    = ref('')
 const resultado = ref(null)
 const naoEncontrado = ref(false)
+const complementoTexto = ref('')
+const complementoEnviado = ref(false)
 
 const tipoLabel = {
   disciplina:     'Disciplina',
@@ -35,6 +37,8 @@ const statusClass = {
 function consultar() {
   naoEncontrado.value = false
   resultado.value = null
+  complementoTexto.value = ''
+  complementoEnviado.value = false
   const protocolo = input.value.trim()
   if (!protocolo) return
   const found = mensagens.value.find(
@@ -45,6 +49,16 @@ function consultar() {
   } else {
     naoEncontrado.value = true
   }
+}
+
+function enviarComplemento() {
+  const texto = complementoTexto.value.trim()
+  if (!texto || !resultado.value) return
+  addComplemento(resultado.value.id, texto)
+  resultado.value = mensagens.value.find(m => m.id === resultado.value.id)
+  complementoTexto.value = ''
+  complementoEnviado.value = true
+  setTimeout(() => { complementoEnviado.value = false }, 2500)
 }
 
 onMounted(() => {
@@ -129,6 +143,42 @@ onMounted(() => {
             A equipe do CAESI ainda não respondeu esta mensagem.
             {{ resultado.status === 'pendente' ? 'Ela está na fila de atendimento.' : 'Está sendo analisada.' }}
           </div>
+        </template>
+
+        <!-- Complementos já enviados -->
+        <template v-if="resultado.complementos?.length">
+          <hr class="divider" style="margin-top:1.5rem;">
+          <p class="label-sm" style="margin-bottom:10px;">Informações adicionadas por você</p>
+          <div class="complementos-lista">
+            <div v-for="(c, i) in resultado.complementos" :key="i" class="complemento-item">
+              <div class="complemento-data">{{ c.data }}</div>
+              <div class="complemento-texto">{{ c.texto }}</div>
+            </div>
+          </div>
+        </template>
+
+        <!-- Adicionar complemento -->
+        <template v-if="resultado.status !== 'atendida'">
+          <hr class="divider" style="margin-top:1.5rem;">
+          <p class="label-sm" style="margin-bottom:4px;">Adicionar mais informações</p>
+          <p style="font-size:0.78rem;color:var(--cinza);margin-bottom:0.8rem;">
+            Esqueceu de contar algo? Complemente seu relato sem perder o protocolo.
+          </p>
+          <div v-if="complementoEnviado" class="alert-atendida">
+            <span style="font-size:1.2rem;">✓</span>
+            <div class="alert-atendida-title">Complemento enviado!</div>
+          </div>
+          <form v-else class="field" style="margin-bottom:0;" @submit.prevent="enviarComplemento">
+            <textarea v-model="complementoTexto" rows="3" maxlength="1000" placeholder="Escreva a informação adicional…"></textarea>
+            <div class="btn-row" style="margin-top:0.6rem;">
+              <button type="submit" class="btn btn-outline btn-sm" :disabled="!complementoTexto.trim()">Enviar complemento</button>
+            </div>
+          </form>
+        </template>
+        <template v-else>
+          <p style="font-size:0.78rem;color:var(--cinza);margin-top:1.2rem;">
+            Este ticket já foi atendido. Se for algo novo, abra um novo relato.
+          </p>
         </template>
       </div>
     </div>
