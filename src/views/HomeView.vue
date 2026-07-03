@@ -247,6 +247,17 @@ function instaScrollBy(dir) {
   if (!el) return
   const card = el.querySelector('.insta-card')
   const passo = card ? card.offsetWidth + 16 : 260
+  const maxScroll = el.scrollWidth - el.clientWidth
+
+  // Carrossel cíclico: no fim, "próximo" volta pro início (e vice-versa).
+  if (dir > 0 && el.scrollLeft >= maxScroll - 20) {
+    el.scrollTo({ left: 0, behavior: 'smooth' })
+    return
+  }
+  if (dir < 0 && el.scrollLeft <= 20) {
+    el.scrollTo({ left: maxScroll, behavior: 'smooth' })
+    return
+  }
   el.scrollBy({ left: dir * passo, behavior: 'smooth' })
 }
 
@@ -566,7 +577,7 @@ const posts = [
         </a>
       </div>
       <div class="insta-carrossel">
-        <button class="insta-nav-btn insta-nav-btn--prev" aria-label="Posts anteriores" @click="instaScrollBy(-1)">←</button>
+        <button class="insta-nav-btn insta-nav-btn--prev" aria-label="Posts anteriores" @click="instaScrollBy(-1)">&lt;</button>
 
         <div
           ref="instaScrollEl"
@@ -588,7 +599,7 @@ const posts = [
           </a>
         </div>
 
-        <button class="insta-nav-btn insta-nav-btn--next" aria-label="Próximos posts" @click="instaScrollBy(1)">→</button>
+        <button class="insta-nav-btn insta-nav-btn--next" aria-label="Próximos posts" @click="instaScrollBy(1)">&gt;</button>
       </div>
     </section>
 

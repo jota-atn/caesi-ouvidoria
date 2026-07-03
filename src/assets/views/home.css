@@ -113,18 +113,19 @@
 
 .insta-nav-btn {
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(242,230,196,0.3);
-  background: transparent;
-  color: var(--creme);
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 1rem;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  color: rgba(242,230,196,0.6);
+  font-family: 'Archivo', sans-serif;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 1;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transform: scaleY(1.6);
+  transition: color 0.15s;
 }
-.insta-nav-btn:hover { border-color: var(--amarelo); background: rgba(245,197,66,0.1); }
+.insta-nav-btn:hover { color: var(--amarelo); }
 
 .insta-grid {
   display: flex;
