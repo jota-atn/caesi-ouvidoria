@@ -430,19 +430,22 @@ const posts = [
 
       <div class="cal-home-layout">
         <!-- Próximos eventos: quadradinhos à esquerda -->
-        <div class="cal-home-teasers">
-          <p v-if="proximosEventos.length === 0" class="cal-home-sem-evento">Nenhum evento agendado no momento.</p>
-          <button
-            v-for="e in proximosEventos.slice(0, 6)" :key="e.id"
-            class="evento-teaser"
-            @click="abrirEvento(e)"
-          >
-            <div class="evento-teaser-data">
-              <span class="evento-teaser-dia">{{ diaMes(e.data).dia }}</span>
-              <span class="evento-teaser-mes">{{ diaMes(e.data).mes }}</span>
-            </div>
-            <div class="evento-teaser-nome">{{ e.nome }}</div>
-          </button>
+        <div class="cal-home-teasers-col">
+          <p class="cal-home-teasers-titulo">Eventos próximos</p>
+          <div class="cal-home-teasers">
+            <p v-if="proximosEventos.length === 0" class="cal-home-sem-evento">Nenhum evento agendado no momento.</p>
+            <button
+              v-for="e in proximosEventos.slice(0, 6)" :key="e.id"
+              class="evento-teaser"
+              @click="abrirEvento(e)"
+            >
+              <div class="evento-teaser-data">
+                <span class="evento-teaser-dia">{{ diaMes(e.data).dia }}</span>
+                <span class="evento-teaser-mes">{{ diaMes(e.data).mes }}</span>
+              </div>
+              <div class="evento-teaser-nome">{{ e.nome }}</div>
+            </button>
+          </div>
         </div>
 
         <!-- Grade de mês + busca à direita -->
