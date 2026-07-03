@@ -521,7 +521,11 @@ const posts = [
                   <span class="evento-teaser-dia">{{ diaMes(e.data).dia }}</span>
                   <span class="evento-teaser-mes">{{ diaMes(e.data).mes }}</span>
                 </div>
-                <div class="evento-teaser-nome">{{ e.nome }}</div>
+                <div class="evento-teaser-corpo">
+                  <div class="evento-teaser-nome">{{ e.nome }}</div>
+                  <p v-if="e.descricao" class="evento-teaser-desc">{{ e.descricao }}</p>
+                </div>
+                <span v-if="e.passado" class="evento-teaser-tag">Encerrado</span>
               </template>
               <span v-else class="evento-teaser-placeholder-dot"></span>
             </button>

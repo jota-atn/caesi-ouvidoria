@@ -187,7 +187,7 @@
 .cal-home-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 1.2rem;
   align-items: stretch;
 }
 
@@ -208,11 +208,9 @@
 }
 
 .cal-home-teasers {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: auto;
-  align-content: start;
-  gap: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
   flex: 1;
   min-height: 0;
 }
@@ -367,6 +365,7 @@
   gap: 0.8rem;
   padding: 0.9rem 1rem;
   width: 100%;
+  flex: 1;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
 }
@@ -421,16 +420,40 @@
   letter-spacing: 0.05em;
   margin-top: 2px;
 }
+.evento-teaser-corpo {
+  flex: 1;
+  min-width: 0;
+}
 .evento-teaser-nome {
   font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
-  font-size: 0.86rem;
+  font-size: 0.88rem;
   color: var(--preto);
   line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.evento-teaser-desc {
+  font-size: 0.78rem;
+  color: var(--preto);
+  opacity: 0.6;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.evento-teaser-tag {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-family: 'Archivo Black', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--cinza);
+  border: 1px solid var(--creme-escuro);
+  border-radius: 2px;
+  padding: 2px 6px;
 }
 
 .mapa-home-search {
