@@ -235,6 +235,41 @@ watch(algumModalAberto, (aberto) => {
 })
 onBeforeUnmount(() => { document.body.style.overflow = '' })
 
+// ── Carrossel do Instagram (setas + arraste no clique) ───────
+const instaScrollEl = ref(null)
+const instaDragging = ref(false)
+let instaStartX = 0
+let instaScrollStart = 0
+let instaMoved = false
+
+function instaScrollBy(dir) {
+  const el = instaScrollEl.value
+  if (!el) return
+  const card = el.querySelector('.insta-card')
+  const passo = card ? card.offsetWidth + 16 : 260
+  el.scrollBy({ left: dir * passo, behavior: 'smooth' })
+}
+
+function instaDragStart(e) {
+  if (!instaScrollEl.value) return
+  instaDragging.value = true
+  instaMoved = false
+  instaStartX = e.pageX
+  instaScrollStart = instaScrollEl.value.scrollLeft
+}
+function instaDragMove(e) {
+  if (!instaDragging.value) return
+  const dx = e.pageX - instaStartX
+  if (Math.abs(dx) > 4) instaMoved = true
+  instaScrollEl.value.scrollLeft = instaScrollStart - dx
+}
+function instaDragEnd() {
+  instaDragging.value = false
+}
+function instaClickGuard(e) {
+  if (instaMoved) { e.preventDefault(); instaMoved = false }
+}
+
 const posts = [
   { cor: 'rgba(80,64,160,0.28)',  icon: '📢', caption: 'Semana de Boas-Vindas 2026! Recepção aos calouros de CC — sábado, 8h, no SPLAB. Venha com a galera!', data: '12 mai' },
   { cor: 'rgba(245,197,66,0.32)', icon: '🏆', caption: 'Parabéns ao time que representou a UFCG na Maratona de Programação ICPC! Orgulho do CAESI.', data: '3 mai' },
@@ -530,14 +565,30 @@ const posts = [
           Ver perfil →
         </a>
       </div>
-      <div class="insta-grid">
-        <a v-for="(post, i) in posts" :key="i"
-          href="https://instagram.com/caesiufcg" target="_blank" rel="noopener"
-          class="insta-card">
-          <div class="insta-thumb" :style="{ background: post.cor }">{{ post.icon }}</div>
-          <div class="insta-caption">{{ post.caption }}</div>
-          <div class="insta-date">{{ post.data }}</div>
-        </a>
+      <div class="insta-carrossel">
+        <button class="insta-nav-btn insta-nav-btn--prev" aria-label="Posts anteriores" @click="instaScrollBy(-1)">←</button>
+
+        <div
+          ref="instaScrollEl"
+          class="insta-grid"
+          :class="{ 'insta-grid--arrastando': instaDragging }"
+          @mousedown="instaDragStart"
+          @mousemove="instaDragMove"
+          @mouseup="instaDragEnd"
+          @mouseleave="instaDragEnd"
+        >
+          <a v-for="(post, i) in posts" :key="i"
+            href="https://instagram.com/caesiufcg" target="_blank" rel="noopener"
+            class="insta-card"
+            @click="instaClickGuard"
+            @dragstart.prevent>
+            <div class="insta-thumb" :style="{ background: post.cor }">{{ post.icon }}</div>
+            <div class="insta-caption">{{ post.caption }}</div>
+            <div class="insta-date">{{ post.data }}</div>
+          </a>
+        </div>
+
+        <button class="insta-nav-btn insta-nav-btn--next" aria-label="Próximos posts" @click="instaScrollBy(1)">→</button>
       </div>
     </section>
 
