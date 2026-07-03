@@ -12,7 +12,6 @@ const routes = [
   { path: '/calendario',             component: () => import('../views/CalendarioView.vue') },
   { path: '/portal',                 component: () => import('../views/PortalView.vue') },
   { path: '/portal/:id',             component: () => import('../views/PortalDetalheView.vue') },
-  { path: '/mapa',                   component: () => import('../views/MapaView.vue') },
   { path: '/formularios',            component: () => import('../views/FormulariosView.vue') },
   { path: '/formularios/:id',        component: () => import('../views/FormularioDetalheView.vue') },
   { path: '/admin',                  component: () => import('../views/admin/LoginView.vue') },
@@ -34,6 +33,10 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(to) {
+    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    return { top: 0 }
+  },
 })
 
 router.beforeEach((to) => {

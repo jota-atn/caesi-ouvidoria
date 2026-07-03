@@ -206,6 +206,52 @@
   overflow: hidden;
 }
 
+.mapa-home-search {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--branco);
+  border: 2px solid var(--creme-escuro);
+  border-radius: 2px;
+  font-family: 'Archivo', sans-serif;
+  font-size: 0.92rem;
+  color: var(--preto);
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 0.8rem;
+}
+.mapa-home-search:focus { border-color: var(--roxo); }
+
+.mapa-home-resultados {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 0.8rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.mapa-home-resultado-item {
+  text-align: left;
+  padding: 8px 12px;
+  border: 1.5px solid var(--creme-escuro);
+  border-radius: 2px;
+  background: var(--creme);
+  cursor: pointer;
+  font-family: 'Archivo', sans-serif;
+  font-size: 0.88rem;
+  color: var(--preto);
+  transition: border-color 0.15s, background 0.15s;
+}
+.mapa-home-resultado-item:hover { border-color: var(--roxo); background: rgba(80,64,160,0.06); }
+.mapa-home-sem-resultado { font-size: 0.85rem; color: var(--cinza); padding: 6px 2px; }
+
+.mapa-home-leaflet {
+  width: 100%;
+  height: 420px;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1.5px solid var(--creme-escuro);
+}
+
 .anon-success {
   text-align: center;
   padding: 1.5rem 1rem;
@@ -332,4 +378,6 @@
   .insta-thumb { aspect-ratio: 1; }
 
   .admin-no-msg { flex-direction: column; gap: 1rem; }
+
+  .mapa-home-leaflet { height: 320px; }
 }

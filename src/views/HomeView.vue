@@ -1,10 +1,20 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import iconUrl from 'leaflet/dist/images/marker-icon.png'
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import { addMensagem } from '../stores/mensagens.js'
 import { isAdmin } from '../stores/auth.js'
 import { proximosEventos } from '../stores/calendario.js'
+import { estruturas, CENTRO_PADRAO } from '../stores/mapa.js'
+import { useEscapeKey } from '../composables/useEscapeKey.js'
+
+delete L.Icon.Default.prototype._getIconUrl
+L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl })
 
 const MESES_ABREV = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 function diaMes(data) {
@@ -49,6 +59,59 @@ function resetForm() {
   enviado.value = false
   emailEnviado.value = false
 }
+
+// ── Mapa do campus ──────────────────────────────────────
+const mapaEl = ref(null)
+let mapa = null
+const mapaMarkers = new Map()
+
+const buscaMapa = ref('')
+const estruturaModal = ref(null)
+
+const resultadosBusca = computed(() => {
+  const t = buscaMapa.value.toLowerCase().trim()
+  if (!t) return []
+  return estruturas.value.filter(e => e.nome.toLowerCase().includes(t))
+})
+
+function rotaUrl(e) {
+  return `https://www.google.com/maps/dir/?api=1&destination=${e.lat},${e.lng}`
+}
+
+function abrirEstrutura(e) {
+  estruturaModal.value = e
+  if (mapa) {
+    mapa.flyTo([e.lat, e.lng], 18, { duration: 0.6 })
+  }
+}
+
+function fecharModal() { estruturaModal.value = null }
+useEscapeKey(fecharModal)
+
+function renderMapaMarkers() {
+  if (!mapa) return
+  mapaMarkers.forEach(m => m.remove())
+  mapaMarkers.clear()
+  for (const e of estruturas.value) {
+    const marker = L.marker([e.lat, e.lng]).addTo(mapa)
+    marker.on('click', () => abrirEstrutura(e))
+    mapaMarkers.set(e.id, marker)
+  }
+}
+
+onMounted(() => {
+  if (!mapaEl.value) return
+  mapa = L.map(mapaEl.value).setView([CENTRO_PADRAO.lat, CENTRO_PADRAO.lng], 16)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19,
+  }).addTo(mapa)
+  renderMapaMarkers()
+})
+
+watch(estruturas, () => renderMapaMarkers())
+
+onBeforeUnmount(() => { mapa?.remove() })
 
 const posts = [
   { cor: 'rgba(80,64,160,0.28)',  icon: '📢', caption: 'Semana de Boas-Vindas 2026! Recepção aos calouros de CC — sábado, 8h, no SPLAB. Venha com a galera!', data: '12 mai' },
@@ -264,6 +327,34 @@ const posts = [
       </div>
     </section>
 
+    <!-- Mapa do campus -->
+    <section class="home-section" id="mapa" style="scroll-margin-top:80px;">
+      <div class="section-label">Onde fica</div>
+      <h2 class="section-title">Mapa do <span>campus</span></h2>
+
+      <div class="paper" style="padding:1.2rem;">
+        <input
+          v-model="buscaMapa" type="search" class="mapa-home-search"
+          placeholder="Buscar estrutura… (ex.: Bloco CP, auditório)"
+        >
+        <div v-if="resultadosBusca.length > 0" class="mapa-home-resultados">
+          <button
+            v-for="e in resultadosBusca" :key="e.id"
+            class="mapa-home-resultado-item"
+            @click="abrirEstrutura(e); buscaMapa = ''"
+          >{{ e.nome }}</button>
+        </div>
+        <div v-else-if="buscaMapa.trim()" class="mapa-home-resultados">
+          <span class="mapa-home-sem-resultado">Nenhuma estrutura encontrada.</span>
+        </div>
+
+        <div ref="mapaEl" class="mapa-home-leaflet"></div>
+        <p style="font-size:0.78rem;color:var(--cinza);margin-top:0.8rem;">
+          Clique num ponto do mapa pra ver os detalhes da estrutura.
+        </p>
+      </div>
+    </section>
+
     <!-- Instagram -->
     <section class="home-section">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;flex-wrap:wrap;gap:12px;">
@@ -288,5 +379,24 @@ const posts = [
     </section>
 
     <SiteFooter />
+
+    <!-- Modal: detalhe da estrutura -->
+    <Teleport to="body">
+      <div v-if="estruturaModal" class="modal-overlay" @click.self="fecharModal">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-estrutura-title" v-focus-trap>
+          <div class="modal-title" id="modal-estrutura-title">{{ estruturaModal.nome }}</div>
+          <div class="modal-body">
+            <p v-if="estruturaModal.descricao">{{ estruturaModal.descricao }}</p>
+            <p v-else style="color:var(--cinza);font-style:italic;">Sem descrição cadastrada.</p>
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-outline btn-sm" @click="fecharModal">Fechar</button>
+            <a :href="rotaUrl(estruturaModal)" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
+              Ver rota →
+            </a>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
