@@ -204,14 +204,43 @@
 .cal-home-teasers {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  align-content: start;
+  grid-auto-rows: 1fr;
+  align-content: stretch;
   gap: 0.7rem;
+  min-height: 100%;
+}
+.cal-home-teasers--vazio {
+  display: block;
+  min-height: 340px;
 }
 
-.cal-home-sem-evento {
-  grid-column: 1 / -1;
-  font-size: 0.85rem;
-  color: rgba(242,230,196,0.6);
+.cal-home-vazio {
+  height: 100%;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 4px;
+  padding: 1.5rem;
+  border: 1.5px dashed rgba(242,230,196,0.25);
+  border-radius: 2px;
+}
+.cal-home-vazio-icon {
+  color: rgba(242,230,196,0.4);
+  margin-bottom: 0.6rem;
+}
+.cal-home-vazio-icon :deep(svg) { width: 30px; height: 30px; }
+.cal-home-vazio p {
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: rgba(242,230,196,0.85);
+}
+.cal-home-vazio span {
+  font-size: 0.8rem;
+  color: rgba(242,230,196,0.5);
 }
 
 .cal-home-paper {
@@ -331,7 +360,7 @@
   gap: 0.8rem;
   padding: 0.9rem 1rem;
   width: 100%;
-  max-width: 260px;
+  height: 100%;
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
 }
@@ -339,6 +368,11 @@
   transform: translate(-2px,-2px);
   box-shadow: 5px 5px 0 var(--roxo-escuro);
 }
+.evento-teaser--passado {
+  border-left-color: var(--cinza);
+  opacity: 0.6;
+}
+.evento-teaser--passado .evento-teaser-data { background: var(--cinza); }
 .evento-teaser-data {
   flex-shrink: 0;
   width: 44px;
