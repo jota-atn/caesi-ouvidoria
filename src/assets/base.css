@@ -13,7 +13,7 @@
   --vermelho:    #D95555;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; overflow-wrap: break-word; }
 
 html { scroll-behavior: smooth; }
 
