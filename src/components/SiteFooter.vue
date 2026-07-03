@@ -10,9 +10,9 @@
       </div>
       <div class="footer-links">
         <RouterLink to="/sobre" class="footer-link">Sobre</RouterLink>
-        <RouterLink to="/estatuto" class="footer-link">Estatuto</RouterLink>
-        <RouterLink to="/contato" class="footer-link">Contato</RouterLink>
+        <RouterLink to="/informacoes" class="footer-link">Informações</RouterLink>
         <a href="https://instagram.com/caesiufcg" target="_blank" rel="noopener" class="footer-link">Instagram</a>
+        <a href="mailto:caesi@ccc.ufcg.edu.br" class="footer-link">caesi@ccc.ufcg.edu.br</a>
       </div>
     </div>
     <div class="footer-copy">© {{ new Date().getFullYear() }} CAESI · Desenvolvido pelo Centro Acadêmico</div>
