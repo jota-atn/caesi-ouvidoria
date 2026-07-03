@@ -18,8 +18,8 @@ export function getEstrutura(id) {
   return _estruturas.value.find(e => e.id === id) ?? null
 }
 
-export function addEstrutura({ nome, descricao = '', lat, lng }) {
-  const nova = { id: Date.now(), nome, descricao, lat, lng }
+export function addEstrutura({ nome, descricao = '', lat, lng, imagens = [] }) {
+  const nova = { id: Date.now(), nome, descricao, lat, lng, imagens }
   persist([..._estruturas.value, nova])
   return nova
 }

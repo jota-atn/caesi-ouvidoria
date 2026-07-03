@@ -19,17 +19,56 @@ const markers = new Map()
 const selecionadoId = ref(null)
 const pendingPoint   = ref(null) // { lat, lng } de um clique em área vazia
 
-const formNovo = ref({ nome: '', descricao: '' })
-const formEdit = ref({ nome: '', descricao: '' })
+const formNovo = ref({ nome: '', descricao: '', imagens: [] })
+const formEdit = ref({ nome: '', descricao: '', imagens: [] })
+const fileNovoRef = ref(null)
+const fileEditRef = ref(null)
 
 const selecionado = computed(() => estruturas.value.find(e => e.id === selecionadoId.value) ?? null)
 
 function arredonda(n) { return Math.round(n * 1e6) / 1e6 }
 
+function comprimirImagem(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader()
+    reader.onload = ev => {
+      const img = new Image()
+      img.onload = () => {
+        const MAX = 900
+        let w = img.width, h = img.height
+        if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX }
+        else if (h > MAX)     { w = Math.round(w * MAX / h); h = MAX }
+        const canvas = document.createElement('canvas')
+        canvas.width = w; canvas.height = h
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+        resolve(canvas.toDataURL('image/jpeg', 0.82))
+      }
+      img.src = ev.target.result
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
+async function onImagensNovo(e) {
+  for (const file of e.target.files) {
+    formNovo.value.imagens.push(await comprimirImagem(file))
+  }
+  e.target.value = ''
+}
+function removerImagemNovo(i) { formNovo.value.imagens.splice(i, 1) }
+
+async function onImagensEdit(e) {
+  for (const file of e.target.files) {
+    formEdit.value.imagens.push(await comprimirImagem(file))
+  }
+  e.target.value = ''
+}
+function removerImagemEdit(i) { formEdit.value.imagens.splice(i, 1) }
+
 function selecionarMarcador(e) {
   pendingPoint.value = null
   selecionadoId.value = e.id
-  formEdit.value = { nome: e.nome, descricao: e.descricao ?? '' }
+  formEdit.value = { nome: e.nome, descricao: e.descricao ?? '', imagens: [...(e.imagens ?? [])] }
 }
 
 function selecionarNaLista(id) {
@@ -53,8 +92,9 @@ function salvarNova() {
     descricao: formNovo.value.descricao.trim(),
     lat: pendingPoint.value.lat,
     lng: pendingPoint.value.lng,
+    imagens: [...formNovo.value.imagens],
   })
-  formNovo.value = { nome: '', descricao: '' }
+  formNovo.value = { nome: '', descricao: '', imagens: [] }
   pendingPoint.value = null
   showToast('Estrutura adicionada ao mapa.', 'success')
 }
@@ -64,6 +104,7 @@ function salvarEdicao() {
   updateEstrutura(selecionado.value.id, {
     nome: formEdit.value.nome.trim(),
     descricao: formEdit.value.descricao.trim(),
+    imagens: [...formEdit.value.imagens],
   })
   showToast('Estrutura atualizada.', 'success')
 }
@@ -105,7 +146,7 @@ onMounted(() => {
   map.on('click', (ev) => {
     selecionadoId.value = null
     pendingPoint.value = { lat: arredonda(ev.latlng.lat), lng: arredonda(ev.latlng.lng) }
-    formNovo.value = { nome: '', descricao: '' }
+    formNovo.value = { nome: '', descricao: '', imagens: [] }
   })
 })
 
@@ -146,6 +187,17 @@ onBeforeUnmount(() => { map?.remove() })
               <label>Descrição <span class="field-hint">(opcional)</span></label>
               <textarea v-model="formNovo.descricao" rows="3" placeholder="O que tem aqui…"></textarea>
             </div>
+            <div class="field">
+              <label>Imagens <span class="field-hint">(opcional)</span></label>
+              <button type="button" class="btn-foto" @click="fileNovoRef.click()">+ Adicionar imagens</button>
+              <input ref="fileNovoRef" type="file" accept="image/*" multiple style="display:none" @change="onImagensNovo">
+              <div v-if="formNovo.imagens.length > 0" class="imagens-preview">
+                <div v-for="(img, i) in formNovo.imagens" :key="i" class="img-thumb-wrap">
+                  <img :src="img" class="img-thumb" :alt="`Imagem ${i+1}`">
+                  <button type="button" class="img-thumb-remove" @click="removerImagemNovo(i)">×</button>
+                </div>
+              </div>
+            </div>
             <div class="btn-row">
               <button class="btn btn-primary btn-sm" @click="salvarNova">Salvar →</button>
               <button class="btn btn-outline btn-sm" @click="cancelarSelecao">Cancelar</button>
@@ -162,6 +214,17 @@ onBeforeUnmount(() => { map?.remove() })
             <div class="field">
               <label>Descrição</label>
               <textarea v-model="formEdit.descricao" rows="3"></textarea>
+            </div>
+            <div class="field">
+              <label>Imagens <span class="field-hint">(opcional)</span></label>
+              <button type="button" class="btn-foto" @click="fileEditRef.click()">+ Adicionar imagens</button>
+              <input ref="fileEditRef" type="file" accept="image/*" multiple style="display:none" @change="onImagensEdit">
+              <div v-if="formEdit.imagens.length > 0" class="imagens-preview">
+                <div v-for="(img, i) in formEdit.imagens" :key="i" class="img-thumb-wrap">
+                  <img :src="img" class="img-thumb" :alt="`Imagem ${i+1}`">
+                  <button type="button" class="img-thumb-remove" @click="removerImagemEdit(i)">×</button>
+                </div>
+              </div>
             </div>
             <div class="btn-row">
               <button class="btn btn-primary btn-sm" @click="salvarEdicao">Salvar →</button>
@@ -210,6 +273,58 @@ onBeforeUnmount(() => { map?.remove() })
 .mapa-leaflet { width: 100%; height: 560px; cursor: crosshair; }
 
 .mapa-form .field:last-of-type { margin-bottom: 0.8rem; }
+
+.btn-foto {
+  padding: 7px 14px;
+  background: var(--branco);
+  border: 2px dashed var(--roxo);
+  border-radius: 2px;
+  font-family: 'Archivo', sans-serif;
+  font-size: 0.84rem;
+  color: var(--roxo-escuro);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-foto:hover { background: rgba(80,64,160,0.07); }
+
+.imagens-preview {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.img-thumb-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.img-thumb {
+  width: 74px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1.5px solid var(--creme-escuro);
+  display: block;
+}
+
+.img-thumb-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--preto);
+  color: var(--branco);
+  border: none;
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 .mapa-lista {
   display: flex;
