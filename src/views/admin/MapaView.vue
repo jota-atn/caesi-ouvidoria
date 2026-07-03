@@ -136,7 +136,11 @@ function renderMarkers() {
 }
 
 onMounted(() => {
-  map = L.map(mapEl.value).setView([CENTRO_PADRAO.lat, CENTRO_PADRAO.lng], 17)
+  map = L.map(mapEl.value, {
+    zoomSnap: 0.25,
+    zoomDelta: 0.5,
+    wheelPxPerZoomLevel: 180,
+  }).setView([CENTRO_PADRAO.lat, CENTRO_PADRAO.lng], 17)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     maxZoom: 19,
