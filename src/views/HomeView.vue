@@ -6,6 +6,7 @@ import CalendarioSecao from '../components/CalendarioSecao.vue'
 import MapaSecao from '../components/MapaSecao.vue'
 import { addMensagem } from '../stores/mensagens.js'
 import { isAdmin } from '../stores/auth.js'
+import { isEmail } from '../utils/validation.js'
 
 const form = ref({ tipo: '', periodo: '', mensagem: '', nome: '', email: '' })
 const errors = ref({})
@@ -23,6 +24,7 @@ function submit() {
   if (!form.value.tipo)                       e.tipo = true
   if (!form.value.periodo.trim())             e.periodo = true
   if (form.value.mensagem.trim().length < 20) e.mensagem = true
+  if (form.value.email.trim() && !isEmail(form.value.email)) e.email = true
   errors.value = e
   if (Object.keys(e).length === 0) {
     const nova = addMensagem({
@@ -266,7 +268,8 @@ const posts = [
                 </div>
                 <div class="field">
                   <label>E-mail</label>
-                  <input v-model="form.email" type="email" placeholder="seu@email.com">
+                  <input v-model="form.email" type="email" placeholder="seu@email.com" :class="{ invalid: errors.email }">
+                  <span class="error-msg" role="alert">Informe um e-mail válido.</span>
                 </div>
               </div>
             </div>

@@ -6,6 +6,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import { formularios, inscricoes, addInscricao } from '../stores/formularios.js'
 import { showToast } from '../stores/toast.js'
+import { isEmail } from '../utils/validation.js'
 
 const route  = useRoute()
 const router = useRouter()
@@ -98,6 +99,10 @@ function submitForm() {
   }
   if (!identif.value.email.trim()) {
     submitError.value = 'Informe seu e-mail.'
+    return
+  }
+  if (!isEmail(identif.value.email)) {
+    submitError.value = 'Informe um e-mail válido.'
     return
   }
   if (formulario.value.requerMatricula && !identif.value.matricula.trim()) {

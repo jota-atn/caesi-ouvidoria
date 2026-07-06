@@ -10,6 +10,7 @@ const route    = useRoute()
 const input    = ref('')
 const resultado = ref(null)
 const naoEncontrado = ref(false)
+const campoVazio = ref(false)
 const complementoTexto = ref('')
 const complementoEnviado = ref(false)
 
@@ -41,6 +42,7 @@ function consultar() {
   complementoTexto.value = ''
   complementoEnviado.value = false
   const protocolo = input.value.trim()
+  campoVazio.value = !protocolo
   if (!protocolo) return
   const found = mensagens.value.find(
     m => m.protocolo.toLowerCase() === protocolo.toLowerCase()
@@ -92,9 +94,15 @@ onMounted(() => {
             placeholder="#2025-1234"
             autocomplete="off"
             spellcheck="false"
+            @input="campoVazio = false"
           />
           <button type="submit" class="btn btn-primary">Consultar</button>
         </form>
+      </div>
+
+      <!-- Campo vazio -->
+      <div v-if="campoVazio" class="alert-erro">
+        Informe um número de protocolo.
       </div>
 
       <!-- Não encontrado -->
