@@ -1,58 +1,36 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { loginAdmin } from '../../stores/auth.js'
+import { loginComGoogle } from '../../stores/auth.js'
+import googleIcon from '../../assets/icons/google.svg?raw'
 
 const router = useRouter()
-const senha  = ref('')
-const erro   = ref(false)
 const loading = ref(false)
 
-function entrar() {
-  erro.value = false
+function entrarComGoogle() {
   loading.value = true
   setTimeout(() => {
-    loading.value = false
-    if (!loginAdmin(senha.value)) {
-      erro.value = true
-      senha.value = ''
-    } else {
-      router.push('/admin/painel')
-    }
-  }, 400)
+    loginComGoogle()
+    router.push('/admin/painel')
+  }, 700)
 }
 </script>
 
 <template>
   <div class="admin-login-page">
     <RouterLink to="/" class="admin-login-voltar">← Voltar ao site</RouterLink>
-    <form class="admin-login-box" @submit.prevent="entrar">
+    <div class="admin-login-box">
       <div class="admin-login-logo">
         <img src="/logo_caesi.png" alt="CAESI" />
       </div>
       <h2 class="admin-login-title">Acesso restrito</h2>
+      <p class="admin-login-sub">Entre com a conta Google cadastrada como administrador do CAESI.</p>
 
-      <div v-if="erro" class="alert-erro">Código incorreto.</div>
-
-      <div class="field-group">
-        <label for="senha" class="label-sm">Código de acesso</label>
-        <input
-          id="senha"
-          v-model="senha"
-          type="password"
-          class="admin-login-input"
-          placeholder="••••••••"
-          autocomplete="current-password"
-          required
-          autofocus
-        />
-      </div>
-
-      <button type="submit" class="btn btn-primary btn-full" :disabled="loading">
-        {{ loading ? 'Verificando...' : 'Entrar' }}
+      <button type="button" class="btn-google" :disabled="loading" @click="entrarComGoogle">
+        <span class="btn-google-icon" v-html="googleIcon"></span>
+        {{ loading ? 'Entrando...' : 'Entrar com Google' }}
       </button>
-
-    </form>
+    </div>
   </div>
 </template>
 
@@ -97,26 +75,34 @@ function entrar() {
   margin: 0;
 }
 
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.admin-login-sub {
+  font-size: 0.85rem;
+  color: var(--cinza);
+  text-align: center;
+  margin: -0.6rem 0 0;
+  line-height: 1.6;
 }
 
-.admin-login-input {
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px;
   background: var(--branco);
   border: 2px solid var(--creme-escuro);
   border-radius: 2px;
-  font-family: 'Archivo', sans-serif;
-  font-size: 1rem;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 0.95rem;
   color: var(--preto);
-  outline: none;
-  transition: border-color 0.2s;
-  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: border-color 0.15s, opacity 0.15s;
 }
-.admin-login-input:focus { border-color: var(--roxo); }
+.btn-google:hover:not(:disabled) { border-color: var(--roxo); }
+.btn-google:disabled { opacity: 0.7; cursor: default; }
+.btn-google-icon { display: flex; }
+.btn-google-icon :deep(svg) { width: 18px; height: 18px; }
 
 .admin-login-voltar {
   position: absolute;

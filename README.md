@@ -64,4 +64,4 @@ src/
 
 ## Estado do projeto
 
-Todos os módulos de frontend da especificação estão implementados (mockados, sem backend). Falta integrar com a API real (FastAPI + MySQL + S3, conforme especificação) e evoluir a autenticação (JWT + Google OAuth). Ver `MOCKADOS.local.md` e `PENDENCIAS_TECNICAS.local.md` (não versionados) para detalhes de handoff com o backend.
+Todos os módulos de frontend da especificação estão implementados (mockados, sem backend). Falta integrar com a API real (FastAPI + MySQL + S3, conforme especificação) e evoluir a autenticação (JWT + Google OAuth).
