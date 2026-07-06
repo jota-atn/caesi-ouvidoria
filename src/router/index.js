@@ -49,9 +49,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
+  const path = to.path.length > 1 ? to.path.replace(/\/+$/, '') : to.path
+
   if (to.meta.admin && !isAdmin.value) return '/admin'
-  if (to.meta.admin && mustChangePassword.value && to.path !== '/admin/trocar-senha') return '/admin/trocar-senha'
-  if (to.path === '/admin' && isAdmin.value) return mustChangePassword.value ? '/admin/trocar-senha' : '/admin/painel'
+  if (to.meta.admin && mustChangePassword.value && path !== '/admin/trocar-senha') return '/admin/trocar-senha'
+  if (path === '/admin' && isAdmin.value) return mustChangePassword.value ? '/admin/trocar-senha' : '/admin/painel'
 })
 
 export default router
