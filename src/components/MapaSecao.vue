@@ -56,7 +56,7 @@ function iniciarEdicaoEstrutura() {
 function cancelarEdicaoEstrutura() { estruturaModoEdicao.value = false }
 
 function salvarEdicaoEstrutura() {
-  if (!estruturaEditForm.value.nome.trim()) return
+  if (!estruturaEditForm.value.nome.trim()) { showToast('Informe o nome da estrutura.', 'error'); return }
   updateEstrutura(estruturaModal.value.id, {
     nome: estruturaEditForm.value.nome.trim(),
     descricao: estruturaEditForm.value.descricao.trim(),
@@ -77,7 +77,8 @@ function excluirEstrutura() {
 function fecharNovaEstruturaModal() { novaEstruturaModal.value = null }
 
 function salvarNovaEstrutura() {
-  if (!novaEstruturaForm.value.nome.trim() || !novaEstruturaModal.value) return
+  if (!novaEstruturaModal.value) return
+  if (!novaEstruturaForm.value.nome.trim()) { showToast('Informe o nome da estrutura.', 'error'); return }
   addEstrutura({
     nome: novaEstruturaForm.value.nome.trim(),
     descricao: novaEstruturaForm.value.descricao.trim(),

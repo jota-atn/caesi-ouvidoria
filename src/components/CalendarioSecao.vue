@@ -154,7 +154,7 @@ function iniciarEdicaoEvento() {
 function cancelarEdicaoEvento() { eventoModoEdicao.value = false }
 
 function salvarEdicaoEvento() {
-  if (!eventoEditForm.value.nome.trim()) return
+  if (!eventoEditForm.value.nome.trim()) { showToast('Informe o nome do evento.', 'error'); return }
   updateEvento(eventoModal.value.id, {
     nome: eventoEditForm.value.nome.trim(),
     descricao: eventoEditForm.value.descricao.trim(),
@@ -182,7 +182,7 @@ function abrirNovoEvento(iso) {
 function fecharNovoEventoModal() { novoEventoModal.value = null }
 
 function salvarNovoEvento() {
-  if (!novoEventoForm.value.nome.trim()) return
+  if (!novoEventoForm.value.nome.trim()) { showToast('Informe o nome do evento.', 'error'); return }
   addEvento({
     nome: novoEventoForm.value.nome.trim(),
     descricao: novoEventoForm.value.descricao.trim(),

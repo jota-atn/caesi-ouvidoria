@@ -87,7 +87,8 @@ function cancelarSelecao() {
 }
 
 function salvarNova() {
-  if (!formNovo.value.nome.trim() || !pendingPoint.value) return
+  if (!pendingPoint.value) return
+  if (!formNovo.value.nome.trim()) { showToast('Informe o nome da estrutura.', 'error'); return }
   addEstrutura({
     nome: formNovo.value.nome.trim(),
     descricao: formNovo.value.descricao.trim(),
@@ -101,7 +102,8 @@ function salvarNova() {
 }
 
 function salvarEdicao() {
-  if (!selecionado.value || !formEdit.value.nome.trim()) return
+  if (!selecionado.value) return
+  if (!formEdit.value.nome.trim()) { showToast('Informe o nome da estrutura.', 'error'); return }
   updateEstrutura(selecionado.value.id, {
     nome: formEdit.value.nome.trim(),
     descricao: formEdit.value.descricao.trim(),

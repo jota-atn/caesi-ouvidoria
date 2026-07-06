@@ -93,14 +93,17 @@ function salvarNovoEvento() {
 const editandoId = ref(null)
 const editForm   = ref({ nome: '', descricao: '' })
 
+const errosEdit = ref({})
+
 function iniciarEdicao(e) {
   editandoId.value = e.id
   editForm.value = { nome: e.nome, descricao: e.descricao ?? '' }
+  errosEdit.value = {}
 }
 function cancelarEdicao() { editandoId.value = null }
 
 function salvarEdicao(id) {
-  if (!editForm.value.nome.trim()) return
+  if (!editForm.value.nome.trim()) { errosEdit.value = { nome: true }; return }
   updateEvento(id, { nome: editForm.value.nome.trim(), descricao: editForm.value.descricao.trim() })
   editandoId.value = null
   showToast('Evento atualizado.', 'success')
@@ -202,7 +205,8 @@ function excluirEvento(e) {
               <div class="cal-form-add" style="width:100%;">
                 <div class="field">
                   <label>Nome *</label>
-                  <input v-model="editForm.nome" type="text" maxlength="100">
+                  <input v-model="editForm.nome" type="text" maxlength="100" :class="{ invalid: errosEdit.nome }">
+                  <span class="error-msg">Preencha o nome do evento.</span>
                 </div>
                 <div class="field">
                   <label>Descrição</label>

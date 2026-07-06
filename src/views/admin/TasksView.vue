@@ -30,7 +30,10 @@ function iniciaisNome(nome) {
 }
 
 function adicionarMembro() {
-  if (!novoMembroNome.value.trim()) return
+  if (!novoMembroNome.value.trim()) {
+    showToast('Informe o nome do membro.', 'error')
+    return
+  }
   addMembro(novoMembroNome.value)
   novoMembroNome.value = ''
   adicionandoMembro.value = false
@@ -512,6 +515,9 @@ useEscapeKey(() => {
           </div>
         </div>
 
+        <p v-if="!form.titulo.trim() || !form.prazo" class="error-msg" style="display:block;text-align:right;">
+          Preencha título e prazo para salvar.
+        </p>
         <div class="modal-actions">
           <button class="btn btn-outline" @click="modalForm = false">Cancelar</button>
           <button class="btn btn-amarelo" :disabled="!form.titulo.trim() || !form.prazo" @click="salvarTask">

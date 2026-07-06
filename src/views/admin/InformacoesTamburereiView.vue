@@ -9,7 +9,7 @@ const form = ref({ ...tamburetei.value })
 const salvo = ref(false)
 
 function salvar() {
-  if (!form.value.titulo.trim()) return
+  if (!form.value.titulo.trim()) { showToast('Informe o título da página.', 'error'); return }
   saveTamburetei({
     titulo: form.value.titulo.trim(),
     descricao: form.value.descricao.trim(),
