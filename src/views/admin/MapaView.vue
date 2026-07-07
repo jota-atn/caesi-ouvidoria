@@ -186,7 +186,7 @@ onBeforeUnmount(() => { map?.remove() })
         <h2>Gestão do <span>Mapa</span></h2>
       </div>
 
-      <p style="font-size:0.85rem;color:var(--cinza);margin-bottom:1rem;line-height:1.6;">
+      <p style="font-size:0.85rem;color:rgba(242,230,196,0.65);margin-bottom:1rem;line-height:1.6;">
         Clique num ponto vazio do mapa pra adicionar uma estrutura. Arraste um pin existente pra reposicionar.
       </p>
 
