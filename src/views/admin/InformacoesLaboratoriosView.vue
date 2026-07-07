@@ -411,7 +411,7 @@ const lista = computed(() => {
 .pub-card-btn--danger { color: var(--vermelho, #c0392b); border-color: var(--vermelho, #c0392b); }
 .pub-card-btn--danger:hover { background: var(--vermelho, #c0392b); color: var(--branco); }
 
-.textarea { min-height: 100px; resize: vertical; }
+.textarea { min-height: 100px; resize: vertical; max-height: 500px; }
 .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 0.8rem; }
 
 .empty-state {

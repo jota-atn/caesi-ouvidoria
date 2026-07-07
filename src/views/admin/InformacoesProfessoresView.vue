@@ -402,7 +402,7 @@ const lista = computed(() => {
   text-transform: uppercase; letter-spacing: 0.04em;
 }
 
-.textarea { min-height: 80px; resize: vertical; }
+.textarea { min-height: 80px; resize: vertical; max-height: 500px; }
 .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 0.8rem; }
 
 .empty-state {

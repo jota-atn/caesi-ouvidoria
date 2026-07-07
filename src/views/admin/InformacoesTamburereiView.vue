@@ -68,5 +68,5 @@ function salvar() {
 </template>
 
 <style scoped>
-.textarea { min-height: 220px; resize: vertical; }
+.textarea { min-height: 220px; resize: vertical; max-height: 600px; }
 </style>

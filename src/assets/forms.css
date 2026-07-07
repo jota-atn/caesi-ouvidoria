@@ -57,7 +57,7 @@
   cursor: pointer;
 }
 
-.field textarea { resize: vertical; min-height: 130px; }
+.field textarea { resize: vertical; min-height: 130px; max-height: 500px; }
 
 .char-counter {
   text-align: right;
