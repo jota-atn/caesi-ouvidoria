@@ -8,9 +8,31 @@ import { showToast } from '../../stores/toast.js'
 
 function nomeEstrutura(id) { return estruturas.value.find(e => e.id === id)?.nome ?? null }
 
+function comprimirImagem(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader()
+    reader.onload = ev => {
+      const img = new Image()
+      img.onload = () => {
+        const MAX = 900
+        let w = img.width, h = img.height
+        if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX }
+        else if (h > MAX)     { w = Math.round(w * MAX / h); h = MAX }
+        const canvas = document.createElement('canvas')
+        canvas.width = w; canvas.height = h
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+        resolve(canvas.toDataURL('image/jpeg', 0.82))
+      }
+      img.src = ev.target.result
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
 // --------------- Formulário adicionar ---------------
 const mostrarForm = ref(false)
-const formAdd = reactive({ nome: '', estruturaId: '', lattes: '', googleAcademico: '', linkedin: '' })
+const fileAddRef  = ref(null)
+const formAdd = reactive({ nome: '', sala: '', estruturaId: '', descricao: '', foto: '', lattes: '', googleAcademico: '', linkedin: '' })
 const erros   = reactive({ nome: '' })
 
 function validarNome(nome) {
@@ -22,49 +44,78 @@ function validar(form) {
   return !erros.nome
 }
 
+async function onFotoAdd(e) {
+  const file = e.target.files?.[0]
+  if (file) formAdd.foto = await comprimirImagem(file)
+  e.target.value = ''
+}
+function removerFotoAdd() { formAdd.foto = '' }
+
 function publicar() {
   if (!validar(formAdd)) return
   addProfessor({
     nome: formAdd.nome.trim(),
+    sala: formAdd.sala.trim(),
     estruturaId: formAdd.estruturaId ? Number(formAdd.estruturaId) : null,
+    descricao: formAdd.descricao.trim(),
+    foto: formAdd.foto || '',
     lattes: formAdd.lattes.trim(),
     googleAcademico: formAdd.googleAcademico.trim(),
     linkedin: formAdd.linkedin.trim(),
   })
-  Object.assign(formAdd, { nome: '', estruturaId: '', lattes: '', googleAcademico: '', linkedin: '' })
+  Object.assign(formAdd, { nome: '', sala: '', estruturaId: '', descricao: '', foto: '', lattes: '', googleAcademico: '', linkedin: '' })
   mostrarForm.value = false
   showToast('Professor cadastrado.', 'success')
 }
 
 function cancelarAdd() {
-  Object.assign(formAdd, { nome: '', estruturaId: '', lattes: '', googleAcademico: '', linkedin: '' })
+  Object.assign(formAdd, { nome: '', sala: '', estruturaId: '', descricao: '', foto: '', lattes: '', googleAcademico: '', linkedin: '' })
   erros.nome = ''
   mostrarForm.value = false
 }
 
 // --------------- Edição inline ---------------
-const editandoId = ref(null)
-const formEdit = reactive({ nome: '', estruturaId: '', lattes: '', googleAcademico: '', linkedin: '' })
+const editandoId  = ref(null)
+const fileEditRef = ref(null)
+const formEdit = reactive({ nome: '', sala: '', estruturaId: '', descricao: '', foto: '', lattes: '', googleAcademico: '', linkedin: '' })
 const errosEdit = reactive({ nome: '' })
+
+function triggerFileEdit() {
+  const el = Array.isArray(fileEditRef.value) ? fileEditRef.value[0] : fileEditRef.value
+  el?.click()
+}
 
 function abrirEdit(p) {
   editandoId.value = p.id
   errosEdit.nome = ''
   Object.assign(formEdit, {
     nome: p.nome,
+    sala: p.sala ?? '',
     estruturaId: p.estruturaId ?? '',
+    descricao: p.descricao ?? '',
+    foto: p.foto ?? '',
     lattes: p.lattes ?? '',
     googleAcademico: p.googleAcademico ?? '',
     linkedin: p.linkedin ?? '',
   })
 }
 
+async function onFotoEdit(e) {
+  const file = e.target.files?.[0]
+  if (file) formEdit.foto = await comprimirImagem(file)
+  e.target.value = ''
+}
+function removerFotoEdit() { formEdit.foto = '' }
+
 function salvarEdit(id) {
   errosEdit.nome = validarNome(formEdit.nome)
   if (errosEdit.nome) return
   updateProfessor(id, {
     nome: formEdit.nome.trim(),
+    sala: formEdit.sala.trim(),
     estruturaId: formEdit.estruturaId ? Number(formEdit.estruturaId) : null,
+    descricao: formEdit.descricao.trim(),
+    foto: formEdit.foto || '',
     lattes: formEdit.lattes.trim(),
     googleAcademico: formEdit.googleAcademico.trim(),
     linkedin: formEdit.linkedin.trim(),
@@ -120,11 +171,35 @@ const lista = computed(() => {
         </div>
 
         <div class="field">
-          <label class="label">Sala / Localização <span class="field-hint">(opcional — linka com o Mapa)</span></label>
+          <label class="label">Sala <span class="field-hint">(opcional)</span></label>
+          <input v-model="formAdd.sala" type="text" class="input" placeholder="Ex.: Sala 214, Bloco CP">
+        </div>
+
+        <div class="field">
+          <label class="label">Localização no mapa <span class="field-hint">(opcional — linka com o Mapa)</span></label>
           <select v-model="formAdd.estruturaId" class="input">
             <option value="">Nenhuma</option>
             <option v-for="e in estruturas" :key="e.id" :value="e.id">{{ e.nome }}</option>
           </select>
+        </div>
+
+        <div class="field">
+          <label class="label">Descrição <span class="field-hint">(opcional)</span></label>
+          <textarea v-model="formAdd.descricao" class="input textarea" rows="3" placeholder="Área de atuação, disciplinas, linha de pesquisa…"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="label">Foto <span class="field-hint">(opcional)</span></label>
+          <div v-if="formAdd.foto" class="imagens-preview">
+            <div class="img-thumb-wrap">
+              <img :src="formAdd.foto" class="img-thumb img-thumb--avatar" alt="">
+              <button type="button" class="img-thumb-remove" @click="removerFotoAdd">×</button>
+            </div>
+          </div>
+          <button type="button" class="btn-foto" @click="fileAddRef.click()" style="margin-top:8px;">
+            {{ formAdd.foto ? 'Trocar foto' : '+ Adicionar foto' }}
+          </button>
+          <input ref="fileAddRef" type="file" accept="image/*" style="display:none" @change="onFotoAdd">
         </div>
 
         <div class="field">
@@ -158,11 +233,18 @@ const lista = computed(() => {
 
       <div v-for="p in lista" :key="p.id" class="pub-card">
         <template v-if="editandoId !== p.id">
-          <div class="pub-card-titulo">{{ p.nome }}</div>
-          <div v-if="p.estruturaId" style="font-size:0.8rem;color:var(--cinza);margin-bottom:0.4rem;">
-            Localização: {{ nomeEstrutura(p.estruturaId) }}
+          <div class="pub-card-top-row">
+            <img v-if="p.foto" :src="p.foto" class="pub-card-avatar" :alt="p.nome">
+            <div>
+              <div class="pub-card-titulo">{{ p.nome }}</div>
+              <div v-if="p.sala" style="font-size:0.8rem;color:var(--cinza);">{{ p.sala }}</div>
+              <div v-if="p.estruturaId" style="font-size:0.8rem;color:var(--cinza);">
+                Localização: {{ nomeEstrutura(p.estruturaId) }}
+              </div>
+            </div>
           </div>
-          <div v-if="p.lattes || p.googleAcademico || p.linkedin" class="diretorio-links">
+          <p v-if="p.descricao" class="pub-card-preview" style="margin-top:0.6rem;">{{ p.descricao }}</p>
+          <div v-if="p.lattes || p.googleAcademico || p.linkedin" class="diretorio-links" style="margin-top:0.6rem;">
             <span v-if="p.lattes" class="diretorio-pill">Lattes</span>
             <span v-if="p.googleAcademico" class="diretorio-pill">Google Acadêmico</span>
             <span v-if="p.linkedin" class="diretorio-pill">LinkedIn</span>
@@ -183,11 +265,32 @@ const lista = computed(() => {
             <span v-if="errosEdit.nome" class="error-msg" style="display:block;">{{ errosEdit.nome }}</span>
           </div>
           <div class="field">
-            <label class="label">Sala / Localização</label>
+            <label class="label">Sala <span class="field-hint">(opcional)</span></label>
+            <input v-model="formEdit.sala" type="text" class="input" placeholder="Ex.: Sala 214, Bloco CP">
+          </div>
+          <div class="field">
+            <label class="label">Localização no mapa</label>
             <select v-model="formEdit.estruturaId" class="input">
               <option value="">Nenhuma</option>
               <option v-for="e in estruturas" :key="e.id" :value="e.id">{{ e.nome }}</option>
             </select>
+          </div>
+          <div class="field">
+            <label class="label">Descrição</label>
+            <textarea v-model="formEdit.descricao" class="input textarea" rows="3"></textarea>
+          </div>
+          <div class="field">
+            <label class="label">Foto</label>
+            <div v-if="formEdit.foto" class="imagens-preview">
+              <div class="img-thumb-wrap">
+                <img :src="formEdit.foto" class="img-thumb img-thumb--avatar" alt="">
+                <button type="button" class="img-thumb-remove" @click="removerFotoEdit">×</button>
+              </div>
+            </div>
+            <button type="button" class="btn-foto" @click="triggerFileEdit()" style="margin-top:8px;">
+              {{ formEdit.foto ? 'Trocar foto' : '+ Adicionar foto' }}
+            </button>
+            <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onFotoEdit">
           </div>
           <div class="field">
             <label class="label">Lattes</label>
@@ -221,11 +324,30 @@ const lista = computed(() => {
 .mural-search:focus { border-color: var(--roxo); }
 .mural-count { font-size: 0.8rem; color: var(--cinza); flex-shrink: 0; }
 
+.btn-foto {
+  padding: 7px 14px; background: var(--branco); border: 2px dashed var(--roxo); border-radius: 2px;
+  font-family: 'Archivo', sans-serif; font-size: 0.84rem; color: var(--roxo-escuro); cursor: pointer; transition: background 0.15s;
+}
+.btn-foto:hover { background: rgba(80,64,160,0.07); }
+
+.imagens-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.img-thumb-wrap { position: relative; flex-shrink: 0; }
+.img-thumb { width: 90px; height: 60px; object-fit: cover; border-radius: 2px; border: 1.5px solid var(--creme-escuro); display: block; }
+.img-thumb--avatar { width: 72px; height: 72px; border-radius: 50%; }
+.img-thumb-remove {
+  position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--preto); color: var(--branco); border: none; font-size: 0.75rem; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+
 .pub-card {
   background: var(--branco); border: 1.5px solid var(--creme-escuro); border-left: 4px solid var(--roxo);
   border-radius: 2px; padding: 1.2rem 1.4rem; margin-bottom: 0.8rem; box-shadow: 3px 3px 0 var(--roxo-escuro);
 }
+.pub-card-top-row { display: flex; align-items: center; gap: 12px; }
+.pub-card-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1.5px solid var(--creme-escuro); }
 .pub-card-titulo { font-family: 'Archivo Black', sans-serif; font-weight: 700; font-size: 1rem; color: var(--preto); margin-bottom: 0.3rem; }
+.pub-card-preview { font-size: 0.84rem; color: var(--preto); opacity: 0.75; line-height: 1.55; }
 .pub-card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .pub-card-btn { padding: 5px 14px; font-size: 0.82rem; }
 .pub-card-btn--danger { color: var(--vermelho, #c0392b); border-color: var(--vermelho, #c0392b); }
@@ -238,7 +360,7 @@ const lista = computed(() => {
   text-transform: uppercase; letter-spacing: 0.04em;
 }
 
-.textarea { min-height: 120px; resize: vertical; }
+.textarea { min-height: 80px; resize: vertical; }
 .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 0.8rem; }
 
 .empty-state {

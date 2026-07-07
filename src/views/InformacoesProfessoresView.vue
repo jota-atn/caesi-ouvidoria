@@ -38,7 +38,15 @@ const lista = computed(() => {
 
       <div class="diretorio-grid">
         <div v-for="p in lista" :key="p.id" class="diretorio-card">
-          <div class="diretorio-nome">{{ p.nome }}</div>
+          <div class="diretorio-top-row">
+            <img v-if="p.foto" :src="p.foto" class="diretorio-avatar" :alt="p.nome">
+            <span v-else class="diretorio-avatar diretorio-avatar--inicial">{{ p.nome?.[0]?.toUpperCase() || '?' }}</span>
+            <div>
+              <div class="diretorio-nome">{{ p.nome }}</div>
+              <div v-if="p.sala" class="diretorio-sala">{{ p.sala }}</div>
+            </div>
+          </div>
+          <p v-if="p.descricao" class="diretorio-desc">{{ p.descricao }}</p>
           <div v-if="p.lattes || p.googleAcademico || p.linkedin" class="diretorio-links">
             <a v-if="p.lattes"          :href="p.lattes"          target="_blank" rel="noopener" class="diretorio-pill">Lattes</a>
             <a v-if="p.googleAcademico" :href="p.googleAcademico" target="_blank" rel="noopener" class="diretorio-pill">Google Acadêmico</a>
@@ -81,12 +89,25 @@ const lista = computed(() => {
   gap: 0.6rem;
 }
 
+.diretorio-top-row { display: flex; align-items: center; gap: 10px; }
+.diretorio-avatar {
+  width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+  border: 1.5px solid var(--creme-escuro);
+}
+.diretorio-avatar--inicial {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--roxo-escuro); color: var(--creme);
+  font-family: 'Archivo Black', sans-serif; font-weight: 800; font-size: 1.1rem;
+}
+
 .diretorio-nome {
   font-family: 'Archivo Black', sans-serif;
   font-weight: 700;
   font-size: 0.98rem;
   color: var(--preto);
 }
+.diretorio-sala { font-size: 0.78rem; color: var(--cinza); margin-top: 2px; }
+.diretorio-desc { font-size: 0.84rem; color: var(--preto); opacity: 0.75; line-height: 1.55; }
 
 .diretorio-links { display: flex; gap: 6px; flex-wrap: wrap; }
 .diretorio-pill {
