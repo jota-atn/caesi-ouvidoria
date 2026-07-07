@@ -5,7 +5,7 @@ import BackLink from '../../components/BackLink.vue'
 import { laboratorios, addLaboratorio, updateLaboratorio, deleteLaboratorio } from '../../stores/informacoes.js'
 import { estruturas } from '../../stores/mapa.js'
 import { showToast } from '../../stores/toast.js'
-import { isEmail } from '../../utils/validation.js'
+import { isEmail, isUrl } from '../../utils/validation.js'
 
 function nomeEstrutura(id) { return estruturas.value.find(e => e.id === id)?.nome ?? null }
 
@@ -35,7 +35,7 @@ const mostrarForm = ref(false)
 const fileAddRef  = ref(null)
 const fileGaleriaAddRef = ref(null)
 const formAdd = reactive({ nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
-const erros   = reactive({ nome: '', email: '' })
+const erros   = reactive({ nome: '', email: '', linkExterno: '' })
 
 function validarNome(nome) {
   return nome.trim().length < 2 ? 'Nome obrigatório (mínimo 2 caracteres).' : ''
@@ -45,10 +45,15 @@ function validarEmailOpcional(email) {
   return email.trim() && !isEmail(email) ? 'Informe um e-mail válido.' : ''
 }
 
+function validarUrlOpcional(url) {
+  return url.trim() && !isUrl(url) ? 'Informe um link válido.' : ''
+}
+
 function validar(form) {
-  erros.nome  = validarNome(form.nome)
-  erros.email = validarEmailOpcional(form.email)
-  return !erros.nome && !erros.email
+  erros.nome        = validarNome(form.nome)
+  erros.email       = validarEmailOpcional(form.email)
+  erros.linkExterno = validarUrlOpcional(form.linkExterno)
+  return !erros.nome && !erros.email && !erros.linkExterno
 }
 
 async function onImagemAdd(e) {
@@ -85,8 +90,7 @@ function publicar() {
 
 function cancelarAdd() {
   Object.assign(formAdd, { nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
-  erros.nome = ''
-  erros.email = ''
+  Object.assign(erros, { nome: '', email: '', linkExterno: '' })
   mostrarForm.value = false
 }
 
@@ -100,7 +104,7 @@ function triggerGaleriaEdit() {
   el?.click()
 }
 const formEdit = reactive({ nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
-const errosEdit = reactive({ nome: '', email: '' })
+const errosEdit = reactive({ nome: '', email: '', linkExterno: '' })
 
 function triggerFileEdit() {
   const el = Array.isArray(fileEditRef.value) ? fileEditRef.value[0] : fileEditRef.value
@@ -109,8 +113,7 @@ function triggerFileEdit() {
 
 function abrirEdit(l) {
   editandoId.value = l.id
-  errosEdit.nome = ''
-  errosEdit.email = ''
+  Object.assign(errosEdit, { nome: '', email: '', linkExterno: '' })
   Object.assign(formEdit, {
     nome: l.nome, sigla: l.sigla ?? '', descricao: l.descricao ?? '',
     imagem: l.imagem ?? '', imagens: [...(l.imagens ?? [])], email: l.email ?? '',
@@ -134,9 +137,10 @@ async function onGaleriaEdit(e) {
 function removerGaleriaEdit(i) { formEdit.imagens.splice(i, 1) }
 
 function salvarEdit(id) {
-  errosEdit.nome  = validarNome(formEdit.nome)
-  errosEdit.email = validarEmailOpcional(formEdit.email)
-  if (errosEdit.nome || errosEdit.email) return
+  errosEdit.nome        = validarNome(formEdit.nome)
+  errosEdit.email       = validarEmailOpcional(formEdit.email)
+  errosEdit.linkExterno = validarUrlOpcional(formEdit.linkExterno)
+  if (errosEdit.nome || errosEdit.email || errosEdit.linkExterno) return
   updateLaboratorio(id, {
     nome: formEdit.nome.trim(),
     sigla: formEdit.sigla.trim(),
@@ -206,7 +210,8 @@ const lista = computed(() => {
         </div>
         <div class="field">
           <label class="label">Link externo <span class="field-hint">(opcional)</span></label>
-          <input v-model="formAdd.linkExterno" type="url" class="input" placeholder="https://...">
+          <input v-model="formAdd.linkExterno" type="url" class="input" placeholder="https://..." :class="{ invalid: erros.linkExterno }">
+          <span v-if="erros.linkExterno" class="error-msg" style="display:block;">{{ erros.linkExterno }}</span>
         </div>
         <div class="field">
           <label class="label">Sala / Localização <span class="field-hint">(opcional — linka com o Mapa)</span></label>
@@ -303,7 +308,8 @@ const lista = computed(() => {
           </div>
           <div class="field">
             <label class="label">Link externo</label>
-            <input v-model="formEdit.linkExterno" type="url" class="input">
+            <input v-model="formEdit.linkExterno" type="url" class="input" :class="{ invalid: errosEdit.linkExterno }">
+            <span v-if="errosEdit.linkExterno" class="error-msg" style="display:block;">{{ errosEdit.linkExterno }}</span>
           </div>
           <div class="field">
             <label class="label">Sala / Localização</label>

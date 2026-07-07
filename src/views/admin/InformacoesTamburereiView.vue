@@ -4,12 +4,17 @@ import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
 import { tamburetei, saveTamburetei } from '../../stores/informacoes.js'
 import { showToast } from '../../stores/toast.js'
+import { isUrl } from '../../utils/validation.js'
 
 const form = ref({ ...tamburetei.value })
 const salvo = ref(false)
+const erros = ref({})
 
 function salvar() {
   if (!form.value.titulo.trim()) { showToast('Informe o título da página.', 'error'); return }
+  const linkInvalido = form.value.linkExterno.trim() && !isUrl(form.value.linkExterno)
+  erros.value = { linkExterno: linkInvalido }
+  if (linkInvalido) return
   saveTamburetei({
     titulo: form.value.titulo.trim(),
     descricao: form.value.descricao.trim(),
@@ -50,7 +55,8 @@ function salvar() {
 
         <div class="field">
           <label class="label">Link externo</label>
-          <input v-model="form.linkExterno" type="url" class="input" placeholder="https://tamburetei.opendevufcg.org/">
+          <input v-model="form.linkExterno" type="url" class="input" placeholder="https://tamburetei.opendevufcg.org/" :class="{ invalid: erros.linkExterno }">
+          <span v-if="erros.linkExterno" class="error-msg" style="display:block;">Informe um link válido.</span>
         </div>
 
         <button class="btn btn-primary" :style="salvo ? 'background:var(--verde);border-color:var(--verde);' : ''" @click="salvar">

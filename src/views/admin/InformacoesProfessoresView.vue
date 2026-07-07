@@ -5,7 +5,7 @@ import BackLink from '../../components/BackLink.vue'
 import { professores, addProfessor, updateProfessor, deleteProfessor } from '../../stores/informacoes.js'
 import { estruturas } from '../../stores/mapa.js'
 import { showToast } from '../../stores/toast.js'
-import { isEmail } from '../../utils/validation.js'
+import { isEmail, isUrl } from '../../utils/validation.js'
 
 function nomeEstrutura(id) { return estruturas.value.find(e => e.id === id)?.nome ?? null }
 
@@ -34,7 +34,7 @@ function comprimirImagem(file) {
 const mostrarForm = ref(false)
 const fileAddRef  = ref(null)
 const formAdd = reactive({ nome: '', sala: '', estruturaId: '', descricao: '', foto: '', email: '', lattes: '', googleAcademico: '', linkedin: '' })
-const erros   = reactive({ nome: '', email: '' })
+const erros   = reactive({ nome: '', email: '', lattes: '', googleAcademico: '', linkedin: '' })
 
 function validarNome(nome) {
   return nome.trim().length < 2 ? 'Nome obrigatório (mínimo 2 caracteres).' : ''
@@ -44,10 +44,17 @@ function validarEmailOpcional(email) {
   return email.trim() && !isEmail(email) ? 'Informe um e-mail válido.' : ''
 }
 
+function validarUrlOpcional(url) {
+  return url.trim() && !isUrl(url) ? 'Informe um link válido.' : ''
+}
+
 function validar(form) {
-  erros.nome  = validarNome(form.nome)
-  erros.email = validarEmailOpcional(form.email)
-  return !erros.nome && !erros.email
+  erros.nome            = validarNome(form.nome)
+  erros.email           = validarEmailOpcional(form.email)
+  erros.lattes          = validarUrlOpcional(form.lattes)
+  erros.googleAcademico = validarUrlOpcional(form.googleAcademico)
+  erros.linkedin        = validarUrlOpcional(form.linkedin)
+  return !erros.nome && !erros.email && !erros.lattes && !erros.googleAcademico && !erros.linkedin
 }
 
 async function onFotoAdd(e) {
@@ -77,8 +84,7 @@ function publicar() {
 
 function cancelarAdd() {
   Object.assign(formAdd, { nome: '', sala: '', estruturaId: '', descricao: '', foto: '', email: '', lattes: '', googleAcademico: '', linkedin: '' })
-  erros.nome = ''
-  erros.email = ''
+  Object.assign(erros, { nome: '', email: '', lattes: '', googleAcademico: '', linkedin: '' })
   mostrarForm.value = false
 }
 
@@ -86,7 +92,7 @@ function cancelarAdd() {
 const editandoId  = ref(null)
 const fileEditRef = ref(null)
 const formEdit = reactive({ nome: '', sala: '', estruturaId: '', descricao: '', foto: '', email: '', lattes: '', googleAcademico: '', linkedin: '' })
-const errosEdit = reactive({ nome: '', email: '' })
+const errosEdit = reactive({ nome: '', email: '', lattes: '', googleAcademico: '', linkedin: '' })
 
 function triggerFileEdit() {
   const el = Array.isArray(fileEditRef.value) ? fileEditRef.value[0] : fileEditRef.value
@@ -95,8 +101,7 @@ function triggerFileEdit() {
 
 function abrirEdit(p) {
   editandoId.value = p.id
-  errosEdit.nome = ''
-  errosEdit.email = ''
+  Object.assign(errosEdit, { nome: '', email: '', lattes: '', googleAcademico: '', linkedin: '' })
   Object.assign(formEdit, {
     nome: p.nome,
     sala: p.sala ?? '',
@@ -118,9 +123,12 @@ async function onFotoEdit(e) {
 function removerFotoEdit() { formEdit.foto = '' }
 
 function salvarEdit(id) {
-  errosEdit.nome  = validarNome(formEdit.nome)
-  errosEdit.email = validarEmailOpcional(formEdit.email)
-  if (errosEdit.nome || errosEdit.email) return
+  errosEdit.nome            = validarNome(formEdit.nome)
+  errosEdit.email           = validarEmailOpcional(formEdit.email)
+  errosEdit.lattes          = validarUrlOpcional(formEdit.lattes)
+  errosEdit.googleAcademico = validarUrlOpcional(formEdit.googleAcademico)
+  errosEdit.linkedin        = validarUrlOpcional(formEdit.linkedin)
+  if (errosEdit.nome || errosEdit.email || errosEdit.lattes || errosEdit.googleAcademico || errosEdit.linkedin) return
   updateProfessor(id, {
     nome: formEdit.nome.trim(),
     sala: formEdit.sala.trim(),
@@ -222,15 +230,18 @@ const lista = computed(() => {
 
         <div class="field">
           <label class="label">Lattes <span class="field-hint">(opcional)</span></label>
-          <input v-model="formAdd.lattes" type="url" class="input" placeholder="http://lattes.cnpq.br/...">
+          <input v-model="formAdd.lattes" type="url" class="input" placeholder="http://lattes.cnpq.br/..." :class="{ invalid: erros.lattes }">
+          <span v-if="erros.lattes" class="error-msg" style="display:block;">{{ erros.lattes }}</span>
         </div>
         <div class="field">
           <label class="label">Google Acadêmico <span class="field-hint">(opcional)</span></label>
-          <input v-model="formAdd.googleAcademico" type="url" class="input" placeholder="https://scholar.google.com/...">
+          <input v-model="formAdd.googleAcademico" type="url" class="input" placeholder="https://scholar.google.com/..." :class="{ invalid: erros.googleAcademico }">
+          <span v-if="erros.googleAcademico" class="error-msg" style="display:block;">{{ erros.googleAcademico }}</span>
         </div>
         <div class="field">
           <label class="label">LinkedIn <span class="field-hint">(opcional)</span></label>
-          <input v-model="formAdd.linkedin" type="url" class="input" placeholder="https://linkedin.com/in/...">
+          <input v-model="formAdd.linkedin" type="url" class="input" placeholder="https://linkedin.com/in/..." :class="{ invalid: erros.linkedin }">
+          <span v-if="erros.linkedin" class="error-msg" style="display:block;">{{ erros.linkedin }}</span>
         </div>
 
         <div class="form-actions">
@@ -318,15 +329,18 @@ const lista = computed(() => {
           </div>
           <div class="field">
             <label class="label">Lattes</label>
-            <input v-model="formEdit.lattes" type="url" class="input">
+            <input v-model="formEdit.lattes" type="url" class="input" :class="{ invalid: errosEdit.lattes }">
+            <span v-if="errosEdit.lattes" class="error-msg" style="display:block;">{{ errosEdit.lattes }}</span>
           </div>
           <div class="field">
             <label class="label">Google Acadêmico</label>
-            <input v-model="formEdit.googleAcademico" type="url" class="input">
+            <input v-model="formEdit.googleAcademico" type="url" class="input" :class="{ invalid: errosEdit.googleAcademico }">
+            <span v-if="errosEdit.googleAcademico" class="error-msg" style="display:block;">{{ errosEdit.googleAcademico }}</span>
           </div>
           <div class="field">
             <label class="label">LinkedIn</label>
-            <input v-model="formEdit.linkedin" type="url" class="input">
+            <input v-model="formEdit.linkedin" type="url" class="input" :class="{ invalid: errosEdit.linkedin }">
+            <span v-if="errosEdit.linkedin" class="error-msg" style="display:block;">{{ errosEdit.linkedin }}</span>
           </div>
           <div class="form-actions">
             <button class="btn btn-outline" @click="cancelarEdit">Cancelar</button>

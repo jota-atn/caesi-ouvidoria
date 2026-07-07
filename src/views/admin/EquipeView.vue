@@ -9,7 +9,7 @@ import {
   arquivarGestaoAtual, removerGestaoHistorico, adicionarGestaoManual,
 } from '../../stores/equipe.js'
 import { showToast } from '../../stores/toast.js'
-import { isEmail } from '../../utils/validation.js'
+import { isEmail, isUrl } from '../../utils/validation.js'
 import pencilIcon from '../../assets/icons/pencil.svg?raw'
 import xIcon     from '../../assets/icons/x.svg?raw'
 
@@ -37,7 +37,7 @@ const fileEditRef = ref(null)
 
 function iniciarEdicao(admin) {
   editandoId.value = admin.id
-  editForm.value   = { ...admin }
+  editForm.value   = { linkedin: '', git: '', lattes: '', ...admin }
   errorsEdit.value = {}
 }
 
@@ -56,10 +56,17 @@ async function onFotoEdit(e) {
 
 function removerFotoEdit() { editForm.value.foto = '' }
 
+function validarUrlOpcional(url) {
+  return !!(url.trim() && !isUrl(url))
+}
+
 function salvarEdicao() {
   const e = {}
   if (!editForm.value.nome.trim())    e.nome  = true
   if (!isEmail(editForm.value.email)) e.email = true
+  if (validarUrlOpcional(editForm.value.linkedin)) e.linkedin = true
+  if (validarUrlOpcional(editForm.value.git))      e.git      = true
+  if (validarUrlOpcional(editForm.value.lattes))   e.lattes   = true
   errorsEdit.value = e
   if (Object.keys(e).length) return
   updateAdmin(editandoId.value, { ...editForm.value })
@@ -103,6 +110,9 @@ function cadastrarAdmin() {
   const e = {}
   if (!formAdd.value.nome.trim())  e.nome  = true
   if (!isEmail(formAdd.value.email)) e.email = true
+  if (validarUrlOpcional(formAdd.value.linkedin)) e.linkedin = true
+  if (validarUrlOpcional(formAdd.value.git))      e.git      = true
+  if (validarUrlOpcional(formAdd.value.lattes))   e.lattes   = true
   errorsAdd.value = e
   if (Object.keys(e).length) return
   addAdmin({ ...formAdd.value })
@@ -289,15 +299,18 @@ function comprimirImagem(file) {
         <div class="admin-form-grid">
           <div class="field">
             <label>LinkedIn <span class="field-hint">(opcional)</span></label>
-            <input v-model="formAdd.linkedin" type="url" placeholder="https://linkedin.com/in/...">
+            <input v-model="formAdd.linkedin" type="url" placeholder="https://linkedin.com/in/..." :class="{ invalid: errorsAdd.linkedin }">
+            <span class="error-msg">Informe um link válido.</span>
           </div>
           <div class="field">
             <label>GitHub <span class="field-hint">(opcional)</span></label>
-            <input v-model="formAdd.git" type="url" placeholder="https://github.com/...">
+            <input v-model="formAdd.git" type="url" placeholder="https://github.com/..." :class="{ invalid: errorsAdd.git }">
+            <span class="error-msg">Informe um link válido.</span>
           </div>
           <div class="field">
             <label>Lattes <span class="field-hint">(opcional)</span></label>
-            <input v-model="formAdd.lattes" type="url" placeholder="http://lattes.cnpq.br/...">
+            <input v-model="formAdd.lattes" type="url" placeholder="http://lattes.cnpq.br/..." :class="{ invalid: errorsAdd.lattes }">
+            <span class="error-msg">Informe um link válido.</span>
           </div>
         </div>
 
@@ -389,15 +402,18 @@ function comprimirImagem(file) {
           <div class="admin-form-grid">
             <div class="field">
               <label>LinkedIn</label>
-              <input v-model="editForm.linkedin" type="url" placeholder="https://linkedin.com/in/...">
+              <input v-model="editForm.linkedin" type="url" placeholder="https://linkedin.com/in/..." :class="{ invalid: errorsEdit.linkedin }">
+              <span class="error-msg">Informe um link válido.</span>
             </div>
             <div class="field">
               <label>GitHub</label>
-              <input v-model="editForm.git" type="url" placeholder="https://github.com/...">
+              <input v-model="editForm.git" type="url" placeholder="https://github.com/..." :class="{ invalid: errorsEdit.git }">
+              <span class="error-msg">Informe um link válido.</span>
             </div>
             <div class="field">
               <label>Lattes</label>
-              <input v-model="editForm.lattes" type="url" placeholder="http://lattes.cnpq.br/...">
+              <input v-model="editForm.lattes" type="url" placeholder="http://lattes.cnpq.br/..." :class="{ invalid: errorsEdit.lattes }">
+              <span class="error-msg">Informe um link válido.</span>
             </div>
           </div>
 
