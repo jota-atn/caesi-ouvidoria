@@ -111,6 +111,11 @@ function confirmarDelete(id) {
   showToast('Artefato removido.', 'info')
 }
 
+const tiposUsados = computed(() => {
+  const set = new Set(artefatos.value.map(a => a.tipo).filter(Boolean))
+  return [...set].sort()
+})
+
 // --------------- Busca ---------------
 const busca = ref('')
 const lista = computed(() => {
@@ -145,7 +150,7 @@ const lista = computed(() => {
 
         <div class="field">
           <label class="label">Tipo <span class="field-hint">(opcional)</span></label>
-          <input v-model="formAdd.tipo" type="text" class="input" placeholder="Ex.: Nota Fiscal, Ata de Reunião, Ofício…">
+          <input v-model="formAdd.tipo" type="text" class="input" placeholder="Ex.: Nota Fiscal, Ata de Reunião, Ofício…" list="portal-tipos">
         </div>
 
         <div class="field">
@@ -225,7 +230,7 @@ const lista = computed(() => {
 
           <div class="field">
             <label class="label">Tipo</label>
-            <input v-model="formEdit.tipo" type="text" class="input" placeholder="Ex.: Nota Fiscal, Ata de Reunião, Ofício…">
+            <input v-model="formEdit.tipo" type="text" class="input" placeholder="Ex.: Nota Fiscal, Ata de Reunião, Ofício…" list="portal-tipos">
           </div>
 
           <div class="field">
@@ -255,6 +260,10 @@ const lista = computed(() => {
         </template>
 
       </div>
+
+      <datalist id="portal-tipos">
+        <option v-for="t in tiposUsados" :key="t" :value="t" />
+      </datalist>
     </div>
   </div>
 </template>

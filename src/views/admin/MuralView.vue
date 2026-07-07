@@ -131,6 +131,11 @@ function confirmarDelete(id) {
   showToast('Publicação removida.', 'info')
 }
 
+const tiposUsados = computed(() => {
+  const set = new Set(publicacoes.value.map(p => p.tipo).filter(Boolean))
+  return [...set].sort()
+})
+
 // --------------- Busca ---------------
 const busca = ref('')
 const lista = computed(() => {
@@ -171,7 +176,7 @@ const lista = computed(() => {
 
         <div class="field">
           <label class="label">Tipo de publicação</label>
-          <input v-model="formAdd.tipo" type="text" class="input" placeholder="Ex.: Edital, Comunicado, Evento…">
+          <input v-model="formAdd.tipo" type="text" class="input" placeholder="Ex.: Edital, Comunicado, Evento…" list="mural-tipos">
         </div>
 
         <div class="field">
@@ -263,7 +268,7 @@ const lista = computed(() => {
 
           <div class="field">
             <label class="label">Tipo de publicação</label>
-            <input v-model="formEdit.tipo" type="text" class="input" placeholder="Ex.: Edital, Comunicado, Evento…">
+            <input v-model="formEdit.tipo" type="text" class="input" placeholder="Ex.: Edital, Comunicado, Evento…" list="mural-tipos">
           </div>
 
           <div class="field">
@@ -292,6 +297,10 @@ const lista = computed(() => {
         </template>
 
       </div>
+
+      <datalist id="mural-tipos">
+        <option v-for="t in tiposUsados" :key="t" :value="t" />
+      </datalist>
     </div>
   </div>
 </template>
