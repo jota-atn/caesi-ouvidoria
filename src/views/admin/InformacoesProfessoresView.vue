@@ -183,6 +183,20 @@ const lista = computed(() => {
         </div>
 
         <div class="field">
+          <label class="label">Foto <span class="field-hint">(opcional)</span></label>
+          <div v-if="formAdd.foto" class="imagens-preview">
+            <div class="img-thumb-wrap">
+              <img :src="formAdd.foto" class="img-thumb img-thumb--avatar" alt="">
+              <button type="button" class="img-thumb-remove" @click="removerFotoAdd">×</button>
+            </div>
+          </div>
+          <button type="button" class="btn-foto" @click="fileAddRef.click()" style="margin-top:8px;">
+            {{ formAdd.foto ? 'Trocar foto' : '+ Adicionar foto' }}
+          </button>
+          <input ref="fileAddRef" type="file" accept="image/*" style="display:none" @change="onFotoAdd">
+        </div>
+
+        <div class="field">
           <label class="label">Sala <span class="field-hint">(opcional)</span></label>
           <input v-model="formAdd.sala" type="text" class="input" placeholder="Ex.: Sala 214, Bloco CP">
         </div>
@@ -198,20 +212,6 @@ const lista = computed(() => {
         <div class="field">
           <label class="label">Descrição <span class="field-hint">(opcional)</span></label>
           <textarea v-model="formAdd.descricao" class="input textarea" rows="3" placeholder="Área de atuação, disciplinas, linha de pesquisa…"></textarea>
-        </div>
-
-        <div class="field">
-          <label class="label">Foto <span class="field-hint">(opcional)</span></label>
-          <div v-if="formAdd.foto" class="imagens-preview">
-            <div class="img-thumb-wrap">
-              <img :src="formAdd.foto" class="img-thumb img-thumb--avatar" alt="">
-              <button type="button" class="img-thumb-remove" @click="removerFotoAdd">×</button>
-            </div>
-          </div>
-          <button type="button" class="btn-foto" @click="fileAddRef.click()" style="margin-top:8px;">
-            {{ formAdd.foto ? 'Trocar foto' : '+ Adicionar foto' }}
-          </button>
-          <input ref="fileAddRef" type="file" accept="image/*" style="display:none" @change="onFotoAdd">
         </div>
 
         <div class="field">
@@ -284,6 +284,19 @@ const lista = computed(() => {
             <span v-if="errosEdit.nome" class="error-msg" style="display:block;">{{ errosEdit.nome }}</span>
           </div>
           <div class="field">
+            <label class="label">Foto</label>
+            <div v-if="formEdit.foto" class="imagens-preview">
+              <div class="img-thumb-wrap">
+                <img :src="formEdit.foto" class="img-thumb img-thumb--avatar" alt="">
+                <button type="button" class="img-thumb-remove" @click="removerFotoEdit">×</button>
+              </div>
+            </div>
+            <button type="button" class="btn-foto" @click="triggerFileEdit()" style="margin-top:8px;">
+              {{ formEdit.foto ? 'Trocar foto' : '+ Adicionar foto' }}
+            </button>
+            <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onFotoEdit">
+          </div>
+          <div class="field">
             <label class="label">Sala <span class="field-hint">(opcional)</span></label>
             <input v-model="formEdit.sala" type="text" class="input" placeholder="Ex.: Sala 214, Bloco CP">
           </div>
@@ -297,19 +310,6 @@ const lista = computed(() => {
           <div class="field">
             <label class="label">Descrição</label>
             <textarea v-model="formEdit.descricao" class="input textarea" rows="3"></textarea>
-          </div>
-          <div class="field">
-            <label class="label">Foto</label>
-            <div v-if="formEdit.foto" class="imagens-preview">
-              <div class="img-thumb-wrap">
-                <img :src="formEdit.foto" class="img-thumb img-thumb--avatar" alt="">
-                <button type="button" class="img-thumb-remove" @click="removerFotoEdit">×</button>
-              </div>
-            </div>
-            <button type="button" class="btn-foto" @click="triggerFileEdit()" style="margin-top:8px;">
-              {{ formEdit.foto ? 'Trocar foto' : '+ Adicionar foto' }}
-            </button>
-            <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onFotoEdit">
           </div>
           <div class="field">
             <label class="label">E-mail de contato</label>

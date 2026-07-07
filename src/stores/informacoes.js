@@ -58,8 +58,8 @@ function persistLaboratorios(list) {
   _laboratorios.value = [...list]
 }
 
-export function addLaboratorio({ nome, sigla = '', descricao = '', imagem = null, linkExterno = '', estruturaId = null }) {
-  const novo = { id: Date.now(), nome, sigla, descricao, imagem, linkExterno, estruturaId }
+export function addLaboratorio({ nome, sigla = '', descricao = '', imagem = null, imagens = [], email = '', linkExterno = '', estruturaId = null }) {
+  const novo = { id: Date.now(), nome, sigla, descricao, imagem, imagens, email, linkExterno, estruturaId }
   persistLaboratorios([..._laboratorios.value, novo])
   return novo
 }

@@ -17,6 +17,7 @@ const routes = [
   { path: '/informacoes/tamburetei',         component: () => import('../views/InformacoesTamburereiView.vue') },
   { path: '/informacoes/professores',        component: () => import('../views/InformacoesProfessoresView.vue') },
   { path: '/informacoes/laboratorios',       component: () => import('../views/InformacoesLaboratoriosView.vue') },
+  { path: '/informacoes/laboratorios/:id',   component: () => import('../views/LaboratorioDetalheView.vue') },
   { path: '/admin',                  component: () => import('../views/admin/LoginView.vue') },
   { path: '/admin/trocar-senha',     component: () => import('../views/admin/TrocarSenhaView.vue'),         meta: { admin: true } },
   { path: '/admin/painel',           component: () => import('../views/admin/PainelView.vue'),              meta: { admin: true } },

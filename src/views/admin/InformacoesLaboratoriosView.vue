@@ -5,6 +5,7 @@ import BackLink from '../../components/BackLink.vue'
 import { laboratorios, addLaboratorio, updateLaboratorio, deleteLaboratorio } from '../../stores/informacoes.js'
 import { estruturas } from '../../stores/mapa.js'
 import { showToast } from '../../stores/toast.js'
+import { isEmail } from '../../utils/validation.js'
 
 function nomeEstrutura(id) { return estruturas.value.find(e => e.id === id)?.nome ?? null }
 
@@ -32,16 +33,22 @@ function comprimirImagem(file) {
 // --------------- Formulário adicionar ---------------
 const mostrarForm = ref(false)
 const fileAddRef  = ref(null)
-const formAdd = reactive({ nome: '', sigla: '', descricao: '', imagem: '', linkExterno: '', estruturaId: '' })
-const erros   = reactive({ nome: '' })
+const fileGaleriaAddRef = ref(null)
+const formAdd = reactive({ nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
+const erros   = reactive({ nome: '', email: '' })
 
 function validarNome(nome) {
   return nome.trim().length < 2 ? 'Nome obrigatório (mínimo 2 caracteres).' : ''
 }
 
+function validarEmailOpcional(email) {
+  return email.trim() && !isEmail(email) ? 'Informe um e-mail válido.' : ''
+}
+
 function validar(form) {
-  erros.nome = validarNome(form.nome)
-  return !erros.nome
+  erros.nome  = validarNome(form.nome)
+  erros.email = validarEmailOpcional(form.email)
+  return !erros.nome && !erros.email
 }
 
 async function onImagemAdd(e) {
@@ -51,6 +58,14 @@ async function onImagemAdd(e) {
 }
 function removerImagemAdd() { formAdd.imagem = '' }
 
+async function onGaleriaAdd(e) {
+  for (const file of e.target.files) {
+    formAdd.imagens.push(await comprimirImagem(file))
+  }
+  e.target.value = ''
+}
+function removerGaleriaAdd(i) { formAdd.imagens.splice(i, 1) }
+
 function publicar() {
   if (!validar(formAdd)) return
   addLaboratorio({
@@ -58,25 +73,34 @@ function publicar() {
     sigla: formAdd.sigla.trim(),
     descricao: formAdd.descricao.trim(),
     imagem: formAdd.imagem || null,
+    imagens: [...formAdd.imagens],
+    email: formAdd.email.trim(),
     linkExterno: formAdd.linkExterno.trim(),
     estruturaId: formAdd.estruturaId ? Number(formAdd.estruturaId) : null,
   })
-  Object.assign(formAdd, { nome: '', sigla: '', descricao: '', imagem: '', linkExterno: '', estruturaId: '' })
+  Object.assign(formAdd, { nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
   mostrarForm.value = false
   showToast('Laboratório cadastrado.', 'success')
 }
 
 function cancelarAdd() {
-  Object.assign(formAdd, { nome: '', sigla: '', descricao: '', imagem: '', linkExterno: '', estruturaId: '' })
+  Object.assign(formAdd, { nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
   erros.nome = ''
+  erros.email = ''
   mostrarForm.value = false
 }
 
 // --------------- Edição inline ---------------
 const editandoId  = ref(null)
 const fileEditRef = ref(null)
-const formEdit = reactive({ nome: '', sigla: '', descricao: '', imagem: '', linkExterno: '', estruturaId: '' })
-const errosEdit = reactive({ nome: '' })
+const fileGaleriaEditRef = ref(null)
+
+function triggerGaleriaEdit() {
+  const el = Array.isArray(fileGaleriaEditRef.value) ? fileGaleriaEditRef.value[0] : fileGaleriaEditRef.value
+  el?.click()
+}
+const formEdit = reactive({ nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
+const errosEdit = reactive({ nome: '', email: '' })
 
 function triggerFileEdit() {
   const el = Array.isArray(fileEditRef.value) ? fileEditRef.value[0] : fileEditRef.value
@@ -86,9 +110,11 @@ function triggerFileEdit() {
 function abrirEdit(l) {
   editandoId.value = l.id
   errosEdit.nome = ''
+  errosEdit.email = ''
   Object.assign(formEdit, {
     nome: l.nome, sigla: l.sigla ?? '', descricao: l.descricao ?? '',
-    imagem: l.imagem ?? '', linkExterno: l.linkExterno ?? '', estruturaId: l.estruturaId ?? '',
+    imagem: l.imagem ?? '', imagens: [...(l.imagens ?? [])], email: l.email ?? '',
+    linkExterno: l.linkExterno ?? '', estruturaId: l.estruturaId ?? '',
   })
 }
 
@@ -99,14 +125,25 @@ async function onImagemEdit(e) {
 }
 function removerImagemEdit() { formEdit.imagem = '' }
 
+async function onGaleriaEdit(e) {
+  for (const file of e.target.files) {
+    formEdit.imagens.push(await comprimirImagem(file))
+  }
+  e.target.value = ''
+}
+function removerGaleriaEdit(i) { formEdit.imagens.splice(i, 1) }
+
 function salvarEdit(id) {
-  errosEdit.nome = validarNome(formEdit.nome)
-  if (errosEdit.nome) return
+  errosEdit.nome  = validarNome(formEdit.nome)
+  errosEdit.email = validarEmailOpcional(formEdit.email)
+  if (errosEdit.nome || errosEdit.email) return
   updateLaboratorio(id, {
     nome: formEdit.nome.trim(),
     sigla: formEdit.sigla.trim(),
     descricao: formEdit.descricao.trim(),
     imagem: formEdit.imagem || null,
+    imagens: [...formEdit.imagens],
+    email: formEdit.email.trim(),
     linkExterno: formEdit.linkExterno.trim(),
     estruturaId: formEdit.estruturaId ? Number(formEdit.estruturaId) : null,
   })
@@ -179,7 +216,7 @@ const lista = computed(() => {
           </select>
         </div>
         <div class="field">
-          <label class="label">Imagem / logo <span class="field-hint">(opcional)</span></label>
+          <label class="label">Foto de capa <span class="field-hint">(opcional)</span></label>
           <div v-if="formAdd.imagem" class="imagens-preview">
             <div class="img-thumb-wrap">
               <img :src="formAdd.imagem" class="img-thumb" alt="">
@@ -187,9 +224,27 @@ const lista = computed(() => {
             </div>
           </div>
           <button type="button" class="btn-foto" @click="fileAddRef.click()" style="margin-top:8px;">
-            {{ formAdd.imagem ? 'Trocar imagem' : '+ Adicionar imagem' }}
+            {{ formAdd.imagem ? 'Trocar foto' : '+ Adicionar foto de capa' }}
           </button>
           <input ref="fileAddRef" type="file" accept="image/*" style="display:none" @change="onImagemAdd">
+        </div>
+
+        <div class="field">
+          <label class="label">Fotos extras <span class="field-hint">(opcional — equipe, eventos etc.)</span></label>
+          <div v-if="formAdd.imagens.length > 0" class="imagens-preview">
+            <div v-for="(img, i) in formAdd.imagens" :key="i" class="img-thumb-wrap">
+              <img :src="img" class="img-thumb" :alt="`Foto ${i + 1}`">
+              <button type="button" class="img-thumb-remove" @click="removerGaleriaAdd(i)">×</button>
+            </div>
+          </div>
+          <button type="button" class="btn-foto" @click="fileGaleriaAddRef.click()" style="margin-top:8px;">+ Adicionar fotos</button>
+          <input ref="fileGaleriaAddRef" type="file" accept="image/*" multiple style="display:none" @change="onGaleriaAdd">
+        </div>
+
+        <div class="field">
+          <label class="label">E-mail de contato <span class="field-hint">(opcional)</span></label>
+          <input v-model="formAdd.email" type="email" class="input" placeholder="laboratorio@ccc.ufcg.edu.br" :class="{ invalid: erros.email }">
+          <span v-if="erros.email" class="error-msg" style="display:block;">{{ erros.email }}</span>
         </div>
 
         <div class="form-actions">
@@ -221,6 +276,8 @@ const lista = computed(() => {
             Localização: {{ nomeEstrutura(l.estruturaId) }}
           </div>
           <div class="pub-card-preview">{{ l.descricao }}</div>
+          <div v-if="l.email" style="font-size:0.8rem;color:var(--cinza);margin-bottom:0.6rem;">{{ l.email }}</div>
+          <div v-if="l.imagens?.length" style="font-size:0.76rem;color:var(--cinza);margin-bottom:0.6rem;">{{ l.imagens.length }} foto{{ l.imagens.length > 1 ? 's' : '' }} extra{{ l.imagens.length > 1 ? 's' : '' }}</div>
           <div class="pub-card-actions">
             <button class="btn btn-outline pub-card-btn" @click="abrirEdit(l)">Editar</button>
             <button v-if="confirmarDeleteId === l.id" class="btn btn-danger pub-card-btn" @click="confirmarDelete(l.id)">Confirmar exclusão</button>
@@ -256,7 +313,7 @@ const lista = computed(() => {
             </select>
           </div>
           <div class="field">
-            <label class="label">Imagem / logo</label>
+            <label class="label">Foto de capa</label>
             <div v-if="formEdit.imagem" class="imagens-preview">
               <div class="img-thumb-wrap">
                 <img :src="formEdit.imagem" class="img-thumb" alt="">
@@ -264,9 +321,25 @@ const lista = computed(() => {
               </div>
             </div>
             <button type="button" class="btn-foto" @click="triggerFileEdit()" style="margin-top:8px;">
-              {{ formEdit.imagem ? 'Trocar imagem' : '+ Adicionar imagem' }}
+              {{ formEdit.imagem ? 'Trocar foto' : '+ Adicionar foto de capa' }}
             </button>
             <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onImagemEdit">
+          </div>
+          <div class="field">
+            <label class="label">Fotos extras <span class="field-hint">(equipe, eventos etc.)</span></label>
+            <div v-if="formEdit.imagens.length > 0" class="imagens-preview">
+              <div v-for="(img, i) in formEdit.imagens" :key="i" class="img-thumb-wrap">
+                <img :src="img" class="img-thumb" :alt="`Foto ${i + 1}`">
+                <button type="button" class="img-thumb-remove" @click="removerGaleriaEdit(i)">×</button>
+              </div>
+            </div>
+            <button type="button" class="btn-foto" @click="triggerGaleriaEdit()" style="margin-top:8px;">+ Adicionar fotos</button>
+            <input ref="fileGaleriaEditRef" type="file" accept="image/*" multiple style="display:none" @change="onGaleriaEdit">
+          </div>
+          <div class="field">
+            <label class="label">E-mail de contato</label>
+            <input v-model="formEdit.email" type="email" class="input" :class="{ invalid: errosEdit.email }">
+            <span v-if="errosEdit.email" class="error-msg" style="display:block;">{{ errosEdit.email }}</span>
           </div>
           <div class="form-actions">
             <button class="btn btn-outline" @click="cancelarEdit">Cancelar</button>

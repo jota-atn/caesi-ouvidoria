@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
-import mapPinIcon from '../assets/icons/map-pin.svg?raw'
 import { laboratorios } from '../stores/informacoes.js'
 
 const route = useRoute()
@@ -37,7 +36,7 @@ const lista = computed(() => {
       </div>
 
       <div class="lab-grid">
-        <div v-for="l in lista" :key="l.id" class="lab-card">
+        <RouterLink v-for="l in lista" :key="l.id" :to="`/informacoes/laboratorios/${l.id}`" class="lab-card">
           <div v-if="l.imagem" class="lab-card-img-wrap">
             <img :src="l.imagem" :alt="l.nome" class="lab-card-img">
           </div>
@@ -48,13 +47,10 @@ const lista = computed(() => {
             </div>
             <p v-if="l.descricao" class="lab-card-desc">{{ l.descricao }}</p>
             <div class="lab-card-footer">
-              <a v-if="l.linkExterno" :href="l.linkExterno" target="_blank" rel="noopener" class="diretorio-local">Site do laboratório →</a>
-              <RouterLink v-if="l.estruturaId" :to="`/?estrutura=${l.estruturaId}#mapa`" class="diretorio-local">
-                <span v-html="mapPinIcon" class="diretorio-local-icon"></span> Ver localização →
-              </RouterLink>
+              <span class="diretorio-local">Ver detalhes →</span>
             </div>
           </div>
-        </div>
+        </RouterLink>
       </div>
     </div>
 
@@ -84,6 +80,12 @@ const lista = computed(() => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.lab-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 3px 6px 0 var(--roxo-escuro);
 }
 
 .lab-card-img-wrap {
