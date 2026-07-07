@@ -10,6 +10,7 @@ import BackLink from '../../components/BackLink.vue'
 import { estruturas, addEstrutura, updateEstrutura, removeEstrutura, CENTRO_PADRAO } from '../../stores/mapa.js'
 import { showToast } from '../../stores/toast.js'
 import { isValidImageFile } from '../../utils/validation.js'
+import crosshairIcon from '../../assets/icons/crosshair.svg?raw'
 
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl })
@@ -166,6 +167,10 @@ onMounted(() => {
 
 watch(estruturas, () => renderMarkers())
 
+function recentralizar() {
+  map?.setView([CENTRO_PADRAO.lat, CENTRO_PADRAO.lng], 17)
+}
+
 onBeforeUnmount(() => { map?.remove() })
 </script>
 
@@ -188,6 +193,9 @@ onBeforeUnmount(() => { map?.remove() })
       <div class="mapa-layout">
         <div class="paper mapa-map-paper">
           <div ref="mapEl" class="mapa-leaflet"></div>
+          <button type="button" class="mapa-recentralizar" title="Recentralizar na UFCG" aria-label="Recentralizar na UFCG" @click="recentralizar">
+            <span v-html="crosshairIcon"></span>
+          </button>
         </div>
 
         <div class="paper mapa-painel">
@@ -286,6 +294,28 @@ onBeforeUnmount(() => { map?.remove() })
 
 .mapa-map-paper { padding: 0; overflow: hidden; }
 .mapa-leaflet { width: 100%; height: 560px; cursor: crosshair; }
+
+.mapa-recentralizar {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 400;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--branco);
+  border: 1.5px solid var(--creme-escuro);
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 var(--roxo-escuro);
+  color: var(--roxo-escuro);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+.mapa-recentralizar:hover { background: var(--creme); }
+.mapa-recentralizar:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--roxo-escuro); }
+.mapa-recentralizar :deep(svg) { width: 19px; height: 19px; }
 
 .mapa-form .field:last-of-type { margin-bottom: 0.8rem; }
 

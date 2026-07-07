@@ -10,6 +10,7 @@ import { isAdmin } from '../stores/auth.js'
 import { estruturas, CENTRO_PADRAO, addEstrutura, updateEstrutura, removeEstrutura } from '../stores/mapa.js'
 import { useEscapeKey } from '../composables/useEscapeKey.js'
 import { showToast } from '../stores/toast.js'
+import crosshairIcon from '../assets/icons/crosshair.svg?raw'
 
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl })
@@ -135,6 +136,10 @@ onMounted(() => {
   }
 })
 
+function recentralizar() {
+  mapa?.setView([CENTRO_PADRAO.lat, CENTRO_PADRAO.lng], 16)
+}
+
 watch(estruturas, () => renderMapaMarkers())
 
 onBeforeUnmount(() => { mapa?.remove() })
@@ -170,7 +175,12 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
         <span class="mapa-home-sem-resultado">Nenhuma estrutura encontrada.</span>
       </div>
 
-      <div ref="mapaEl" class="mapa-home-leaflet" :class="{ 'mapa-home-leaflet--admin': isAdmin }"></div>
+      <div class="mapa-home-leaflet-wrap">
+        <div ref="mapaEl" class="mapa-home-leaflet" :class="{ 'mapa-home-leaflet--admin': isAdmin }"></div>
+        <button type="button" class="mapa-recentralizar" title="Recentralizar na UFCG" aria-label="Recentralizar na UFCG" @click="recentralizar">
+          <span v-html="crosshairIcon"></span>
+        </button>
+      </div>
       <p style="font-size:0.78rem;color:var(--cinza);margin-top:0.8rem;">
         <template v-if="isAdmin">Clique num ponto vazio pra adicionar uma estrutura, ou num pin pra ver/editar. Arraste um pin pra reposicionar.</template>
         <template v-else>Clique num ponto do mapa pra ver os detalhes da estrutura.</template>

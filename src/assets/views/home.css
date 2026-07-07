@@ -501,6 +501,8 @@
 .mapa-home-resultado-item:hover { border-color: var(--roxo); background: rgba(80,64,160,0.06); }
 .mapa-home-sem-resultado { font-size: 0.85rem; color: var(--cinza); padding: 6px 2px; }
 
+.mapa-home-leaflet-wrap { position: relative; }
+
 .mapa-home-leaflet {
   width: 100%;
   height: 420px;
@@ -509,6 +511,28 @@
   border: 1.5px solid var(--creme-escuro);
 }
 .mapa-home-leaflet--admin { cursor: crosshair; }
+
+.mapa-recentralizar {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 400;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--branco);
+  border: 1.5px solid var(--creme-escuro);
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 var(--roxo-escuro);
+  color: var(--roxo-escuro);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+.mapa-recentralizar:hover { background: var(--creme); }
+.mapa-recentralizar:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--roxo-escuro); }
+.mapa-recentralizar svg { width: 19px; height: 19px; }
 
 .mapa-modal-galeria { margin-bottom: 1rem; }
 
