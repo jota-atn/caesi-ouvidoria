@@ -47,7 +47,7 @@ onBeforeUnmount(() => {
 
     <Navbar />
 
-    <div class="home-section" style="padding-top:3.5rem;flex:1;">
+    <div class="home-section" style="padding-top:2rem;flex:1;">
       <BackLink to="/" style="margin-bottom:1.2rem;" />
       <div class="section-label">Documentação oficial</div>
       <h1 class="section-title">Estatuto do <span>CAESI</span></h1>
