@@ -292,7 +292,7 @@ const lista = computed(() => {
 }
 .mural-search:focus { border-color: var(--roxo); }
 
-.mural-count { font-size: 0.8rem; color: var(--cinza); flex-shrink: 0; }
+.mural-count { font-size: 0.8rem; color: rgba(242,230,196,0.65); flex-shrink: 0; }
 
 .btn-foto {
   padding: 7px 14px;
