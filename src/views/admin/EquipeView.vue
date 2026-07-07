@@ -9,6 +9,7 @@ import {
   arquivarGestaoAtual, removerGestaoHistorico, adicionarGestaoManual,
 } from '../../stores/equipe.js'
 import { showToast } from '../../stores/toast.js'
+import { isEmail } from '../../utils/validation.js'
 import pencilIcon from '../../assets/icons/pencil.svg?raw'
 import xIcon     from '../../assets/icons/x.svg?raw'
 
@@ -31,16 +32,19 @@ function salvarInfo() {
 // --- Editar admin existente ---
 const editandoId  = ref(null)
 const editForm    = ref(null)
+const errorsEdit  = ref({})
 const fileEditRef = ref(null)
 
 function iniciarEdicao(admin) {
   editandoId.value = admin.id
   editForm.value   = { ...admin }
+  errorsEdit.value = {}
 }
 
 function cancelarEdicao() {
   editandoId.value = null
   editForm.value   = null
+  errorsEdit.value = {}
 }
 
 async function onFotoEdit(e) {
@@ -53,7 +57,11 @@ async function onFotoEdit(e) {
 function removerFotoEdit() { editForm.value.foto = '' }
 
 function salvarEdicao() {
-  if (!editForm.value.nome.trim() || !editForm.value.email.trim()) return
+  const e = {}
+  if (!editForm.value.nome.trim())    e.nome  = true
+  if (!isEmail(editForm.value.email)) e.email = true
+  errorsEdit.value = e
+  if (Object.keys(e).length) return
   updateAdmin(editandoId.value, { ...editForm.value })
   showToast('Admin atualizado.', 'success')
   cancelarEdicao()
@@ -94,7 +102,7 @@ function removerFotoAdd() { formAdd.value.foto = '' }
 function cadastrarAdmin() {
   const e = {}
   if (!formAdd.value.nome.trim())  e.nome  = true
-  if (!formAdd.value.email.trim()) e.email = true
+  if (!isEmail(formAdd.value.email)) e.email = true
   errorsAdd.value = e
   if (Object.keys(e).length) return
   addAdmin({ ...formAdd.value })
@@ -261,7 +269,7 @@ function comprimirImagem(file) {
             <label>E-mail *</label>
             <input v-model="formAdd.email" type="email" placeholder="admin@email.com"
               :class="{ invalid: errorsAdd.email }">
-            <span class="error-msg">Preencha o e-mail.</span>
+            <span class="error-msg">Informe um e-mail válido.</span>
           </div>
           <div class="field">
             <label>Diretoria <span class="field-hint">(opcional)</span></label>
@@ -355,11 +363,13 @@ function comprimirImagem(file) {
           <div class="admin-form-grid">
             <div class="field">
               <label>Nome *</label>
-              <input v-model="editForm.nome" type="text" maxlength="80">
+              <input v-model="editForm.nome" type="text" maxlength="80" :class="{ invalid: errorsEdit.nome }">
+              <span class="error-msg">Preencha o nome.</span>
             </div>
             <div class="field">
               <label>E-mail *</label>
-              <input v-model="editForm.email" type="email">
+              <input v-model="editForm.email" type="email" :class="{ invalid: errorsEdit.email }">
+              <span class="error-msg">Informe um e-mail válido.</span>
             </div>
             <div class="field">
               <label>Diretoria</label>

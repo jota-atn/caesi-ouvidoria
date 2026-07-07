@@ -99,6 +99,10 @@ function submitNovoForm() {
   if (!novoForm.value.titulo.trim()) e.titulo = true
   if (!novoForm.value.tipo)          e.tipo = true
   if (novoForm.value.pago && (!novoForm.value.valor || Number(novoForm.value.valor) <= 0)) e.valor = true
+  if (novoForm.value.limiteVagas !== '' && Number(novoForm.value.limiteVagas) < 1) e.limiteVagas = true
+  if (novoForm.value.campos.some(c => c.label.trim() && c.tipo === 'select' && !c.opcoesStr.split(',').map(s => s.trim()).filter(Boolean).length)) {
+    e.campos = true
+  }
   novoFormErrors.value = e
   if (Object.keys(e).length > 0) return
 
@@ -220,7 +224,8 @@ function submitNovoForm() {
             </div>
             <div class="field">
               <label>Limite de submissões <span class="field-hint">(opcional)</span></label>
-              <input v-model="novoForm.limiteVagas" type="number" min="1" step="1" placeholder="Ilimitado">
+              <input v-model="novoForm.limiteVagas" type="number" min="1" step="1" placeholder="Ilimitado" :class="{ invalid: novoFormErrors.limiteVagas }">
+              <span class="error-msg">O limite deve ser maior que zero.</span>
             </div>
           </div>
 
@@ -247,6 +252,10 @@ function submitNovoForm() {
           <div v-if="novoForm.campos.length === 0" style="font-size:0.85rem;color:var(--cinza);margin-bottom:1rem;">
             Nenhum campo adicionado. O formulário terá apenas nome e e-mail por padrão.
           </div>
+
+          <p v-if="novoFormErrors.campos" class="error-msg" style="display:block;margin-bottom:0.8rem;">
+            Campos do tipo "Seleção" precisam de ao menos uma opção.
+          </p>
 
           <div v-for="(campo, index) in novoForm.campos" :key="campo._id">
             <div class="campo-row">

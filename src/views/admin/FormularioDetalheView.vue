@@ -184,6 +184,7 @@ function salvarEdicao() {
   const e = {}
   if (!editForm.value.titulo.trim()) e.titulo = true
   if (formulario.value.pago && (!editForm.value.valor || Number(editForm.value.valor) <= 0)) e.valor = true
+  if (editForm.value.limiteVagas !== '' && Number(editForm.value.limiteVagas) < 1) e.limiteVagas = true
   editErrors.value = e
   if (Object.keys(e).length > 0) return
 
@@ -347,7 +348,8 @@ function excluirFormulario() {
             </div>
             <div class="field">
               <label>Limite de submissões <span class="field-hint">(opcional)</span></label>
-              <input v-model="editForm.limiteVagas" type="number" min="1" step="1" placeholder="Ilimitado">
+              <input v-model="editForm.limiteVagas" type="number" min="1" step="1" placeholder="Ilimitado" :class="{ invalid: editErrors.limiteVagas }">
+              <span class="error-msg">O limite deve ser maior que zero.</span>
             </div>
           </div>
           <div class="btn-row">

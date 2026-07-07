@@ -51,13 +51,13 @@ function desfazer() {
 }
 
 function salvarNota() {
-  updateNota(id, nota.value)
+  updateNota(id, nota.value.trim())
   notaSalva.value = true
   setTimeout(() => { notaSalva.value = false }, 2000)
 }
 
 function salvarResposta() {
-  updateResposta(id, resposta.value)
+  updateResposta(id, resposta.value.trim())
   respostaSalva.value = true
   setTimeout(() => { respostaSalva.value = false }, 2000)
   if (resposta.value.trim() && mensagem.value?.email) {
@@ -66,6 +66,10 @@ function salvarResposta() {
 }
 
 function enviarEmail() {
+  if (!emailAssunto.value.trim() || !emailCorpo.value.trim()) {
+    showToast('Preencha o assunto e a mensagem do e-mail.', 'error')
+    return
+  }
   emailAberto.value = false
   emailAssunto.value = ''
   emailCorpo.value = ''
