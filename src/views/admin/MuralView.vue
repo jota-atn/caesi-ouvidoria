@@ -1,10 +1,16 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
+import { marked } from 'marked'
 import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
 import { publicacoes, addPublicacao, updatePublicacao, deletePublicacao } from '../../stores/mural.js'
 import { showToast } from '../../stores/toast.js'
 import { isValidImageFile } from '../../utils/validation.js'
+
+function textoPlano(md) {
+  const html = String(marked.parse(md || ''))
+  return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim()
+}
 
 // --------------- Compressão ---------------
 function comprimirImagem(file) {
@@ -237,7 +243,7 @@ const lista = computed(() => {
             <span class="pub-card-data">{{ p.criadoEm }}<template v-if="p.editadoEm"> · editado {{ p.editadoEm }}</template></span>
           </div>
           <div class="pub-card-titulo">{{ p.titulo }}</div>
-          <div class="pub-card-preview">{{ p.mensagem }}</div>
+          <div class="pub-card-preview">{{ textoPlano(p.mensagem) }}</div>
 
           <div class="pub-card-actions">
             <RouterLink :to="`/mural/${p.id}`" class="btn btn-outline pub-card-btn" target="_blank">Ver →</RouterLink>
