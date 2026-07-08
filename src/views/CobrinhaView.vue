@@ -83,6 +83,31 @@ const NOMES_CHEFE = {
   invasor: 'Invasor Verde do Espaço',
 }
 
+const MENSAGENS_COMIDA_ESPECIAL = [
+  'Dalton ficaria orgulhoso!',
+  'Compilou de primeira. Suspeito.',
+  'Merge sem conflito. Milagre acadêmico.',
+  'Isso é O(1) de eficiência.',
+  'Aprovado com 10 em FMCC2',
+  'Venceu Manel em uma discussão',
+  'Foi chamado pra Projeto',
+]
+
+const MENSAGENS_GAME_OVER = [
+  'Essa aí tu pagou rasgado',
+  'Te vira bicho!',
+  'Dessa vez pagou fumado!',
+  'Foi pego colando, dá nisso mesmo',
+  'Essa doeu mais que P2 de manhã cedo',
+  'Tentou enrolar Eanes por ponto e olha no que deu',
+]
+
+function mensagemAleatoria(lista) {
+  return lista[Math.floor(Math.random() * lista.length)]
+}
+
+const mensagemGameOver = ref(MENSAGENS_GAME_OVER[0])
+
 const score = ref(0)
 const recorde = ref(Number(localStorage.getItem('caesi_cobrinha_recorde') || 0))
 const estado = ref('jogando') // 'jogando' | 'pausado' | 'fim' | 'vencido'
@@ -132,7 +157,7 @@ function reposicionarComida() {
   const livre = posicaoLivre()
   comida.x = livre.x
   comida.y = livre.y
-  comida.especial = comidasComidas > 0 && comidasComidas % 6 === 0
+  comida.especial = comidasComidas > 0 && comidasComidas % 12 === 0
 }
 
 function gerarObstaculos(qtd, evitarCentro = false, evitarCobra = false) {
@@ -413,6 +438,7 @@ function trocarVelocidade() {
 
 function morrer() {
   estado.value = 'fim'
+  mensagemGameOver.value = mensagemAleatoria(MENSAGENS_GAME_OVER)
   if (score.value > recorde.value) {
     recorde.value = score.value
     localStorage.setItem('caesi_cobrinha_recorde', String(recorde.value))
@@ -518,7 +544,7 @@ function tick() {
     comidasComidas += 1
     if (comida.especial) {
       score.value += 30
-      showToast('O professor Dalton aprovou sua manobra! +30', 'success')
+      showToast(`${mensagemAleatoria(MENSAGENS_COMIDA_ESPECIAL)} +30`, 'success')
     } else {
       score.value += 10
     }
@@ -682,7 +708,7 @@ onUnmounted(() => {
           ></div>
 
           <div v-if="estado === 'fim'" class="cobrinha-overlay">
-            <p class="cobrinha-overlay-titulo">A cobrinha foi capturada!</p>
+            <p class="cobrinha-overlay-titulo">{{ mensagemGameOver }}</p>
             <p class="cobrinha-overlay-sub">
               Pontuação: {{ score }}
               <template v-if="score > 0 && score >= recorde"> — novo recorde!</template>
