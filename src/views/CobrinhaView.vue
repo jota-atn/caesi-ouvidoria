@@ -3,9 +3,40 @@ import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BackLink from '../components/BackLink.vue'
 import { showToast } from '../stores/toast.js'
+import { useEscapeKey } from '../composables/useEscapeKey.js'
 import capeloIcon from '../assets/icons/graduation-cap.svg?raw'
 
 const router = useRouter()
+
+const mqDesktop = window.matchMedia('(any-pointer: fine)')
+const ehDesktop = ref(mqDesktop.matches)
+function atualizarEhDesktop(e) { ehDesktop.value = e.matches }
+
+const modalBoasVindas = ref(true)
+const modalConfirmarSaida = ref(false)
+let pausadoPeloModal = false
+
+function abrirConfirmarSaida() {
+  if (estado.value === 'jogando') {
+    estado.value = 'pausado'
+    pausadoPeloModal = true
+  }
+  modalConfirmarSaida.value = true
+}
+
+function fecharConfirmarSaida() {
+  modalConfirmarSaida.value = false
+  if (pausadoPeloModal) {
+    if (estado.value === 'pausado') estado.value = 'jogando'
+    pausadoPeloModal = false
+  }
+}
+
+useEscapeKey(() => {
+  if (modalBoasVindas.value) { modalBoasVindas.value = false; return }
+  if (modalConfirmarSaida.value) { fecharConfirmarSaida(); return }
+  abrirConfirmarSaida()
+})
 
 const CELL = 24
 const COLS = 28
@@ -157,8 +188,8 @@ function tick() {
 }
 
 function onKeydown(e) {
+  if (modalBoasVindas.value || modalConfirmarSaida.value) return
   if (estado.value === 'fim' && (e.key === 'Enter' || e.key === 'r' || e.key === 'R')) { reiniciar(); return }
-  if (e.key === 'Escape') { router.push('/'); return }
 
   const teclaNormalizada = e.key.length === 1 ? e.key.toLowerCase() : e.key
   const nomeDirecao = TECLA_PARA_DIRECAO[teclaNormalizada]
@@ -197,11 +228,14 @@ function onKeyup(e) {
 }
 
 onMounted(() => {
+  mqDesktop.addEventListener('change', atualizarEhDesktop)
+  if (!ehDesktop.value) return
   document.addEventListener('keydown', onKeydown)
   document.addEventListener('keyup', onKeyup)
   iniciar()
 })
 onUnmounted(() => {
+  mqDesktop.removeEventListener('change', atualizarEhDesktop)
   document.removeEventListener('keydown', onKeydown)
   document.removeEventListener('keyup', onKeyup)
   clearInterval(tickId)
@@ -217,7 +251,7 @@ onUnmounted(() => {
       <BackLink to="/" style="margin-bottom:1.2rem;" />
       <div class="page-heading">
         <h2>Cobrinha do <span>CAESI</span></h2>
-        <div class="cobrinha-hud">
+        <div class="cobrinha-hud" v-if="ehDesktop">
           <div class="cobrinha-stat">
             <span class="cobrinha-stat-num">{{ score }}</span>
             <span class="cobrinha-stat-label">Pontos</span>
@@ -229,7 +263,7 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div class="paper cobrinha-paper">
+      <div v-if="ehDesktop" class="paper cobrinha-paper">
         <div class="cobrinha-area" :style="{ width: COLS * CELL + 'px', height: ROWS * CELL + 'px' }">
           <div
             v-for="o in obstaculos"
@@ -289,6 +323,33 @@ onUnmounted(() => {
             <span class="cobrinha-tecla-grupo"><kbd>P</kbd>pausar</span>
             <span class="cobrinha-tecla-grupo"><kbd>Esc</kbd>sair</span>
           </div>
+        </div>
+      </div>
+
+      <div v-else class="paper cobrinha-paper" style="text-align:center;">
+        <p class="paper-title">Só dá pra jogar no computador</p>
+        <p style="font-size:0.9rem;line-height:1.6;">Esse Easter Egg usa o teclado — WASD ou as setinhas. Volta aqui de um computador pra jogar.</p>
+        <p v-if="recorde > 0" style="margin-top:0.6rem;color:var(--roxo-escuro);">Seu recorde até agora: <strong>{{ recorde }}</strong></p>
+      </div>
+    </div>
+
+    <div v-if="modalBoasVindas" class="modal-overlay" @click.self="modalBoasVindas = false">
+      <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
+        <h2 class="modal-title">Parabéns! Você encontrou um Easter Egg!</h2>
+        <p class="modal-body">Existe um código secreto escondido no site do CAESI, e você acabou de descobrir pra onde ele leva.</p>
+        <div class="modal-actions">
+          <button class="btn btn-amarelo" @click="modalBoasVindas = false">Jogar</button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="modalConfirmarSaida" class="modal-overlay" @click.self="fecharConfirmarSaida">
+      <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
+        <h2 class="modal-title">Sair da cobrinha?</h2>
+        <p class="modal-body">Você vai voltar pra página inicial do site.</p>
+        <div class="modal-actions">
+          <button class="btn btn-outline" @click="fecharConfirmarSaida">Cancelar</button>
+          <button class="btn btn-amarelo" @click="router.push('/')">Sair</button>
         </div>
       </div>
     </div>
