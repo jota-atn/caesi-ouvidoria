@@ -106,9 +106,17 @@ function pertoDoCentro(x, y) {
   return Math.abs(x - CENTRO_X) <= 4 && Math.abs(y - CENTRO_Y) <= 3
 }
 
+// zona de segurança ao redor da cabeça, mais uma faixa estendida bem à frente
+// na direção em que a cobra está indo — senão spawna algo "na cara" de quem
+// tá indo reto sem dar tempo nenhum de reagir
 function pertoDaCobra(x, y) {
   const cabeca = cobra.value[0]
-  return Math.abs(x - cabeca.x) <= 4 && Math.abs(y - cabeca.y) <= 3
+  if (Math.abs(x - cabeca.x) <= 5 && Math.abs(y - cabeca.y) <= 4) return true
+
+  const dir = direcao.value
+  const passosAFrente = (x - cabeca.x) * dir.x + (y - cabeca.y) * dir.y
+  const desvioLateral = dir.x !== 0 ? Math.abs(y - cabeca.y) : Math.abs(x - cabeca.x)
+  return passosAFrente >= 1 && passosAFrente <= 12 && desvioLateral <= 1
 }
 
 function posicaoLivre(evitarCentro = false, evitarCobra = false) {
@@ -378,9 +386,9 @@ function iniciar() {
   invulneravelInimigos = 0
   velocidade = 130
   estado.value = 'aguardando'
-  gerarObstaculos(6, true)
-  gerarInimigo(true)
-  gerarInimigo(true)
+  gerarObstaculos(6, true, true)
+  gerarInimigo(true, true)
+  gerarInimigo(true, true)
   reposicionarComida()
 
   // DEBUG temporário: começa direto na luta do chefe pra testar. Tirar depois.
