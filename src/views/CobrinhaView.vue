@@ -314,6 +314,49 @@ function iniciarBatalhaChefe() {
   showToast(`Chefe ${chefesDerrotados.value + 1} de 3 apareceu! Acerte a cabeça nele.`, 'info')
 }
 
+// ── Transição pra boss fight: cobra encolhe, tela fecha em círculo (iris wipe), troca o cenário, reabre ──
+const TAMANHO_COBRA_CHEFE = 3
+const TRANSICAO_DURACAO = 400
+const transicaoFase = ref(null) // null | 'fechando' | 'abrindo'
+const transicaoCentro = reactive({ x: 50, y: 50 })
+
+function centroDaCabecaPercentual() {
+  if (!cobra.value.length) return { x: 50, y: 50 }
+  const cabeca = cobra.value[0]
+  return { x: ((cabeca.x + 0.5) / COLS) * 100, y: ((cabeca.y + 0.5) / ROWS) * 100 }
+}
+
+function encolherCobraAnimado(alvo, aoTerminar) {
+  const excedente = cobra.value.length - alvo
+  if (excedente <= 0) { aoTerminar(); return }
+  const intervalo = Math.max(18, Math.min(55, 700 / excedente))
+  function passo() {
+    if (cobra.value.length <= alvo) { aoTerminar(); return }
+    cobra.value = cobra.value.slice(0, -1)
+    setTimeout(passo, intervalo)
+  }
+  passo()
+}
+
+function iniciarTransicaoChefe() {
+  if (estado.value === 'transicao') return
+  estado.value = 'transicao'
+  const centro = centroDaCabecaPercentual()
+  transicaoCentro.x = centro.x
+  transicaoCentro.y = centro.y
+  encolherCobraAnimado(TAMANHO_COBRA_CHEFE, () => {
+    transicaoFase.value = 'fechando'
+    setTimeout(() => {
+      iniciarBatalhaChefe()
+      transicaoFase.value = 'abrindo'
+      setTimeout(() => {
+        transicaoFase.value = null
+        estado.value = 'jogando'
+      }, TRANSICAO_DURACAO)
+    }, TRANSICAO_DURACAO)
+  })
+}
+
 function iniciar() {
   cobra.value = [
     { x: CENTRO_X, y: CENTRO_Y },
@@ -329,6 +372,7 @@ function iniciar() {
   chefeAtivo.value = null
   chefesDerrotados.value = 0
   proximoLimiarChefe.value = LIMIAR_CHEFE_INICIAL
+  transicaoFase.value = null
   score.value = 0
   comidasComidas = 0
   invulneravelInimigos = 0
@@ -419,7 +463,7 @@ function tick() {
         gerarInimigo(false, true)
         invulneravelInimigos = 15
         // DEBUG temporário: pula direto pro próximo chefe, sem esperar pontuação. Tirar depois.
-        if (DEBUG_COMECAR_NO_CHEFE) iniciarBatalhaChefe()
+        if (DEBUG_COMECAR_NO_CHEFE) iniciarTransicaoChefe()
       } else {
         empurrarChefe(chefeAtivo.value)
         chefeAtivo.value.atordoado = 10
@@ -484,7 +528,7 @@ function tick() {
   if (atingidoPorProjetil) { morrer(); return }
 
   if (!chefeAtivo.value && chefesDerrotados.value < 3 && score.value >= proximoLimiarChefe.value) {
-    iniciarBatalhaChefe()
+    iniciarTransicaoChefe()
   }
 }
 
@@ -620,6 +664,13 @@ onUnmounted(() => {
             class="cobrinha-segmento"
             :class="{ 'cobrinha-segmento--cabeca': i === 0, 'cobrinha-segmento--par': i > 0 && i % 2 === 0 }"
             :style="{ left: seg.x * CELL + 'px', top: seg.y * CELL + 'px', width: CELL + 'px', height: CELL + 'px' }"
+          ></div>
+
+          <div
+            v-if="transicaoFase"
+            class="cobrinha-transicao"
+            :class="'cobrinha-transicao--' + transicaoFase"
+            :style="{ left: transicaoCentro.x + '%', top: transicaoCentro.y + '%' }"
           ></div>
 
           <div v-if="estado === 'fim'" class="cobrinha-overlay">
@@ -935,6 +986,31 @@ onUnmounted(() => {
 .cobrinha-chefe-segmento--perdido {
   background: rgba(242,230,196,0.15);
   box-shadow: none;
+}
+
+.cobrinha-transicao {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 100vmax var(--preto);
+  z-index: 20;
+  pointer-events: none;
+}
+.cobrinha-transicao--fechando {
+  animation: cobrinha-iris-fechar 0.4s steps(10, end) forwards;
+}
+.cobrinha-transicao--abrindo {
+  animation: cobrinha-iris-abrir 0.4s steps(10, end) forwards;
+}
+@keyframes cobrinha-iris-fechar {
+  from { width: 2200px; height: 2200px; }
+  to   { width: 0; height: 0; }
+}
+@keyframes cobrinha-iris-abrir {
+  from { width: 0; height: 0; }
+  to   { width: 2200px; height: 2200px; }
 }
 
 .cobrinha-overlay {
