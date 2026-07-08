@@ -38,7 +38,7 @@ useEscapeKey(() => {
   abrirConfirmarSaida()
 })
 
-const CELL = 24
+const CELL = 28
 const COLS = 28
 const ROWS = 18
 
@@ -264,7 +264,7 @@ onUnmounted(() => {
       </div>
 
       <div v-if="ehDesktop" class="paper cobrinha-paper">
-        <div class="cobrinha-area" :style="{ width: COLS * CELL + 'px', height: ROWS * CELL + 'px' }">
+        <div class="cobrinha-area" :style="{ width: COLS * CELL + 'px', height: ROWS * CELL + 'px', backgroundSize: CELL + 'px ' + CELL + 'px' }">
           <div
             v-for="o in obstaculos"
             :key="'o' + o.x + '-' + o.y"
@@ -283,7 +283,7 @@ onUnmounted(() => {
             v-for="(seg, i) in cobra"
             :key="'s' + i"
             class="cobrinha-segmento"
-            :class="{ 'cobrinha-segmento--cabeca': i === 0 }"
+            :class="{ 'cobrinha-segmento--cabeca': i === 0, 'cobrinha-segmento--par': i > 0 && i % 2 === 0 }"
             :style="{ left: seg.x * CELL + 'px', top: seg.y * CELL + 'px', width: CELL + 'px', height: CELL + 'px' }"
           ></div>
 
@@ -379,6 +379,8 @@ onUnmounted(() => {
   font-size: 1.3rem;
   color: var(--roxo-escuro);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
 }
 .cobrinha-stat-label {
   font-size: 0.62rem;
@@ -401,11 +403,13 @@ onUnmounted(() => {
   position: relative;
   background-color: var(--creme-escuro);
   background-image:
-    linear-gradient(to right, rgba(80,64,160,0.08) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(80,64,160,0.08) 1px, transparent 1px);
-  background-size: 24px 24px;
-  border: 1px solid rgba(80,64,160,0.3);
-  border-radius: 2px;
+    linear-gradient(to right, rgba(80,64,160,0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(80,64,160,0.1) 1px, transparent 1px);
+  border: none;
+  outline: 3px solid var(--roxo-escuro);
+  outline-offset: 0;
+  box-shadow: inset 0 0 0 2px var(--creme);
+  border-radius: 0;
   overflow: hidden;
   max-width: 100%;
 }
@@ -421,8 +425,11 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   background: var(--roxo);
-  border-radius: 3px;
-  box-shadow: 2px 2px 0 var(--roxo-escuro);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--roxo-escuro);
+}
+.cobrinha-segmento--par::before {
+  background: var(--roxo-fundo);
 }
 .cobrinha-segmento--cabeca {
   z-index: 2;
@@ -430,7 +437,7 @@ onUnmounted(() => {
 }
 .cobrinha-segmento--cabeca::before {
   background: var(--roxo-escuro);
-  box-shadow: 2px 2px 0 var(--preto);
+  box-shadow: 3px 3px 0 var(--preto);
 }
 
 .cobrinha-comida {
@@ -444,14 +451,20 @@ onUnmounted(() => {
 .cobrinha-comida::before {
   content: '';
   position: absolute;
-  inset: 3px;
-  background: var(--amarelo);
-  border-radius: 50%;
-  box-shadow: 2px 2px 0 var(--roxo-escuro);
+  inset: 2px;
+  background: var(--roxo-escuro);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
 }
-.cobrinha-comida--especial::before {
+.cobrinha-comida::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  background: var(--amarelo);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  filter: drop-shadow(2px 2px 0 var(--roxo-escuro));
+}
+.cobrinha-comida--especial::after {
   background: var(--creme);
-  border: 2px solid var(--amarelo);
   animation: cobrinha-pulso 0.8s infinite alternate;
 }
 .cobrinha-comida :deep(svg) {
@@ -464,7 +477,7 @@ onUnmounted(() => {
 
 @keyframes cobrinha-pulso {
   from { transform: scale(1); }
-  to   { transform: scale(1.2); }
+  to   { transform: scale(1.15); }
 }
 
 .cobrinha-obstaculo {
@@ -478,8 +491,8 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   background: var(--vermelho);
-  border-radius: 2px;
-  box-shadow: 2px 2px 0 var(--preto);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--preto);
 }
 
 .cobrinha-overlay {
@@ -532,7 +545,7 @@ onUnmounted(() => {
 .cobrinha-legenda-cor {
   width: 10px;
   height: 10px;
-  border-radius: 3px;
+  border-radius: 0;
   display: inline-block;
   box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
 }
