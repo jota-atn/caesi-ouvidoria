@@ -858,8 +858,9 @@ onUnmounted(() => {
           ></div>
 
           <div v-if="estado === 'fim'" class="cobrinha-overlay">
-            <p class="cobrinha-overlay-titulo">{{ mensagemGameOver }}</p>
+            <p class="cobrinha-overlay-titulo">{{ chefesDerrotados >= 3 ? 'Parabéns, campeão(ã)!' : mensagemGameOver }}</p>
             <p class="cobrinha-overlay-sub">
+              <template v-if="chefesDerrotados >= 3">Você já tinha zerado o jogo — essa rodada extra foi só diversão. </template>
               Pontuação: {{ score }}
               <template v-if="score > 0 && score >= recorde"> — novo recorde!</template>
             </p>
