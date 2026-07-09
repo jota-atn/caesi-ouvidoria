@@ -786,7 +786,7 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-      <p v-if="ehDesktop && faltamProChefe !== null" class="cobrinha-progresso-chefe">Faltam {{ faltamProChefe }} pontos pro próximo chefe</p>
+      <p v-if="ehDesktop && faltamProChefe !== null" class="cobrinha-progresso-chefe">Faltam {{ faltamProChefe }} pontos pro chefe {{ chefesDerrotados + 1 }} de 3</p>
 
       <div v-if="ehDesktop" class="paper cobrinha-paper">
         <div
