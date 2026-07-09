@@ -597,7 +597,9 @@ function tick() {
         chefesDerrotados.value += 1
         if (chefesDerrotados.value >= 3) {
           estado.value = 'vencido'
-          marcarCobrinhaZerada()
+          if (marcarCobrinhaZerada()) {
+            showToast('Conquista desbloqueada! Veja o troféu no topo do site.', 'success')
+          }
           if (score.value > recorde.value) {
             recorde.value = score.value
             localStorage.setItem('caesi_cobrinha_recorde', String(recorde.value))
