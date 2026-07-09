@@ -903,7 +903,7 @@ onUnmounted(() => {
     <div v-if="modalBoasVindas" class="modal-overlay" @click.self="modalBoasVindas = false">
       <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
         <h2 class="modal-title">Parabéns! Você encontrou um Easter Egg!</h2>
-        <p class="modal-body">Existe um código secreto escondido no site do CAESI, e você acabou de descobrir pra onde ele leva.</p>
+        <p class="modal-body">Existe um código secreto escondido no site do CAESI, e você acabou de descobrir pra onde ele leva. Não conta pra ninguém, viu? Haha.</p>
         <div class="modal-actions">
           <button class="btn btn-amarelo" @click="modalBoasVindas = false">Jogar</button>
         </div>
