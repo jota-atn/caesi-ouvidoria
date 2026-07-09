@@ -910,10 +910,10 @@ onUnmounted(() => {
             <span class="cobrinha-legenda-item"><span class="cobrinha-legenda-cor" style="background:var(--amarelo)"></span>comida</span>
             <span class="cobrinha-legenda-item"><span class="cobrinha-legenda-cor" style="background:var(--vermelho)"></span>obstáculo</span>
             <span class="cobrinha-legenda-item"><span class="cobrinha-legenda-cor" style="background:var(--preto)"></span>inimigo (cabeça elimina +25, corpo mata)</span>
-            <span class="cobrinha-legenda-item"><span class="cobrinha-legenda-cor" style="background:var(--vermelho)"></span>inimigo rápido (mesma regra, 2x mais veloz)</span>
-            <span class="cobrinha-legenda-item"><span class="cobrinha-legenda-cor" style="background:var(--preto)"></span>atirador (parado, atira; o tiro mata em qualquer parte)</span>
-            <span class="cobrinha-legenda-item">chefes em 300 e 750 pontos (3 acertos de cabeça pra vencer, mas ele atira de volta)</span>
-            <span class="cobrinha-legenda-item">chefe final em 1000: dois de uma vez — quem morrer primeiro deixa o outro mais forte</span>
+            <span v-if="chefesDerrotados >= 1" class="cobrinha-legenda-item"><span class="cobrinha-legenda-cor" style="background:var(--vermelho)"></span>inimigo rápido (mesma regra, 2x mais veloz)</span>
+            <span v-if="chefesDerrotados >= 2" class="cobrinha-legenda-item"><span class="cobrinha-legenda-cor" style="background:var(--preto)"></span>atirador (parado, atira; o tiro mata em qualquer parte)</span>
+            <span v-if="chefesDerrotados >= 1" class="cobrinha-legenda-item">chefes acertados na cabeça 3x pra vencer, mas atiram de volta</span>
+            <span v-if="chefesDerrotados >= 2" class="cobrinha-legenda-item">chefe final: dois de uma vez — quem morrer primeiro deixa o outro mais forte</span>
           </div>
           <div class="cobrinha-controles">
             <span class="cobrinha-tecla-grupo">
