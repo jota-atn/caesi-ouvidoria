@@ -17,7 +17,12 @@ const mqDesktop = window.matchMedia('(any-pointer: fine)')
 const ehDesktop = ref(mqDesktop.matches)
 function atualizarEhDesktop(e) { ehDesktop.value = e.matches }
 
-const modalBoasVindas = ref(true)
+const CHAVE_JA_VIU_BOAS_VINDAS = 'caesi_cobrinha_viu_boas_vindas'
+const modalBoasVindas = ref(localStorage.getItem(CHAVE_JA_VIU_BOAS_VINDAS) !== 'true')
+function fecharModalBoasVindas() {
+  modalBoasVindas.value = false
+  localStorage.setItem(CHAVE_JA_VIU_BOAS_VINDAS, 'true')
+}
 const modalConfirmarSaida = ref(false)
 let pausadoPeloModal = false
 
@@ -38,7 +43,7 @@ function fecharConfirmarSaida() {
 }
 
 useEscapeKey(() => {
-  if (modalBoasVindas.value) { modalBoasVindas.value = false; return }
+  if (modalBoasVindas.value) { fecharModalBoasVindas(); return }
   if (modalConfirmarSaida.value) { fecharConfirmarSaida(); return }
   abrirConfirmarSaida()
 })
@@ -922,12 +927,12 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div v-if="modalBoasVindas" class="modal-overlay" @click.self="modalBoasVindas = false">
+    <div v-if="modalBoasVindas" class="modal-overlay" @click.self="fecharModalBoasVindas">
       <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
         <h2 class="modal-title">Parabéns! Você encontrou um Easter Egg!</h2>
         <p class="modal-body">Existe um código secreto escondido no site do CAESI, e você acabou de descobrir pra onde ele leva. Não conta pra ninguém, viu? Haha.</p>
         <div class="modal-actions">
-          <button class="btn btn-amarelo" @click="modalBoasVindas = false">Jogar</button>
+          <button class="btn btn-amarelo" @click="fecharModalBoasVindas">Jogar</button>
         </div>
       </div>
     </div>
