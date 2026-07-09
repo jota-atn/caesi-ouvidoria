@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BackLink from '../components/BackLink.vue'
 import { showToast } from '../stores/toast.js'
@@ -130,6 +130,18 @@ const mensagemGameOver = ref(MENSAGENS_GAME_OVER[0])
 const score = ref(0)
 const recorde = ref(Number(localStorage.getItem('caesi_cobrinha_recorde') || 0))
 const estado = ref('jogando') // 'jogando' | 'pausado' | 'fim' | 'vencido'
+
+// recorde atualiza ao vivo (não só no fim de jogo) e avisa uma vez por partida quando é superado
+let avisouNovoRecordeNestaPartida = false
+watch(score, (novoScore) => {
+  if (novoScore <= recorde.value) return
+  recorde.value = novoScore
+  localStorage.setItem('caesi_cobrinha_recorde', String(recorde.value))
+  if (!avisouNovoRecordeNestaPartida) {
+    avisouNovoRecordeNestaPartida = true
+    showToast('Novo recorde!', 'success')
+  }
+})
 
 const faltamProChefe = computed(() => {
   if (chefesAtivos.value.length || chefesDerrotados.value >= 3) return null
@@ -511,6 +523,7 @@ function iniciar() {
   invulneravelInimigos.value = 0
   efeitoTela.value = null
   pulsoComer.value = false
+  avisouNovoRecordeNestaPartida = false
   tamanhoAntesDoChefe = TAMANHO_COBRA_CHEFE
   crescimentoPendente = 0
   velocidade = 130
@@ -549,10 +562,6 @@ function morrer() {
   estado.value = 'fim'
   dispararEfeitoTela('dano', 280)
   mensagemGameOver.value = sortearMensagemGameOver()
-  if (score.value > recorde.value) {
-    recorde.value = score.value
-    localStorage.setItem('caesi_cobrinha_recorde', String(recorde.value))
-  }
 }
 
 function tick() {
@@ -609,10 +618,6 @@ function tick() {
           estado.value = 'vencido'
           if (marcarCobrinhaZerada()) {
             showToast('Conquista desbloqueada! Veja o troféu no topo do site.', 'success')
-          }
-          if (score.value > recorde.value) {
-            recorde.value = score.value
-            localStorage.setItem('caesi_cobrinha_recorde', String(recorde.value))
           }
           return
         }
