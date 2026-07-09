@@ -711,7 +711,8 @@ function tick() {
 
 function onKeydown(e) {
   if (modalBoasVindas.value || modalConfirmarSaida.value) return
-  if ((estado.value === 'fim' || estado.value === 'vencido') && (e.key === 'Enter' || e.key === 'r' || e.key === 'R')) { reiniciar(); return }
+  // "vencido" tem 3 destinos diferentes (continuar/reiniciar/sair) — sem atalho de teclado pra não resetar sem querer
+  if (estado.value === 'fim' && (e.key === 'Enter' || e.key === 'r' || e.key === 'R')) { reiniciar(); return }
 
   const teclaNormalizada = e.key.length === 1 ? e.key.toLowerCase() : e.key
   const nomeDirecao = TECLA_PARA_DIRECAO[teclaNormalizada]
@@ -786,7 +787,9 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-      <p v-if="ehDesktop && faltamProChefe !== null" class="cobrinha-progresso-chefe">Faltam {{ faltamProChefe }} pontos pro chefe {{ chefesDerrotados + 1 }} de 3</p>
+      <p v-if="ehDesktop && faltamProChefe !== null" class="cobrinha-progresso-chefe">
+        Faltam {{ faltamProChefe }} pontos pro {{ chefesDerrotados === 0 ? 'próximo chefe' : `chefe ${chefesDerrotados + 1} de 3` }}
+      </p>
 
       <div v-if="ehDesktop" class="paper cobrinha-paper">
         <div
