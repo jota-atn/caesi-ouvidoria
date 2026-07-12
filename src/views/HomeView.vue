@@ -83,27 +83,25 @@ const posts = [
 
     <Navbar />
 
-    <!-- 1. Hero / Cabeçalho e Destaque da Ouvidoria -->
-    <section class="hero" style="padding-bottom: 4rem;">
-      <div class="hero-logo">
-        <img src="/logo_caesi.png" alt="CAESI" style="width:100%;height:100%;object-fit:cover;display:block;">
-      </div>
-      <h1 class="hero-title">CAESI <span>UFCG</span></h1>
-      <p class="hero-sub" style="margin-bottom: 0;">
-        Centro Acadêmico de Ciência da Computação da UFCG.<br>
-        Acompanhe nossos avisos, conheça a gestão e acesse nossos serviços.
-      </p>
-      
-      <!-- Novo Destaque Visual para Ouvidoria -->
-      <div style="margin-top: 3.5rem; padding: 2.5rem 1.5rem; background: var(--creme); border-radius: 4px; box-shadow: 6px 6px 0 rgba(0,0,0,0.3); max-width: 600px; margin-left: auto; margin-right: auto; text-align: center; border: 2px solid var(--amarelo);">
-        <h2 style="font-family: 'Archivo Black', sans-serif; font-size: 1.5rem; color: var(--roxo-escuro); margin-bottom: 0.5rem; text-transform: uppercase;">
+<!-- 1. Destaque Gigante da Ouvidoria -->
+    <section class="home-section" style="padding-top: 4rem;">
+      <div class="paper" style="text-align: center; padding: 4rem 2rem;">
+        
+        <!-- Logo dentro do card -->
+        <div class="hero-logo" style="margin: 0 auto 1.5rem; border: none; box-shadow: none; width: 130px; height: 130px; background: transparent;">
+          <img src="/logo_caesi.png" alt="CAESI" style="width:100%;height:100%;object-fit:cover;display:block;border-radius: 50%;">
+        </div>
+
+        <h1 style="font-family: 'Archivo Black', sans-serif; font-size: clamp(1.8rem, 5vw, 2.6rem); color: var(--roxo-escuro); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: -0.02em;">
           Precisa do CAESI?
-        </h2>
-        <p style="color: var(--preto); font-size: 0.95rem; margin-bottom: 1.8rem; line-height: 1.6;">
-          Acesse nossa <strong>Ouvidoria</strong>. Um canal seguro, direto e confidencial para enviar denúncias, reclamações, sugestões ou dúvidas com a representação estudantil.
+        </h1>
+        
+        <p style="color: var(--preto); font-size: 1.05rem; margin-bottom: 2.2rem; line-height: 1.6; max-width: 600px; margin-left: auto; margin-right: auto; font-weight: 500;">
+          Um canal seguro, direto e confidencial para enviar denúncias, reclamações, sugestões ou dúvidas com a representação estudantil.
         </p>
-        <RouterLink to="/ouvidoria" class="btn btn-primary" style="font-size: 1.15rem; padding: 16px 36px; text-transform: uppercase;">
-          Acessar Ouvidoria →
+        
+        <RouterLink to="/ouvidoria" class="btn btn-amarelo" style="font-size: 1.3rem; padding: 18px 40px; text-transform: uppercase; width: 100%; max-width: 420px; justify-content: center; box-shadow: 5px 5px 0 var(--roxo-escuro);">
+          Acessar Ouvidoria
         </RouterLink>
       </div>
     </section>
