@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
+import { useEscapeKey } from '../composables/useEscapeKey.js'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
@@ -174,6 +175,55 @@ function confirmarRemocaoMembro(id, nome) {
     if (editandoMembroId.value === id) cancelarEdicaoMembro()
     removeMembro(id)
   }
+}
+
+// --- Modal de detalhes do membro ---
+const membroModal = ref(null)
+function abrirMembroModal(membro) { membroModal.value = membro }
+function fecharMembroModal() { membroModal.value = null }
+
+const algumModalMembroAberto = computed(() => !!membroModal.value || !!editandoMembroId.value)
+watch(algumModalMembroAberto, (aberto) => {
+  document.body.style.overflow = aberto ? 'hidden' : ''
+})
+onBeforeUnmount(() => { document.body.style.overflow = '' })
+useEscapeKey(() => { fecharMembroModal(); if (editandoMembroId.value) cancelarEdicaoMembro() })
+
+// --- Carrossel de membros (setas + arraste no clique) ───────
+const membroScrollEl = ref(null)
+const membroDragging = ref(false)
+let membroStartX = 0
+let membroScrollStart = 0
+let membroMoved = false
+
+function membroScrollBy(dir) {
+  const el = membroScrollEl.value
+  if (!el) return
+  const card = el.querySelector('.membro-card')
+  const passo = card ? card.offsetWidth + 16 : 200
+  const maxScroll = el.scrollWidth - el.clientWidth
+  if (dir > 0 && el.scrollLeft >= maxScroll - 20) { el.scrollTo({ left: 0, behavior: 'smooth' }); return }
+  if (dir < 0 && el.scrollLeft <= 20) { el.scrollTo({ left: maxScroll, behavior: 'smooth' }); return }
+  el.scrollBy({ left: dir * passo, behavior: 'smooth' })
+}
+
+function membroDragStart(e) {
+  if (!membroScrollEl.value) return
+  membroDragging.value = true
+  membroMoved = false
+  membroStartX = e.pageX
+  membroScrollStart = membroScrollEl.value.scrollLeft
+}
+function membroDragMove(e) {
+  if (!membroDragging.value) return
+  const dx = e.pageX - membroStartX
+  if (Math.abs(dx) > 4) membroMoved = true
+  membroScrollEl.value.scrollLeft = membroScrollStart - dx
+}
+function membroDragEnd() { membroDragging.value = false }
+function membroClickGuard(a) {
+  if (membroMoved) { membroMoved = false; return }
+  if (!editando.value) abrirMembroModal(a)
 }
 
 // --- Adicionar novo membro ---
@@ -432,7 +482,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
         </template>
 
         <div class="equipe-titulo-row">
-          <h3 class="equipe-titulo" style="margin:0;">Conheça a gente</h3>
+          <h3 class="equipe-titulo" style="margin:0;">Conheça a gente!</h3>
           <button v-if="editando" class="btn btn-outline btn-sm" @click="toggleFormAdd">
             {{ mostraFormAdd ? 'Cancelar' : '+ Adicionar membro' }}
           </button>
@@ -506,12 +556,21 @@ onBeforeUnmount(() => { mapaMini?.remove() })
         <div v-if="membros.length === 0" style="font-size:0.9rem;color:var(--cinza);padding:0.5rem 0;">
           Nenhum membro cadastrado ainda.
         </div>
-        <div v-else class="equipe-grid">
-          <div v-for="a in membros" :key="a.id" class="membro-card">
-            <template v-if="!editando || editandoMembroId !== a.id">
+        <div v-else class="membro-carrossel-wrap">
+          <button class="carrossel-nav-btn carrossel-nav-btn--prev" aria-label="Membro anterior" @click="membroScrollBy(-1)">&lt;</button>
+          <div
+            ref="membroScrollEl"
+            class="membro-carrossel"
+            :class="{ 'membro-carrossel--arrastando': membroDragging }"
+            @mousedown="membroDragStart"
+            @mousemove="membroDragMove"
+            @mouseup="membroDragEnd"
+            @mouseleave="membroDragEnd"
+          >
+            <div v-for="a in membros" :key="a.id" class="membro-card" @click="membroClickGuard(a)">
               <div v-if="editando" class="membro-admin-btns">
-                <button class="icon-btn" title="Editar" @click="iniciarEdicaoMembro(a)" v-html="pencilIcon"></button>
-                <button class="icon-btn icon-btn--danger" title="Remover" @click="confirmarRemocaoMembro(a.id, a.nome)" v-html="xIcon"></button>
+                <button class="icon-btn" title="Editar" @click.stop="iniciarEdicaoMembro(a)" v-html="pencilIcon"></button>
+                <button class="icon-btn icon-btn--danger" title="Remover" @click.stop="confirmarRemocaoMembro(a.id, a.nome)" v-html="xIcon"></button>
               </div>
               <div class="membro-avatar">
                 <img v-if="a.foto" :src="a.foto" :alt="a.nome" class="membro-foto">
@@ -520,74 +579,98 @@ onBeforeUnmount(() => { mapaMini?.remove() })
               <div class="membro-nome">{{ a.nome }}</div>
               <div v-if="a.diretoria" class="membro-periodo">{{ a.diretoria }}</div>
               <div v-else-if="a.periodo" class="membro-periodo">{{ a.periodo }}</div>
-              <div v-if="a.email" class="membro-email">{{ a.email }}</div>
-              <div v-if="a.descricao" class="membro-desc" v-html="descricaoHtml(a.descricao)"></div>
-              <div v-if="a.linkedin || a.git || a.lattes" class="membro-links">
-                <a v-if="a.linkedin" :href="a.linkedin" target="_blank" rel="noopener" class="membro-link">LinkedIn</a>
-                <a v-if="a.git"      :href="a.git"      target="_blank" rel="noopener" class="membro-link">GitHub</a>
-                <a v-if="a.lattes"   :href="a.lattes"   target="_blank" rel="noopener" class="membro-link">Lattes</a>
-              </div>
-            </template>
+            </div>
+          </div>
+          <button class="carrossel-nav-btn carrossel-nav-btn--next" aria-label="Próximo membro" @click="membroScrollBy(1)">&gt;</button>
+        </div>
+      </div>
 
-            <!-- Modo edição do membro -->
-            <div v-else class="membro-edit-form">
-              <div class="field">
-                <label>Nome *</label>
-                <input v-model="editForm.nome" type="text" maxlength="80" :class="{ invalid: errorsEdit.nome }">
-                <span class="error-msg">Preencha o nome.</span>
-              </div>
-              <div class="field">
-                <label>E-mail *</label>
-                <input v-model="editForm.email" type="email" :class="{ invalid: errorsEdit.email }">
-                <span class="error-msg">Informe um e-mail válido.</span>
-              </div>
-              <div class="field">
-                <label>Diretoria</label>
-                <input v-model="editForm.diretoria" type="text" maxlength="60">
-              </div>
-              <div class="field">
-                <label>Período <span class="field-hint">(ex.: 2024.2)</span></label>
-                <input v-model="editForm.periodo" type="text" maxlength="10">
-              </div>
-              <div class="field">
-                <label>Descrição <span class="field-hint">(Markdown)</span></label>
-                <textarea v-model="editForm.descricao" rows="2"></textarea>
-              </div>
-              <div class="field">
-                <label>LinkedIn</label>
-                <input v-model="editForm.linkedin" type="url" placeholder="https://linkedin.com/in/..." :class="{ invalid: errorsEdit.linkedin }">
-                <span class="error-msg">Informe um link válido.</span>
-              </div>
-              <div class="field">
-                <label>GitHub</label>
-                <input v-model="editForm.git" type="url" placeholder="https://github.com/..." :class="{ invalid: errorsEdit.git }">
-                <span class="error-msg">Informe um link válido.</span>
-              </div>
-              <div class="field">
-                <label>Lattes</label>
-                <input v-model="editForm.lattes" type="url" placeholder="http://lattes.cnpq.br/..." :class="{ invalid: errorsEdit.lattes }">
-                <span class="error-msg">Informe um link válido.</span>
-              </div>
-              <div class="field">
-                <label>Foto</label>
-                <div class="foto-row">
-                  <div class="avatar-sm">
-                    <img v-if="editForm.foto" :src="editForm.foto" class="avatar-img" alt="">
-                    <span v-else class="avatar-initial">{{ editForm.nome?.[0]?.toUpperCase() || '?' }}</span>
-                  </div>
-                  <button class="btn-foto" @click="fileEditRef.click()">{{ editForm.foto ? 'Trocar foto' : 'Escolher foto' }}</button>
-                  <button v-if="editForm.foto" class="btn-remover-foto" @click="removerFotoEdit">Remover</button>
-                  <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onFotoEdit">
-                </div>
-              </div>
-              <div class="btn-row">
-                <button class="btn btn-primary btn-sm" @click="salvarEdicaoMembro">Salvar →</button>
-                <button class="btn btn-outline btn-sm" @click="cancelarEdicaoMembro">Cancelar</button>
-              </div>
+      <!-- Modal: detalhes do membro -->
+      <Teleport to="body">
+        <div v-if="membroModal" class="modal-overlay" @click.self="fecharMembroModal">
+          <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
+            <div class="membro-modal-avatar">
+              <img v-if="membroModal.foto" :src="membroModal.foto" :alt="membroModal.nome" class="membro-foto">
+              <span v-else class="membro-inicial">{{ membroModal.nome?.[0]?.toUpperCase() || '?' }}</span>
+            </div>
+            <div class="modal-title" style="text-align:center;">{{ membroModal.nome }}</div>
+            <div v-if="membroModal.diretoria" class="membro-periodo" style="width:fit-content;margin:0 auto 0.8rem;">{{ membroModal.diretoria }}</div>
+            <div v-else-if="membroModal.periodo" class="membro-periodo" style="width:fit-content;margin:0 auto 0.8rem;">{{ membroModal.periodo }}</div>
+            <div v-if="membroModal.email" class="membro-email" style="text-align:center;margin-bottom:0.8rem;">{{ membroModal.email }}</div>
+            <div v-if="membroModal.descricao" class="modal-body" v-html="descricaoHtml(membroModal.descricao)"></div>
+            <div v-if="membroModal.linkedin || membroModal.git || membroModal.lattes" class="membro-links" style="justify-content:center;margin-bottom:1rem;">
+              <a v-if="membroModal.linkedin" :href="membroModal.linkedin" target="_blank" rel="noopener" class="membro-link">LinkedIn</a>
+              <a v-if="membroModal.git"      :href="membroModal.git"      target="_blank" rel="noopener" class="membro-link">GitHub</a>
+              <a v-if="membroModal.lattes"   :href="membroModal.lattes"   target="_blank" rel="noopener" class="membro-link">Lattes</a>
+            </div>
+            <div class="modal-actions">
+              <button class="btn btn-outline btn-sm" @click="fecharMembroModal">Fechar</button>
             </div>
           </div>
         </div>
-      </div>
+      </Teleport>
+
+      <!-- Modal: editar membro -->
+      <Teleport to="body">
+        <div v-if="editandoMembroId" class="modal-overlay" @click.self="cancelarEdicaoMembro">
+          <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
+            <p class="secao-sep" style="margin-top:0;">Editar membro</p>
+            <div class="field">
+              <label>Nome *</label>
+              <input v-model="editForm.nome" type="text" maxlength="80" :class="{ invalid: errorsEdit.nome }">
+              <span class="error-msg">Preencha o nome.</span>
+            </div>
+            <div class="field">
+              <label>E-mail *</label>
+              <input v-model="editForm.email" type="email" :class="{ invalid: errorsEdit.email }">
+              <span class="error-msg">Informe um e-mail válido.</span>
+            </div>
+            <div class="field">
+              <label>Diretoria</label>
+              <input v-model="editForm.diretoria" type="text" maxlength="60">
+            </div>
+            <div class="field">
+              <label>Período <span class="field-hint">(ex.: 2024.2)</span></label>
+              <input v-model="editForm.periodo" type="text" maxlength="10">
+            </div>
+            <div class="field">
+              <label>Descrição <span class="field-hint">(Markdown)</span></label>
+              <textarea v-model="editForm.descricao" rows="2"></textarea>
+            </div>
+            <div class="field">
+              <label>LinkedIn</label>
+              <input v-model="editForm.linkedin" type="url" placeholder="https://linkedin.com/in/..." :class="{ invalid: errorsEdit.linkedin }">
+              <span class="error-msg">Informe um link válido.</span>
+            </div>
+            <div class="field">
+              <label>GitHub</label>
+              <input v-model="editForm.git" type="url" placeholder="https://github.com/..." :class="{ invalid: errorsEdit.git }">
+              <span class="error-msg">Informe um link válido.</span>
+            </div>
+            <div class="field">
+              <label>Lattes</label>
+              <input v-model="editForm.lattes" type="url" placeholder="http://lattes.cnpq.br/..." :class="{ invalid: errorsEdit.lattes }">
+              <span class="error-msg">Informe um link válido.</span>
+            </div>
+            <div class="field">
+              <label>Foto</label>
+              <div class="foto-row">
+                <div class="avatar-sm">
+                  <img v-if="editForm.foto" :src="editForm.foto" class="avatar-img" alt="">
+                  <span v-else class="avatar-initial">{{ editForm.nome?.[0]?.toUpperCase() || '?' }}</span>
+                </div>
+                <button class="btn-foto" @click="fileEditRef.click()">{{ editForm.foto ? 'Trocar foto' : 'Escolher foto' }}</button>
+                <button v-if="editForm.foto" class="btn-remover-foto" @click="removerFotoEdit">Remover</button>
+                <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onFotoEdit">
+              </div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary btn-sm" @click="salvarEdicaoMembro">Salvar →</button>
+              <button class="btn btn-outline btn-sm" @click="cancelarEdicaoMembro">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </Teleport>
 
       <div v-if="editando || (historicoVisivel && historicoGestoes.length)" class="paper paper-mb-lg paper--meio">
         <div class="hist-cabecalho">
@@ -829,13 +912,43 @@ onBeforeUnmount(() => { mapaMini?.remove() })
   .sobre-missao-grid { grid-template-columns: 1fr; text-align: center; }
 }
 
-/* ── Equipe: grid responsivo (substitui o carrossel) ──────── */
-.equipe-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 1rem;
+/* ── Equipe: carrossel de tamanho fixo ─────────────────────── */
+.membro-carrossel-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   margin-top: 1.4rem;
 }
+
+.membro-carrossel {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1rem;
+  padding: 4px 4px 0.6rem;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  flex: 1;
+  min-width: 0;
+}
+.membro-carrossel::-webkit-scrollbar { display: none; }
+.membro-carrossel--arrastando { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+
+.carrossel-nav-btn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  color: var(--cinza);
+  font-family: 'Archivo', sans-serif;
+  font-weight: 400;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.carrossel-nav-btn:hover { color: var(--roxo); }
 
 .membro-card {
   display: flex;
@@ -849,6 +962,12 @@ onBeforeUnmount(() => { mapaMini?.remove() })
   gap: 0.35rem;
   box-shadow: 2px 2px 0 var(--roxo-escuro);
   transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  flex: 0 0 190px;
+  width: 190px;
+  height: 210px;
+  justify-content: center;
+  scroll-snap-align: start;
+  cursor: pointer;
 }
 .membro-card:hover {
   transform: translate(-2px, -2px);
@@ -868,6 +987,19 @@ onBeforeUnmount(() => { mapaMini?.remove() })
   align-items: center;
   justify-content: center;
 }
+
+.membro-modal-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 1rem;
+  background: var(--roxo-escuro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.membro-modal-avatar .membro-inicial { font-size: 2.4rem; }
 
 .membro-foto {
   width: 100%;
@@ -1173,6 +1305,10 @@ onBeforeUnmount(() => { mapaMini?.remove() })
   .sobre-mapa-embed { min-height: 240px; }
 }
 
+@media (max-width: 640px) {
+  .carrossel-nav-btn { display: none; }
+}
+
 /* ── Modo de edição (admin) ────────────────────────────────── */
 .sobre-topo {
   display: flex;
@@ -1202,7 +1338,6 @@ onBeforeUnmount(() => { mapaMini?.remove() })
   gap: 4px;
 }
 
-.membro-edit-form,
 .contato-edit-form { text-align: left; }
 
 .add-form-box { border-left: 4px solid var(--roxo); }
