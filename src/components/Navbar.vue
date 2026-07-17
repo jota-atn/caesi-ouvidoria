@@ -49,37 +49,39 @@ function ariaCurrent(path) {
 
 <template>
   <nav class="navbar">
-    <button
-      v-if="isAdmin" type="button" class="sidebar-toggle-btn"
-      :aria-expanded="sidebarAberta" aria-controls="admin-sidebar" aria-label="Menu admin"
-      @click="sidebarAberta = !sidebarAberta"
-    >
-      <span /><span /><span />
-    </button>
-
-    <RouterLink :to="isAdmin ? '/admin/painel' : '/'" class="navbar-brand">
-      <div class="logo-circle">
-        <img src="/logo_caesi.png" alt="CAESI" class="logo-img">
-      </div>
-      <span class="navbar-title">
-        CAESI <span>{{ isAdmin ? 'Admin' : 'Home' }}</span>
-      </span>
-      <span
-        v-if="!isAdmin && cobrinhaZerada"
-        class="navbar-badge"
-        title="Você zerou o Easter Egg da cobrinha!"
-        @click.stop.prevent="explodirConfete"
+    <div class="navbar-left">
+      <button
+        v-if="isAdmin" type="button" class="sidebar-toggle-btn"
+        :aria-expanded="sidebarAberta" aria-controls="admin-sidebar" aria-label="Menu admin"
+        @click="sidebarAberta = !sidebarAberta"
       >
-        <span v-html="awardIcon"></span>
+        <span /><span /><span />
+      </button>
+
+      <RouterLink to="/" class="navbar-brand">
+        <div class="logo-circle">
+          <img src="/logo_caesi.png" alt="CAESI" class="logo-img">
+        </div>
+        <span class="navbar-title">
+          CAESI <span>{{ isAdmin ? 'Admin' : 'Home' }}</span>
+        </span>
         <span
-          v-for="c in confetes"
-          :key="c.id"
-          class="navbar-confete"
-          :class="'navbar-confete--' + c.cor"
-          :style="{ '--dx': c.dx + 'px', '--dy': c.dy + 'px', '--rot': c.rot + 'deg', animationDelay: c.atraso + 'ms' }"
-        ></span>
-      </span>
-    </RouterLink>
+          v-if="!isAdmin && cobrinhaZerada"
+          class="navbar-badge"
+          title="Você zerou o Easter Egg da cobrinha!"
+          @click.stop.prevent="explodirConfete"
+        >
+          <span v-html="awardIcon"></span>
+          <span
+            v-for="c in confetes"
+            :key="c.id"
+            class="navbar-confete"
+            :class="'navbar-confete--' + c.cor"
+            :style="{ '--dx': c.dx + 'px', '--dy': c.dy + 'px', '--rot': c.rot + 'deg', animationDelay: c.atraso + 'ms' }"
+          ></span>
+        </span>
+      </RouterLink>
+    </div>
 
     <button class="hamburger" @click="menuOpen = !menuOpen"
       aria-label="Menu" :aria-expanded="menuOpen" aria-controls="navbar-menu">
