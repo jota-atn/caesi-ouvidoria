@@ -72,14 +72,21 @@ const posts = [
     <!-- Introdução -->
     <section class="home-hero-full">
       <div class="hero">
-        <div class="hero-logo">
-          <img src="/logo_caesi.png" alt="CAESI" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div class="hero-brand">
+          <div class="hero-logo">
+            <img src="/logo_caesi.png" alt="CAESI" style="width:100%;height:100%;object-fit:cover;display:block;">
+          </div>
+          <div class="hero-kicker">Centro Acadêmico · Ciência da Computação · UFCG</div>
+          <h1 class="hero-title">Bem-vindo ao <span>CAESI</span></h1>
         </div>
-        <h1 class="hero-title">CAESI</h1>
+
+        <div class="hero-divider"></div>
+
         <p class="hero-sub">
-          O site do Centro Acadêmico de Ciência da Computação da UFCG. Aqui você
-          encontra o mural de avisos, o calendário de eventos, editais, professores,
-          laboratórios e o canal de ouvidoria — tudo em um só lugar.
+          Criado para descomplicar a vida do estudante e dar transparência à
+          gestão, o portal do CAESI reúne mural, calendário, mapa do campus e
+          muito mais em um só lugar — incluindo uma <strong>Ouvidoria</strong>
+          direta via tickets pra qualquer demanda acadêmica.
         </p>
       </div>
     </section>
@@ -146,5 +153,69 @@ const posts = [
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.home-hero-full .hero {
+  max-width: 800px;
+  padding: 2rem;
+}
+
+.home-hero-full .hero-logo {
+  width: 180px;
+  height: 180px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.home-hero-full .hero-logo:hover {
+  transform: translateY(-4px);
+}
+
+.hero-brand .hero-title {
+  cursor: pointer;
+  display: inline-block;
+  transition: transform 0.2s;
+}
+.hero-brand .hero-title:hover {
+  transform: translateY(-4px);
+}
+
+.hero-kicker {
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--amarelo);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin-bottom: 1rem;
+  display: inline-block;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.hero-kicker:hover {
+  transform: translateY(-4px);
+}
+
+.hero-divider {
+  width: 48px;
+  height: 4px;
+  background: var(--amarelo);
+  border-radius: 2px;
+  margin: 0 auto 1rem;
+}
+
+.home-hero-full .hero-sub {
+  color: rgba(242,230,196,0.8);
+  font-weight: 500;
+  margin-bottom: 2rem;
+  text-align: justify;
+}
+
+.home-hero-full .hero-sub strong {
+  color: var(--amarelo);
+}
+
+@media (max-width: 640px) {
+  .home-hero-full .hero-logo { width: 116px; height: 116px; }
+  .hero-kicker { font-size: 0.68rem; letter-spacing: 0.1em; }
 }
 </style>
