@@ -20,15 +20,6 @@ useEscapeKey(fechar)
   <div v-if="aberta" class="sidebar-backdrop" @click="fechar"></div>
 
   <aside class="admin-sidebar" id="admin-sidebar" :class="{ aberta }">
-    <RouterLink to="/admin/painel" class="sidebar-link" :aria-current="ariaCurrent('/admin/painel')" @click="fechar">Painel</RouterLink>
-
-    <div class="sidebar-grupo">
-      <p class="sidebar-grupo-label">Atendimento</p>
-      <RouterLink to="/admin/ouvidoria"   class="sidebar-link" :aria-current="ariaCurrent('/admin/ouvidoria')"   @click="fechar">Ouvidoria</RouterLink>
-      <RouterLink to="/admin/formularios" class="sidebar-link" :aria-current="ariaCurrent('/admin/formularios')" @click="fechar">Formulários</RouterLink>
-      <RouterLink to="/admin/tasks"       class="sidebar-link" :aria-current="ariaCurrent('/admin/tasks')"       @click="fechar">Tasks</RouterLink>
-    </div>
-
     <div class="sidebar-grupo">
       <p class="sidebar-grupo-label">Conteúdo do site</p>
       <RouterLink to="/admin/mural"       class="sidebar-link" :aria-current="ariaCurrent('/admin/mural')"       @click="fechar">Mural</RouterLink>
