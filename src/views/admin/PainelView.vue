@@ -287,7 +287,7 @@ const temDados = computed(() => mensagens.value.length > 0 || inscricoes.value.l
               {{ publicacoes.length }} publicaç{{ publicacoes.length === 1 ? 'ão' : 'ões' }}
             </span>
           </div>
-          <RouterLink to="/admin/mural" class="geral-row-link">Ver mural →</RouterLink>
+          <RouterLink to="/mural" class="geral-row-link">Ver mural →</RouterLink>
         </div>
 
         <div class="geral-divider" />

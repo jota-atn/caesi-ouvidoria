@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { marked } from 'marked'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
@@ -7,7 +7,119 @@ import BackLink from '../components/BackLink.vue'
 import Pagination from '../components/Pagination.vue'
 import { usePagination } from '../composables/usePagination.js'
 import { usePersistedFilter } from '../composables/usePersistedFilter.js'
-import { publicacoes } from '../stores/mural.js'
+import { useEscapeKey } from '../composables/useEscapeKey.js'
+import { publicacoes, addPublicacao, updatePublicacao, deletePublicacao } from '../stores/mural.js'
+import { isAdmin } from '../stores/auth.js'
+import { showToast } from '../stores/toast.js'
+import { isValidImageFile } from '../utils/validation.js'
+
+function comprimirImagem(file) {
+  return new Promise(resolve => {
+    const reader = new FileReader()
+    reader.onload = ev => {
+      const img = new Image()
+      img.onload = () => {
+        const MAX = 900
+        let w = img.width, h = img.height
+        if (w > h && w > MAX) { h = Math.round(h * MAX / w); w = MAX }
+        else if (h > MAX)     { w = Math.round(w * MAX / h); h = MAX }
+        const canvas = document.createElement('canvas')
+        canvas.width = w; canvas.height = h
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+        resolve(canvas.toDataURL('image/jpeg', 0.82))
+      }
+      img.src = ev.target.result
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
+function validarTitulo(titulo)     { return titulo.trim().length < 3     ? 'Título obrigatório (mín. 3 caracteres).'     : '' }
+function validarMensagem(mensagem) { return mensagem.trim().length < 10 ? 'Mensagem obrigatória (mín. 10 caracteres).' : '' }
+
+// ── Admin: publicar nova ──────────────────────────────────
+const mostrarForm = ref(false)
+const fileAddRef  = ref(null)
+const formAdd = reactive({ titulo: '', tipo: '', mensagem: '', imagens: [] })
+const erros   = reactive({ titulo: '', mensagem: '' })
+
+async function onImagensAdd(e) {
+  let invalido = false
+  for (const file of e.target.files) {
+    if (!isValidImageFile(file)) { invalido = true; continue }
+    formAdd.imagens.push(await comprimirImagem(file))
+  }
+  if (invalido) showToast('Alguns arquivos foram ignorados (precisam ser imagens de até 8MB).', 'error')
+  e.target.value = ''
+}
+function removerImagemAdd(i) { formAdd.imagens.splice(i, 1) }
+
+function publicar() {
+  erros.titulo   = validarTitulo(formAdd.titulo)
+  erros.mensagem = validarMensagem(formAdd.mensagem)
+  if (erros.titulo || erros.mensagem) return
+  addPublicacao({ ...formAdd, imagens: [...formAdd.imagens] })
+  Object.assign(formAdd, { titulo: '', tipo: '', mensagem: '', imagens: [] })
+  mostrarForm.value = false
+  showToast('Publicação adicionada ao mural.', 'success')
+}
+
+function cancelarAdd() {
+  Object.assign(formAdd, { titulo: '', tipo: '', mensagem: '', imagens: [] })
+  erros.titulo = erros.mensagem = ''
+  mostrarForm.value = false
+}
+
+// ── Admin: editar/excluir publicação (via modal) ──────────
+const editModal  = ref(null)
+const fileEditRef = ref(null)
+const formEdit  = reactive({ titulo: '', tipo: '', mensagem: '', imagens: [] })
+const errosEdit = reactive({ titulo: '', mensagem: '' })
+
+function abrirEdit(p) {
+  errosEdit.titulo = errosEdit.mensagem = ''
+  Object.assign(formEdit, {
+    titulo:   p.titulo,
+    tipo:     p.tipo ?? '',
+    mensagem: p.mensagem,
+    imagens:  [...(p.imagens ?? [])],
+  })
+  editModal.value = p
+}
+function fecharEdit() { editModal.value = null }
+
+async function onImagensEdit(e) {
+  let invalido = false
+  for (const file of e.target.files) {
+    if (!isValidImageFile(file)) { invalido = true; continue }
+    formEdit.imagens.push(await comprimirImagem(file))
+  }
+  if (invalido) showToast('Alguns arquivos foram ignorados (precisam ser imagens de até 8MB).', 'error')
+  e.target.value = ''
+}
+function removerImagemEdit(i) { formEdit.imagens.splice(i, 1) }
+
+function salvarEdit() {
+  errosEdit.titulo   = validarTitulo(formEdit.titulo)
+  errosEdit.mensagem = validarMensagem(formEdit.mensagem)
+  if (errosEdit.titulo || errosEdit.mensagem) return
+  updatePublicacao(editModal.value.id, {
+    titulo:   formEdit.titulo.trim(),
+    tipo:     formEdit.tipo.trim(),
+    mensagem: formEdit.mensagem.trim(),
+    imagens:  [...formEdit.imagens],
+  })
+  editModal.value = null
+  showToast('Publicação atualizada.', 'success')
+}
+
+function excluir(p) {
+  if (!confirm(`Remover "${p.titulo}" do mural?`)) return
+  deletePublicacao(p.id)
+  showToast('Publicação removida.', 'info')
+}
+
+useEscapeKey(() => fecharEdit())
 
 const busca   = usePersistedFilter('mural-busca', '')
 const filtro  = usePersistedFilter('mural-filtro', 'todas')
@@ -55,6 +167,49 @@ function textoPlano(md) {
       <BackLink to="/" style="margin-bottom:1.2rem;" />
       <div class="page-heading">
         <h2>Mural do <span>CAESI</span></h2>
+        <button v-if="isAdmin" type="button" class="btn btn-outline btn-outline-creme btn-sm" @click="mostrarForm = !mostrarForm">
+          {{ mostrarForm ? '— Fechar' : '+ Nova publicação' }}
+        </button>
+      </div>
+
+      <!-- Admin: nova publicação -->
+      <div v-if="mostrarForm" class="paper" style="margin-bottom:1.2rem;">
+        <div class="label-sm" style="margin-bottom:1rem;">Nova publicação</div>
+
+        <div class="field">
+          <label class="label">Título *</label>
+          <input v-model="formAdd.titulo" type="text" class="input" placeholder="Título da publicação">
+          <span v-if="erros.titulo" class="error-msg" style="display:block;">{{ erros.titulo }}</span>
+        </div>
+
+        <div class="field">
+          <label class="label">Tipo de publicação</label>
+          <input v-model="formAdd.tipo" type="text" class="input" placeholder="Ex.: Edital, Comunicado, Evento…" list="mural-tipos">
+        </div>
+
+        <div class="field">
+          <label class="label">Mensagem *</label>
+          <textarea v-model="formAdd.mensagem" class="input textarea" rows="7" placeholder="Conteúdo da publicação…"></textarea>
+          <span v-if="erros.mensagem" class="error-msg" style="display:block;">{{ erros.mensagem }}</span>
+        </div>
+
+        <div class="field">
+          <label class="label">Imagens</label>
+          <button type="button" class="btn-foto" @click="fileAddRef.click()">+ Adicionar imagens</button>
+          <input ref="fileAddRef" type="file" accept="image/*" multiple style="display:none" @change="onImagensAdd">
+          <div v-if="formAdd.imagens.length > 0" class="imagens-preview">
+            <div v-for="(img, i) in formAdd.imagens" :key="i" class="img-thumb-wrap">
+              <img :src="img" class="img-thumb" :alt="`Imagem ${i+1}`">
+              <button type="button" class="img-thumb-remove" @click="removerImagemAdd(i)">×</button>
+              <span v-if="i === 0" class="img-thumb-capa">capa</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-outline" @click="cancelarAdd">Cancelar</button>
+          <button class="btn btn-primary" @click="publicar">Publicar</button>
+        </div>
       </div>
 
       <!-- Filtros -->
@@ -110,14 +265,63 @@ function textoPlano(md) {
               <span v-if="p.anexos?.length" class="mural-anexos-hint">{{ p.anexos.length }} anexo{{ p.anexos.length > 1 ? 's' : '' }}</span>
               <span class="mural-card-arrow">Ler mais →</span>
             </div>
+            <div v-if="isAdmin" class="mural-card-admin">
+              <button type="button" class="btn btn-outline btn-sm" @click.stop.prevent="abrirEdit(p)">Editar</button>
+              <button type="button" class="btn btn-outline btn-sm mural-card-btn--danger" @click.stop.prevent="excluir(p)">Excluir</button>
+            </div>
           </div>
         </RouterLink>
       </div>
 
       <Pagination :page="page" :totalPages="totalPages" @prev="prev" @next="next" @goto="goTo" />
+
+      <datalist id="mural-tipos">
+        <option v-for="t in tiposUnicos" :key="t" :value="t" />
+      </datalist>
     </div>
 
     <SiteFooter />
+
+    <!-- Admin: editar publicação -->
+    <Teleport to="body">
+      <div v-if="editModal" class="modal-overlay" @click.self="fecharEdit">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-edit-mural-title" v-focus-trap>
+          <div class="modal-title" id="modal-edit-mural-title">Editar publicação</div>
+          <div class="modal-body">
+            <div class="field">
+              <label>Título *</label>
+              <input v-model="formEdit.titulo" type="text" maxlength="120">
+              <span v-if="errosEdit.titulo" class="error-msg" style="display:block;">{{ errosEdit.titulo }}</span>
+            </div>
+            <div class="field">
+              <label>Tipo de publicação</label>
+              <input v-model="formEdit.tipo" type="text" placeholder="Ex.: Edital, Comunicado, Evento…" list="mural-tipos">
+            </div>
+            <div class="field">
+              <label>Mensagem *</label>
+              <textarea v-model="formEdit.mensagem" rows="7"></textarea>
+              <span v-if="errosEdit.mensagem" class="error-msg" style="display:block;">{{ errosEdit.mensagem }}</span>
+            </div>
+            <div class="field">
+              <label>Imagens</label>
+              <button type="button" class="btn-foto" @click="fileEditRef.click()">+ Adicionar imagens</button>
+              <input ref="fileEditRef" type="file" accept="image/*" multiple style="display:none" @change="onImagensEdit">
+              <div v-if="formEdit.imagens.length > 0" class="imagens-preview">
+                <div v-for="(img, i) in formEdit.imagens" :key="i" class="img-thumb-wrap">
+                  <img :src="img" class="img-thumb" :alt="`Imagem ${i+1}`">
+                  <button type="button" class="img-thumb-remove" @click="removerImagemEdit(i)">×</button>
+                  <span v-if="i === 0" class="img-thumb-capa">capa</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn btn-outline btn-sm" @click="fecharEdit">Cancelar</button>
+            <button class="btn btn-primary btn-sm" @click="salvarEdit">Salvar →</button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -317,4 +521,86 @@ function textoPlano(md) {
 }
 .empty-state p   { font-size: 1rem; font-weight: 600; color: var(--preto); margin-bottom: 0.4rem; }
 .empty-state span { font-size: 0.85rem; color: var(--cinza); }
+
+/* ── Admin: form e ações ──────────────────────────────────── */
+.textarea { min-height: 160px; resize: vertical; max-height: 500px; }
+.form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 0.8rem; }
+
+.mural-card-admin {
+  display: flex;
+  gap: 8px;
+  margin-top: 0.6rem;
+  position: relative;
+  z-index: 1;
+}
+
+.mural-card-btn--danger { color: var(--vermelho, #c0392b); border-color: var(--vermelho, #c0392b); }
+.mural-card-btn--danger:hover { background: var(--vermelho, #c0392b); color: var(--branco); }
+
+.btn-foto {
+  padding: 7px 14px;
+  background: var(--branco);
+  border: 2px dashed var(--roxo);
+  border-radius: 2px;
+  font-family: 'Archivo', sans-serif;
+  font-size: 0.84rem;
+  color: var(--roxo-escuro);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-foto:hover { background: rgba(80,64,160,0.07); }
+
+.imagens-preview {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.img-thumb-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.img-thumb {
+  width: 90px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1.5px solid var(--creme-escuro);
+  display: block;
+}
+
+.img-thumb-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--preto);
+  color: var(--branco);
+  border: none;
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.img-thumb-capa {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(80,64,160,0.8);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  font-family: 'Archivo Black', sans-serif;
+  text-align: center;
+  padding: 1px 0;
+  letter-spacing: 0.04em;
+}
 </style>
