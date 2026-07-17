@@ -360,7 +360,7 @@ function excluirFormulario() {
       </div>
 
       <!-- Ações do formulário -->
-      <div class="paper paper-mb">
+      <div class="paper paper-mb" :class="{ 'paper--meio': editando }">
         <h3 class="paper-subtitle">Ações</h3>
 
         <div v-if="editSalvo" class="alert-atendida" style="margin-bottom:1rem;">
@@ -418,7 +418,7 @@ function excluirFormulario() {
       </div>
 
       <!-- Lista de inscrições -->
-      <div class="paper">
+      <div class="paper paper--fim">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
           <p class="label-sm" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             Inscrições ({{ inscricoesDaForm.length }})
