@@ -38,8 +38,8 @@ useEscapeKey(fechar)
     </div>
 
     <div class="sidebar-grupo">
-      <p class="sidebar-grupo-label">Equipe</p>
-      <RouterLink to="/admin/equipe" class="sidebar-link" :aria-current="ariaCurrent('/admin/equipe')" @click="fechar">Gestão da equipe</RouterLink>
+      <p class="sidebar-grupo-label">Sobre nós</p>
+      <RouterLink to="/sobre?editar=1" class="sidebar-link" :aria-current="ariaCurrent('/sobre')" @click="fechar">Editar página Sobre</RouterLink>
     </div>
   </aside>
 </template>

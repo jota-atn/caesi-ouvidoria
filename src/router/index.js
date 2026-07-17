@@ -24,7 +24,6 @@ const routes = [
   { path: '/admin/painel',           component: () => import('../views/admin/PainelView.vue'),              meta: { admin: true } },
   { path: '/admin/ouvidoria',        component: () => import('../views/admin/OuvidoriaView.vue'),           meta: { admin: true } },
   { path: '/admin/ouvidoria/:id',    component: () => import('../views/admin/OuvidoriaDetalheView.vue'),    meta: { admin: true } },
-  { path: '/admin/equipe',           component: () => import('../views/admin/EquipeView.vue'),              meta: { admin: true } },
   { path: '/admin/formularios',      component: () => import('../views/admin/FormulariosView.vue'),         meta: { admin: true } },
   { path: '/admin/formularios/:id',  component: () => import('../views/admin/FormularioDetalheView.vue'),   meta: { admin: true } },
   { path: '/admin/tasks',            component: () => import('../views/admin/TasksView.vue'),               meta: { admin: true } },

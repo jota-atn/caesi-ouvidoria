@@ -367,7 +367,7 @@ const temDados = computed(() => mensagens.value.length > 0 || inscricoes.value.l
               Nenhum membro cadastrado.
             </div>
           </div>
-          <RouterLink to="/admin/equipe" class="geral-row-link">Editar →</RouterLink>
+          <RouterLink to="/sobre?editar=1" class="geral-row-link">Editar →</RouterLink>
         </div>
 
       </div>
