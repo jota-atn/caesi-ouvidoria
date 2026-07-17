@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { isAdmin, logout } from '../stores/auth.js'
 import { cobrinhaZerada } from '../stores/conquistas.js'
-import AdminSidebar from './AdminSidebar.vue'
 import awardIcon from '../assets/icons/award.svg?raw'
 
 const menuOpen = ref(false)
@@ -34,8 +33,6 @@ function explodirConfete() {
 const route  = useRoute()
 const router = useRouter()
 
-const sidebarAberta = ref(false)
-
 function handleLogout() {
   menuOpen.value = false
   logout()
@@ -50,14 +47,6 @@ function ariaCurrent(path) {
 <template>
   <nav class="navbar">
     <div class="navbar-left">
-      <button
-        v-if="isAdmin" type="button" class="sidebar-toggle-btn"
-        :aria-expanded="sidebarAberta" aria-controls="admin-sidebar" aria-label="Menu admin"
-        @click="sidebarAberta = !sidebarAberta"
-      >
-        <span /><span /><span />
-      </button>
-
       <RouterLink to="/" class="navbar-brand">
         <div class="logo-circle">
           <img src="/logo_caesi.png" alt="CAESI" class="logo-img">
@@ -90,14 +79,13 @@ function ariaCurrent(path) {
 
     <div class="navbar-actions" id="navbar-menu" :class="{ open: menuOpen }">
       <RouterLink v-if="isAdmin" to="/admin/painel" class="nav-link" :aria-current="ariaCurrent('/admin/painel')" @click="menuOpen = false">Painel</RouterLink>
+      <RouterLink v-if="isAdmin" to="/admin/tasks" class="nav-link" :aria-current="ariaCurrent('/admin/tasks')" @click="menuOpen = false">Tasks</RouterLink>
       <RouterLink to="/sobre"       class="nav-link" :aria-current="ariaCurrent('/sobre')"       @click="menuOpen = false">Sobre</RouterLink>
       <RouterLink to="/ouvidoria"   class="nav-link" :aria-current="ariaCurrent('/ouvidoria')"   @click="menuOpen = false">Ouvidoria</RouterLink>
-      <RouterLink v-if="isAdmin" to="/admin/ouvidoria" class="nav-link" :aria-current="ariaCurrent('/admin/ouvidoria')" @click="menuOpen = false">Gerenciar tickets</RouterLink>
       <RouterLink to="/mural"       class="nav-link" :aria-current="ariaCurrent('/mural')"       @click="menuOpen = false">Mural</RouterLink>
       <RouterLink to="/mapa"        class="nav-link" :aria-current="ariaCurrent('/mapa')"        @click="menuOpen = false">Mapa</RouterLink>
       <RouterLink to="/informacoes" class="nav-link" :aria-current="ariaCurrent('/informacoes')" @click="menuOpen = false">Informações</RouterLink>
       <RouterLink :to="isAdmin ? '/admin/formularios' : '/formularios'" class="nav-link" :aria-current="ariaCurrent(isAdmin ? '/admin/formularios' : '/formularios')" @click="menuOpen = false">Formulários</RouterLink>
-      <RouterLink v-if="isAdmin" to="/admin/tasks" class="nav-link" :aria-current="ariaCurrent('/admin/tasks')" @click="menuOpen = false">Tasks</RouterLink>
 
       <template v-if="isAdmin">
         <span class="nav-separator" />
@@ -105,6 +93,4 @@ function ariaCurrent(path) {
       </template>
     </div>
   </nav>
-
-  <AdminSidebar v-if="isAdmin" :aberta="sidebarAberta" @close="sidebarAberta = false" />
 </template>

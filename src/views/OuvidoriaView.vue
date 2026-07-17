@@ -127,7 +127,12 @@ onMounted(() => {
     <Navbar />
 
     <div class="home-section" id="ouvidoria-topo" style="padding-top:2rem; scroll-margin-top:80px;">
-      <BackLink to="/" style="margin-bottom:1.2rem;" />
+      <div class="ouvidoria-topo-row">
+        <BackLink to="/" />
+        <RouterLink v-if="isAdmin" to="/admin/ouvidoria" class="btn btn-outline btn-outline-creme btn-sm">
+          Gerenciar tickets →
+        </RouterLink>
+      </div>
 
       <div class="ouvidoria-intro">
         <div class="section-label">Ouvidoria</div>
@@ -384,6 +389,15 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.ouvidoria-topo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+.ouvidoria-topo-row :deep(.back-link) { margin-bottom: 0; }
+
 .ouvidoria-intro {
   text-align: center;
   display: flex;

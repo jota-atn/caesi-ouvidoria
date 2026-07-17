@@ -56,6 +56,7 @@ router.beforeEach((to) => {
   if (to.meta.admin && !isAdmin.value) return '/admin'
   if (to.meta.admin && mustChangePassword.value && path !== '/admin/trocar-senha') return '/admin/trocar-senha'
   if (path === '/admin' && isAdmin.value) return mustChangePassword.value ? '/admin/trocar-senha' : '/admin/painel'
+  if (path === '/ouvidoria' && isAdmin.value) return '/admin/ouvidoria'
 })
 
 export default router
