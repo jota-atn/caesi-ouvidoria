@@ -2,7 +2,6 @@
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import CalendarioSecao from '../components/CalendarioSecao.vue'
-import MapaSecao from '../components/MapaSecao.vue'
 import calendarIcon from '../assets/icons/calendar.svg?raw'
 import mapPinIcon from '../assets/icons/map-pin.svg?raw'
 import instagramIcon from '../assets/icons/instagram.svg?raw'
@@ -11,6 +10,7 @@ import bookOpenIcon from '../assets/icons/book-open.svg?raw'
 import messageIcon from '../assets/icons/message.svg?raw'
 import clipboardIcon from '../assets/icons/clipboard.svg?raw'
 import usersIcon from '../assets/icons/users.svg?raw'
+import mailIcon from '../assets/icons/mail.svg?raw'
 
 // ── Carrossel do Instagram (setas + arraste no clique) ───────
 import { ref } from 'vue'
@@ -103,10 +103,10 @@ const posts = [
             <div class="step-title">Calendário</div>
             <p class="step-desc">Fique por dentro dos eventos e prazos do curso, sempre atualizados.</p>
           </a>
-          <a href="#mapa" class="step-card">
-            <span class="step-icon" v-html="mapPinIcon"></span>
-            <div class="step-title">Mapa do campus</div>
-            <p class="step-desc">Encontre salas, laboratórios e blocos sem se perder pela UFCG.</p>
+          <a href="#contato" class="step-card">
+            <span class="step-icon" v-html="mailIcon"></span>
+            <div class="step-title">Fale com o CAESI</div>
+            <p class="step-desc">Sala, e-mail e grupos da comunidade — veja como nos encontrar.</p>
           </a>
           <a href="#instagram" class="step-card">
             <span class="step-icon" v-html="instagramIcon"></span>
@@ -182,8 +182,25 @@ const posts = [
             <span class="explore-cta">Ver Sobre Nós →</span>
           </div>
         </RouterLink>
+
+        <RouterLink to="/mapa" class="explore-item">
+          <div class="explore-icon explore-icon--amarelo" v-html="mapPinIcon"></div>
+          <div class="explore-card">
+            <h3 class="explore-title">Não se perca no campus</h3>
+            <p class="explore-desc">
+              Mapa interativo da UFCG com blocos, laboratórios e pontos de
+              referência — busque um local e trace sua rota até lá.
+            </p>
+            <span class="explore-cta">Ver Mapa do Campus →</span>
+          </div>
+        </RouterLink>
       </div>
     </section>
+
+    <!-- Calendário -->
+    <div id="calendario" style="scroll-margin-top: 80px;">
+      <CalendarioSecao />
+    </div>
 
     <!-- Instagram -->
     <section class="home-section" id="instagram" style="scroll-margin-top: 80px;">
@@ -229,15 +246,43 @@ const posts = [
       </div>
     </section>
 
-    <!-- Calendário -->
-    <div id="calendario" style="scroll-margin-top: 80px;">
-      <CalendarioSecao />
-    </div>
+    <!-- Contato -->
+    <section class="home-section" id="contato" style="scroll-margin-top: 80px;">
+      <div class="section-label">Contato</div>
+      <h2 class="section-title" style="margin-bottom:0.6rem;">Fale com o <span>CAESI</span></h2>
+      <p class="contato-sub">Dúvidas, parcerias ou só quer tomar um café? Veja como nos encontrar:</p>
 
-    <!-- Mapa do campus -->
-    <div id="mapa" style="scroll-margin-top: 80px;">
-      <MapaSecao />
-    </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <span class="step-icon" v-html="mapPinIcon"></span>
+          <div class="step-title">Dê uma passada lá!</div>
+          <p class="step-desc">
+            Nossa sala fica no Bloco CP. Sempre tem alguém da gestão por lá
+            pra trocar uma ideia ou ajudar com o que precisar.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <span class="step-icon" v-html="mailIcon"></span>
+          <div class="step-title">Assuntos formais</div>
+          <p class="step-desc">
+            Para parcerias, convites institucionais e assuntos mais sérios,
+            manda um e-mail pra gente.
+          </p>
+          <a href="mailto:caesi@ccc.ufcg.edu.br" class="contato-cta">caesi@ccc.ufcg.edu.br</a>
+        </div>
+
+        <div class="step-card">
+          <span class="step-icon" v-html="messageIcon"></span>
+          <div class="step-title">Redes e grupos</div>
+          <p class="step-desc">
+            Faça parte dos nossos grupos de comunicação pra não perder
+            nenhum aviso de última hora.
+          </p>
+          <a href="#" class="contato-cta">Entrar na Comunidade →</a>
+        </div>
+      </div>
+    </section>
 
     <SiteFooter />
   </div>
@@ -412,5 +457,26 @@ const posts = [
   }
   .explore-icon { width: 64px; height: 64px; }
   .explore-icon :deep(svg) { width: 30px; height: 30px; }
+}
+
+/* ── Contato ──────────────────────────────────────────────── */
+.contato-sub {
+  font-size: 0.95rem;
+  color: rgba(242,230,196,0.8);
+  margin-bottom: 1.8rem;
+}
+
+.contato-cta {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--roxo-escuro);
+  text-decoration: none;
+  word-break: break-word;
+}
+.contato-cta:hover {
+  text-decoration: underline;
 }
 </style>
