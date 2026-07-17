@@ -1,25 +1,22 @@
 <script setup>
-import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useEscapeKey } from '../composables/useEscapeKey.js'
 
+defineProps({ aberta: Boolean })
+const emit = defineEmits(['close'])
+
 const route = useRoute()
-const aberta = ref(false)
 
 function ariaCurrent(path) {
   return route.path === path || route.path.startsWith(path + '/') ? 'page' : undefined
 }
 
-function fechar() { aberta.value = false }
+function fechar() { emit('close') }
 
 useEscapeKey(fechar)
 </script>
 
 <template>
-  <button type="button" class="sidebar-toggle" :aria-expanded="aberta" aria-controls="admin-sidebar" @click="aberta = !aberta">
-    <span /><span /><span />
-  </button>
-
   <div v-if="aberta" class="sidebar-backdrop" @click="fechar"></div>
 
   <aside class="admin-sidebar" id="admin-sidebar" :class="{ aberta }">

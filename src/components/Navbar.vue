@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { isAdmin, logout } from '../stores/auth.js'
 import { cobrinhaZerada } from '../stores/conquistas.js'
@@ -34,9 +34,7 @@ function explodirConfete() {
 const route  = useRoute()
 const router = useRouter()
 
-const mostrarSidebar = computed(() => isAdmin.value && route.path.startsWith('/admin'))
-watch(mostrarSidebar, v => document.body.classList.toggle('admin-sidebar-ativa', v), { immediate: true })
-onUnmounted(() => document.body.classList.remove('admin-sidebar-ativa'))
+const sidebarAberta = ref(false)
 
 function handleLogout() {
   menuOpen.value = false
@@ -51,6 +49,14 @@ function ariaCurrent(path) {
 
 <template>
   <nav class="navbar">
+    <button
+      v-if="isAdmin" type="button" class="sidebar-toggle-btn"
+      :aria-expanded="sidebarAberta" aria-controls="admin-sidebar" aria-label="Menu admin"
+      @click="sidebarAberta = !sidebarAberta"
+    >
+      <span /><span /><span />
+    </button>
+
     <RouterLink :to="isAdmin ? '/admin/painel' : '/'" class="navbar-brand">
       <div class="logo-circle">
         <img src="/logo_caesi.png" alt="CAESI" class="logo-img">
@@ -95,5 +101,5 @@ function ariaCurrent(path) {
     </div>
   </nav>
 
-  <AdminSidebar v-if="mostrarSidebar" />
+  <AdminSidebar v-if="isAdmin" :aberta="sidebarAberta" @close="sidebarAberta = false" />
 </template>
