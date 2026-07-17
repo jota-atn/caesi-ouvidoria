@@ -21,14 +21,13 @@ import MapaSecao from '../components/MapaSecao.vue'
 
 <style scoped>
 :deep(.mapa-home-leaflet) {
-  height: 70vh;
-  min-height: 420px;
+  height: auto;
+  aspect-ratio: 4 / 3;
 }
 
 @media (max-width: 640px) {
   :deep(.mapa-home-leaflet) {
-    height: 60vh;
-    min-height: 340px;
+    aspect-ratio: 1 / 1;
   }
 }
 </style>
