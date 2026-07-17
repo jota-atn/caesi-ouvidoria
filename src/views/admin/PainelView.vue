@@ -170,10 +170,10 @@ const donutOptions = {
       <!-- ── Atendimento: canais de contato com o estudante ───── -->
       <div class="painel-secao">
         <p class="painel-secao-titulo">Atendimento</p>
-        <div class="painel-bento">
+        <div class="painel-bento" :class="inscricoes.length > 0 ? 'painel-bento--3' : 'painel-bento--2'">
 
           <!-- Ouvidoria -->
-          <div class="paper paper-sm bento-tile bento-tile--wide bento-tile--roxo">
+          <div class="paper paper-sm bento-tile bento-tile--roxo">
             <div class="bento-header">
               <span class="bento-icon bento-icon--roxo" v-html="inboxIcon"></span>
               <div class="bento-header-text">
@@ -211,7 +211,7 @@ const donutOptions = {
           </div>
 
           <!-- Formulários -->
-          <div class="paper paper-sm bento-tile bento-tile--wide bento-tile--verde">
+          <div class="paper paper-sm bento-tile bento-tile--verde">
             <div class="bento-header">
               <span class="bento-icon bento-icon--verde" v-html="clipboardIcon"></span>
               <div class="bento-header-text">
@@ -257,7 +257,7 @@ const donutOptions = {
           </div>
 
           <!-- Inscrições por status (só aparece quando há dado real) -->
-          <div v-if="inscricoes.length > 0" class="paper paper-sm bento-tile bento-tile--wide bento-tile--kraft">
+          <div v-if="inscricoes.length > 0" class="paper paper-sm bento-tile bento-tile--kraft">
             <p class="label-sm" style="margin-bottom:0.9rem;">Inscrições por status</p>
             <div class="painel-chart-wrap">
               <Doughnut :data="donutInscricoes" :options="donutOptions" />
@@ -270,10 +270,10 @@ const donutOptions = {
       <!-- ── Conteúdo do site: módulos públicos ───────────────── -->
       <div class="painel-secao">
         <p class="painel-secao-titulo">Conteúdo do site</p>
-        <div class="painel-bento">
+        <div class="painel-bento painel-bento--4">
 
           <!-- Informações -->
-          <div class="paper paper-sm bento-tile bento-tile--wide bento-tile--roxo-escuro">
+          <div class="paper paper-sm bento-tile bento-tile--roxo-escuro">
             <div class="bento-header">
               <span class="bento-icon bento-icon--roxo-escuro" v-html="bookOpenIcon"></span>
               <div class="bento-header-text">
@@ -351,10 +351,10 @@ const donutOptions = {
       <!-- ── Gestão interna: organização do próprio CAESI ─────── -->
       <div class="painel-secao">
         <p class="painel-secao-titulo">Gestão interna</p>
-        <div class="painel-bento">
+        <div class="painel-bento painel-bento--2">
 
           <!-- Tasks -->
-          <div class="paper paper-sm bento-tile bento-tile--wide bento-tile--amarelo">
+          <div class="paper paper-sm bento-tile bento-tile--amarelo">
             <div class="bento-header">
               <span class="bento-icon bento-icon--amarelo" v-html="checkCircleIcon"></span>
               <div class="bento-header-text">
@@ -384,7 +384,7 @@ const donutOptions = {
           </div>
 
           <!-- Equipe -->
-          <div class="paper paper-sm bento-tile bento-tile--wide bento-tile--vermelho">
+          <div class="paper paper-sm bento-tile bento-tile--vermelho">
             <div class="bento-header">
               <span class="bento-icon bento-icon--vermelho" v-html="usersIcon"></span>
               <div class="bento-header-text">

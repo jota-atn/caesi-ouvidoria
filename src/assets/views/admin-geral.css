@@ -17,14 +17,16 @@
 }
 
 /* ── Painel: semi-bento grid ───────────────────────────────
-   Só varia a largura da tile (wide = metade, narrow = um quarto);
-   a altura é sempre intrínseca ao conteúdo, então tiles com gráfico
-   (mais alto) convivem naturalmente com tiles de stat único (mais
-   baixo) sem precisar calcular row-span. */
+   Cada seção declara o próprio número de colunas (2, 3 ou 4) de
+   acordo com quantos tiles ela realmente tem — todos os tiles de
+   uma seção dividem a largura igualmente. Isso evita o problema de
+   um card sobrando sozinho numa linha quase vazia (span fixo +
+   dense-flow deixava isso acontecer sempre que a soma dos spans não
+   fosse múltiplo do nº de colunas). A altura continua intrínseca ao
+   conteúdo, então tiles com gráfico convivem com tiles de stat único
+   sem precisar calcular row-span. */
 .painel-bento {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-flow: dense;
   gap: 1.2rem;
   margin-bottom: 1.5rem;
 }
@@ -32,16 +34,23 @@
 .bento-tile {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
-.bento-tile--wide { grid-column: span 2; }
+.painel-bento--2 { grid-template-columns: repeat(2, 1fr); }
+.painel-bento--3 { grid-template-columns: repeat(3, 1fr); }
+.painel-bento--4 { grid-template-columns: repeat(4, 1fr); }
 
+/* Cada breakpoint só reduz pra uma contagem que divide a anterior
+   sem resto — nunca pra uma que deixaria 1 tile sobrando sozinho.
+   --3 não tem meio-termo (3 não divide por 2), então pula direto
+   pra 1 coluna; --4 passa por 2 colunas antes (4 ÷ 2 = 2, exato). */
 @media (max-width: 900px) {
-  .painel-bento { grid-template-columns: repeat(2, 1fr); }
+  .painel-bento--3 { grid-template-columns: 1fr; }
+  .painel-bento--4 { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
-  .painel-bento { grid-template-columns: 1fr; }
-  .bento-tile--wide { grid-column: span 1; }
+  .painel-bento--2, .painel-bento--4 { grid-template-columns: 1fr; }
 }
 
 .bento-tile--roxo        { border-left: 4px solid var(--roxo); }
