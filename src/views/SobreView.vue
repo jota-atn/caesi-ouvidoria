@@ -29,6 +29,11 @@ import xIcon from '../assets/icons/x.svg?raw'
 const missaoHtml = computed(() => markdownParaHtmlSeguro(missaoTexto.value))
 function descricaoHtml(texto) { return markdownParaHtmlSeguro(texto) }
 
+function descricaoPreview(md, max = 62) {
+  const texto = markdownParaHtmlSeguro(md).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+  return texto.length > max ? texto.slice(0, max).trim() + '…' : texto
+}
+
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl })
 
@@ -39,6 +44,7 @@ import mapPinIcon from '../assets/icons/map-pin.svg?raw'
 import mailIcon from '../assets/icons/mail.svg?raw'
 import instagramIcon from '../assets/icons/instagram.svg?raw'
 import cameraIcon from '../assets/icons/camera.svg?raw'
+import calendarIcon from '../assets/icons/calendar.svg?raw'
 
 // ── Modo de edição (admin) ──────────────────────────────────
 const route = useRoute()
@@ -632,6 +638,12 @@ onBeforeUnmount(() => { mapaMini?.remove() })
               <div class="membro-nome">{{ a.nome }}</div>
               <div v-if="a.diretoria" class="membro-periodo">{{ a.diretoria }}</div>
               <div v-else-if="a.periodo" class="membro-periodo">{{ a.periodo }}</div>
+              <p v-if="a.descricao" class="membro-card-desc">{{ descricaoPreview(a.descricao) }}</p>
+              <div v-if="a.linkedin || a.git || a.lattes" class="membro-card-plataformas">
+                <span v-if="a.linkedin" class="membro-card-dot" title="LinkedIn">in</span>
+                <span v-if="a.git" class="membro-card-dot" title="GitHub">gh</span>
+                <span v-if="a.lattes" class="membro-card-dot" title="Lattes">lt</span>
+              </div>
             </div>
           </div>
           <button class="carrossel-nav-btn carrossel-nav-btn--next" aria-label="Próximo membro" @click="membroScrollBy(1)">&gt;</button>
@@ -641,21 +653,35 @@ onBeforeUnmount(() => { mapaMini?.remove() })
       <!-- Modal: detalhes do membro -->
       <Teleport to="body">
         <div v-if="membroModal" class="modal-overlay" @click.self="fecharMembroModal">
-          <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
-            <div class="membro-modal-avatar">
-              <img v-if="membroModal.foto" :src="membroModal.foto" :alt="membroModal.nome" class="membro-foto">
-              <span v-else class="membro-inicial">{{ membroModal.nome?.[0]?.toUpperCase() || '?' }}</span>
+          <div class="modal-box membro-modal-box" role="dialog" aria-modal="true" v-focus-trap>
+            <div class="membro-modal-grid">
+              <div class="membro-modal-foto-col">
+                <div class="membro-modal-avatar">
+                  <img v-if="membroModal.foto" :src="membroModal.foto" :alt="membroModal.nome" class="membro-foto">
+                  <span v-else class="membro-inicial">{{ membroModal.nome?.[0]?.toUpperCase() || '?' }}</span>
+                </div>
+                <div class="modal-title membro-modal-nome">{{ membroModal.nome }}</div>
+              </div>
+
+              <div class="membro-modal-info-col">
+                <div v-if="membroModal.diretoria" class="membro-modal-diretoria">{{ membroModal.diretoria }}</div>
+                <div v-if="membroModal.descricao" class="modal-body membro-modal-desc" v-html="descricaoHtml(membroModal.descricao)"></div>
+                <div class="membro-modal-meta">
+                  <div v-if="membroModal.email" class="membro-modal-meta-item">
+                    <span v-html="mailIcon"></span> {{ membroModal.email }}
+                  </div>
+                  <div v-if="membroModal.periodo" class="membro-modal-meta-item">
+                    <span v-html="calendarIcon"></span> {{ membroModal.periodo }}
+                  </div>
+                </div>
+                <div v-if="membroModal.linkedin || membroModal.git || membroModal.lattes" class="membro-links">
+                  <a v-if="membroModal.linkedin" :href="membroModal.linkedin" target="_blank" rel="noopener" class="membro-link">LinkedIn</a>
+                  <a v-if="membroModal.git"      :href="membroModal.git"      target="_blank" rel="noopener" class="membro-link">GitHub</a>
+                  <a v-if="membroModal.lattes"   :href="membroModal.lattes"   target="_blank" rel="noopener" class="membro-link">Lattes</a>
+                </div>
+              </div>
             </div>
-            <div class="modal-title" style="text-align:center;">{{ membroModal.nome }}</div>
-            <div v-if="membroModal.diretoria" class="membro-periodo" style="width:fit-content;margin:0 auto 0.8rem;">{{ membroModal.diretoria }}</div>
-            <div v-else-if="membroModal.periodo" class="membro-periodo" style="width:fit-content;margin:0 auto 0.8rem;">{{ membroModal.periodo }}</div>
-            <div v-if="membroModal.email" class="membro-email" style="text-align:center;margin-bottom:0.8rem;">{{ membroModal.email }}</div>
-            <div v-if="membroModal.descricao" class="modal-body" v-html="descricaoHtml(membroModal.descricao)"></div>
-            <div v-if="membroModal.linkedin || membroModal.git || membroModal.lattes" class="membro-links" style="justify-content:center;margin-bottom:1rem;">
-              <a v-if="membroModal.linkedin" :href="membroModal.linkedin" target="_blank" rel="noopener" class="membro-link">LinkedIn</a>
-              <a v-if="membroModal.git"      :href="membroModal.git"      target="_blank" rel="noopener" class="membro-link">GitHub</a>
-              <a v-if="membroModal.lattes"   :href="membroModal.lattes"   target="_blank" rel="noopener" class="membro-link">Lattes</a>
-            </div>
+
             <div class="modal-actions">
               <button class="btn btn-outline btn-sm" @click="fecharMembroModal">Fechar</button>
             </div>
@@ -1079,9 +1105,9 @@ onBeforeUnmount(() => { mapaMini?.remove() })
   gap: 0.35rem;
   box-shadow: 2px 2px 0 var(--roxo-escuro);
   transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
-  flex: 0 0 190px;
-  width: 190px;
-  height: 210px;
+  flex: 0 0 200px;
+  width: 200px;
+  height: 258px;
   justify-content: center;
   scroll-snap-align: start;
   cursor: pointer;
@@ -1106,17 +1132,80 @@ onBeforeUnmount(() => { mapaMini?.remove() })
 }
 
 .membro-modal-avatar {
-  width: 110px;
-  height: 110px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   overflow: hidden;
-  margin: 0 auto 1rem;
+  margin: 0 auto 0.8rem;
   background: var(--roxo-escuro);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
-.membro-modal-avatar .membro-inicial { font-size: 2.4rem; }
+.membro-modal-avatar .membro-inicial { font-size: 2.8rem; }
+
+/* ── Modal de membro: foto à esquerda, info à direita ─────── */
+.membro-modal-box { max-width: 560px; }
+
+.membro-modal-grid {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 1.4rem;
+  align-items: start;
+}
+
+.membro-modal-foto-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.membro-modal-nome { margin-bottom: 0; }
+
+.membro-modal-info-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.membro-modal-diretoria {
+  text-align: center;
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--roxo);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.8rem;
+}
+
+.membro-modal-desc { margin-bottom: 0.9rem; }
+
+.membro-modal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 0.9rem;
+}
+
+.membro-modal-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  color: var(--preto);
+  word-break: break-word;
+}
+.membro-modal-meta-item :deep(svg) { width: 14px; height: 14px; flex-shrink: 0; stroke: var(--roxo-escuro); }
+
+@media (max-width: 520px) {
+  .membro-modal-grid { grid-template-columns: 1fr; }
+  .membro-modal-diretoria { text-align: center; }
+  .membro-modal-meta-item { justify-content: center; }
+  .membro-links { justify-content: center; }
+}
 
 .membro-foto {
   width: 100%;
@@ -1153,11 +1242,38 @@ onBeforeUnmount(() => { mapaMini?.remove() })
   margin-top: 4px;
 }
 
-.membro-email {
-  font-size: 0.76rem;
-  color: var(--cinza);
-  margin-top: 4px;
-  word-break: break-all;
+.membro-card-desc {
+  font-size: 0.72rem;
+  color: var(--preto);
+  opacity: 0.6;
+  line-height: 1.4;
+  margin: 2px 0 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.membro-card-plataformas {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.membro-card-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(80,64,160,0.1);
+  border: 1px solid rgba(80,64,160,0.22);
+  color: var(--roxo-escuro);
+  font-size: 0.55rem;
+  font-weight: 800;
+  font-family: 'Archivo Black', sans-serif;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .membro-desc {
