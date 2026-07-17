@@ -30,7 +30,6 @@ const routes = [
   { path: '/admin/portal',          component: () => import('../views/admin/PortalView.vue'),               meta: { admin: true } },
   { path: '/admin/informacoes',                  component: () => import('../views/admin/InformacoesView.vue'),               meta: { admin: true } },
   { path: '/admin/informacoes/tamburetei',       component: () => import('../views/admin/InformacoesTamburereiView.vue'),     meta: { admin: true } },
-  { path: '/admin/informacoes/professores',      component: () => import('../views/admin/InformacoesProfessoresView.vue'),    meta: { admin: true } },
   { path: '/admin/informacoes/laboratorios',     component: () => import('../views/admin/InformacoesLaboratoriosView.vue'),   meta: { admin: true } },
   { path: '/workspace/:token',       component: () => import('../views/WorkspaceView.vue') },
   { path: '/cobrinha-caesi',         component: () => import('../views/CobrinhaView.vue') },
