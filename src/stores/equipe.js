@@ -106,7 +106,7 @@ export function arquivarGestaoAtual() {
     nomeChapa: _info.value.nomeChapa,
     periodo:  periodoFormatado.value,
     descricao: _descricao.value,
-    membros:  _admins.value.map(({ nome, diretoria, periodo, foto }) => ({ nome, diretoria, periodo, foto: foto ?? '' })),
+    membros:  _membros.value.map(({ nome, diretoria, periodo, foto }) => ({ nome, diretoria, periodo, foto: foto ?? '' })),
   }
   const nova = [entrada, ..._historico.value]
   localStorage.setItem(KEY_HIST, JSON.stringify(nova))
