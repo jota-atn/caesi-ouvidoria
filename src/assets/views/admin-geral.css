@@ -44,10 +44,15 @@
 /* Cada breakpoint só reduz pra uma contagem que divide a anterior
    sem resto — nunca pra uma que deixaria 1 tile sobrando sozinho.
    --3 não tem meio-termo (3 não divide por 2), então pula direto
-   pra 1 coluna; --4 passa por 2 colunas antes (4 ÷ 2 = 2, exato). */
+   pra 1 coluna; --4 passa por 2 colunas antes (4 ÷ 2 = 2, exato).
+   --4 quebra mais cedo (1150px) porque o tile "Informações" (4
+   mini-stats) já fica apertado bem antes do ponto em que --3 (menos
+   conteúdo por tile) começa a incomodar. */
+@media (max-width: 1150px) {
+  .painel-bento--4 { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 900px) {
   .painel-bento--3 { grid-template-columns: 1fr; }
-  .painel-bento--4 { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 560px) {
   .painel-bento--2, .painel-bento--4 { grid-template-columns: 1fr; }
