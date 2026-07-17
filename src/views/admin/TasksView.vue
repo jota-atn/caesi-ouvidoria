@@ -273,7 +273,7 @@ useEscapeKey(() => {
       </div>
 
       <!-- ── Toolbar ──────────────────────────────────────── -->
-      <div class="kanban-toolbar paper paper-mb">
+      <div class="kanban-toolbar paper paper--meio paper-mb">
         <div class="field" style="flex:1;min-width:160px;margin:0;">
           <input v-model="busca" placeholder="Buscar tasks…" />
         </div>
@@ -578,7 +578,14 @@ useEscapeKey(() => {
 }
 .membro-add-input:focus { border-color: var(--roxo); }
 
-.membros-lista { display: flex; flex-direction: column; gap: 0.5rem; }
+.membros-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
 
 .membro-item {
   display: flex; align-items: center; gap: 0.75rem;

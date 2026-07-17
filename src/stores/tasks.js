@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 
 const KEY_TASKS   = 'caesi_tasks'
-const KEY_MEMBROS = 'caesi_membros'
+const KEY_MEMBROS = 'caesi_tasks_membros'
 
 function loadTasks()   { return JSON.parse(localStorage.getItem(KEY_TASKS)   || '[]') }
 function loadMembros() { return JSON.parse(localStorage.getItem(KEY_MEMBROS) || '[]') }
