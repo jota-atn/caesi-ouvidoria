@@ -97,7 +97,7 @@ onUnmounted(() => document.removeEventListener('click', onClickFora))
         <img src="/logo_caesi.png" alt="CAESI" class="logo-img">
       </div>
       <span class="navbar-title">
-        CAESI <span v-if="isAdmin">Admin</span>
+        CAESI <span>{{ isAdmin ? 'Admin' : 'Home' }}</span>
       </span>
       <span
         v-if="!isAdmin && cobrinhaZerada"

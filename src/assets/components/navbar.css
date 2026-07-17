@@ -42,8 +42,15 @@
   font-weight: 700;
   font-size: 1.1rem;
   color: var(--branco);
+  padding-bottom: 6px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
 }
 .navbar-title span { color: var(--amarelo); }
+.navbar-brand:hover .navbar-title {
+  color: var(--amarelo);
+  border-bottom-color: var(--amarelo);
+}
 
 .navbar-badge {
   position: relative;
