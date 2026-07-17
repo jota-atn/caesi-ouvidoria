@@ -7,6 +7,7 @@ const KEY_HIST     = 'caesi_gestoes_anteriores'
 const KEY_HIST_VIS = 'caesi_gestoes_visiveis'
 const KEY_MISSAO   = 'caesi_sobre_missao'
 const KEY_CONTATO  = 'caesi_sobre_contato'
+const KEY_SECOES   = 'caesi_sobre_secoes'
 
 const MISSAO_DEFAULT = `O CAESI, Centro Acadêmico de Ciência da Computação, é a entidade estudantil
 que representa os alunos do curso de Ciência da Computação da UFCG. Nossa missão é defender
@@ -30,6 +31,7 @@ const _historico = ref(JSON.parse(localStorage.getItem(KEY_HIST) || '[]'))
 const _histVis   = ref(localStorage.getItem(KEY_HIST_VIS) !== 'false')
 const _missao    = ref(localStorage.getItem(KEY_MISSAO) || MISSAO_DEFAULT)
 const _contato   = ref({ ...CONTATO_DEFAULT, ...JSON.parse(localStorage.getItem(KEY_CONTATO) || '{}') })
+const _secoes    = ref(JSON.parse(localStorage.getItem(KEY_SECOES) || '[]'))
 
 const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 
@@ -40,6 +42,7 @@ export const historicoGestoes   = computed(() => _historico.value)
 export const historicoVisivel   = computed(() => _histVis.value)
 export const missaoTexto        = computed(() => _missao.value)
 export const contatoInfo        = computed(() => _contato.value)
+export const secoesCustom       = computed(() => _secoes.value)
 export const periodoFormatado  = computed(() => {
   const { mesInicio, anoInicio, mesFim, anoFim } = _info.value
   if (!mesInicio || !anoInicio) return ''
@@ -117,4 +120,32 @@ export function removerGestaoHistorico(id) {
   const nova = _historico.value.filter(g => g.id !== id)
   localStorage.setItem(KEY_HIST, JSON.stringify(nova))
   _historico.value = nova
+}
+
+function persistSecoes(list) {
+  localStorage.setItem(KEY_SECOES, JSON.stringify(list))
+  _secoes.value = [...list]
+}
+
+export function addSecao({ titulo, conteudo }) {
+  const nova = { id: Date.now(), titulo, conteudo }
+  persistSecoes([..._secoes.value, nova])
+  return nova
+}
+
+export function updateSecao(id, data) {
+  persistSecoes(_secoes.value.map(s => s.id === id ? { ...s, ...data } : s))
+}
+
+export function removeSecao(id) {
+  persistSecoes(_secoes.value.filter(s => s.id !== id))
+}
+
+export function moverSecao(id, direcao) {
+  const list = [..._secoes.value]
+  const idx = list.findIndex(s => s.id === id)
+  const alvo = idx + direcao
+  if (idx < 0 || alvo < 0 || alvo >= list.length) return
+  ;[list[idx], list[alvo]] = [list[alvo], list[idx]]
+  persistSecoes(list)
 }

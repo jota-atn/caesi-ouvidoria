@@ -15,6 +15,7 @@ import {
   historicoGestoes, historicoVisivel, setHistoricoVisivel,
   arquivarGestaoAtual, removerGestaoHistorico, adicionarGestaoManual,
   missaoTexto, saveMissao, contatoInfo, saveContato, periodoFormatado,
+  secoesCustom, addSecao, updateSecao, removeSecao, moverSecao,
 } from '../stores/equipe.js'
 import { CENTRO_PADRAO } from '../stores/mapa.js'
 import { markdownParaHtmlSeguro } from '../utils/markdown.js'
@@ -265,6 +266,59 @@ function arquivar() {
   arquivarGestaoAtual()
   confirmandoArquivar.value = false
   showToast('Gestão arquivada no histórico.', 'success')
+}
+
+// --- Seções customizadas ---
+const mostraFormSecao = ref(false)
+const formSecao = ref({ titulo: '', conteudo: '' })
+
+function toggleFormSecao() {
+  mostraFormSecao.value = !mostraFormSecao.value
+  if (!mostraFormSecao.value) formSecao.value = { titulo: '', conteudo: '' }
+}
+
+function cadastrarSecao() {
+  if (!formSecao.value.titulo.trim()) {
+    showToast('Informe o título da seção.', 'error')
+    return
+  }
+  addSecao({ titulo: formSecao.value.titulo.trim(), conteudo: formSecao.value.conteudo.trim() })
+  formSecao.value = { titulo: '', conteudo: '' }
+  mostraFormSecao.value = false
+  showToast('Seção adicionada.', 'success')
+}
+
+const editandoSecaoId = ref(null)
+const editFormSecao = ref(null)
+
+function iniciarEdicaoSecao(secao) {
+  editandoSecaoId.value = secao.id
+  editFormSecao.value = { ...secao }
+}
+
+function cancelarEdicaoSecao() {
+  editandoSecaoId.value = null
+  editFormSecao.value = null
+}
+
+function salvarEdicaoSecao() {
+  if (!editFormSecao.value.titulo.trim()) {
+    showToast('Informe o título da seção.', 'error')
+    return
+  }
+  updateSecao(editandoSecaoId.value, {
+    titulo: editFormSecao.value.titulo.trim(),
+    conteudo: editFormSecao.value.conteudo.trim(),
+  })
+  showToast('Seção atualizada.', 'success')
+  cancelarEdicaoSecao()
+}
+
+function confirmarRemocaoSecao(id, titulo) {
+  if (confirm(`Remover a seção "${titulo}"?`)) {
+    if (editandoSecaoId.value === id) cancelarEdicaoSecao()
+    removeSecao(id)
+  }
 }
 
 const mapaMiniEl = ref(null)
@@ -633,6 +687,60 @@ onBeforeUnmount(() => { mapaMini?.remove() })
             Nenhuma gestão arquivada ainda.
           </p>
         </div>
+      </div>
+
+      <!-- Seções customizadas -->
+      <div v-for="(s, idx) in secoesCustom" :key="s.id" class="paper paper-mb-lg paper--meio">
+        <template v-if="!editando || editandoSecaoId !== s.id">
+          <div class="gestao-header">
+            <h2 class="paper-title" style="margin-bottom:0;">{{ s.titulo }}</h2>
+            <div v-if="editando" class="secao-admin-btns">
+              <button class="icon-btn" title="Mover para cima" :disabled="idx === 0" @click="moverSecao(s.id, -1)">↑</button>
+              <button class="icon-btn" title="Mover para baixo" :disabled="idx === secoesCustom.length - 1" @click="moverSecao(s.id, 1)">↓</button>
+              <button class="icon-btn" title="Editar" @click="iniciarEdicaoSecao(s)" v-html="pencilIcon"></button>
+              <button class="icon-btn icon-btn--danger" title="Remover" @click="confirmarRemocaoSecao(s.id, s.titulo)" v-html="xIcon"></button>
+            </div>
+          </div>
+          <div class="sobre-missao-texto" v-html="descricaoHtml(s.conteudo)"></div>
+        </template>
+
+        <template v-else>
+          <p class="secao-sep" style="margin-top:0;">Editar seção</p>
+          <div class="field">
+            <label>Título</label>
+            <input v-model="editFormSecao.titulo" type="text" maxlength="80">
+          </div>
+          <div class="field">
+            <label>Conteúdo <span class="field-hint">(Markdown)</span></label>
+            <textarea v-model="editFormSecao.conteudo" rows="6"></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary btn-sm" @click="salvarEdicaoSecao">Salvar →</button>
+            <button class="btn btn-outline btn-sm" @click="cancelarEdicaoSecao">Cancelar</button>
+          </div>
+        </template>
+      </div>
+
+      <!-- Adicionar seção customizada -->
+      <div v-if="editando" class="paper paper-mb-lg paper--meio secao-add-box">
+        <div v-if="!mostraFormSecao" style="text-align:center;">
+          <button class="btn btn-outline btn-sm" @click="toggleFormSecao">+ Adicionar seção</button>
+        </div>
+        <template v-else>
+          <p class="secao-sep" style="margin-top:0;">Nova seção</p>
+          <div class="field">
+            <label>Título</label>
+            <input v-model="formSecao.titulo" type="text" maxlength="80" placeholder="Ex.: Parcerias">
+          </div>
+          <div class="field">
+            <label>Conteúdo <span class="field-hint">(Markdown)</span></label>
+            <textarea v-model="formSecao.conteudo" rows="6" placeholder="Escreva o conteúdo da seção…"></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" @click="cadastrarSecao">Adicionar seção →</button>
+            <button class="btn btn-outline btn-sm" @click="toggleFormSecao">Cancelar</button>
+          </div>
+        </template>
       </div>
 
       <div class="paper paper--fim">
@@ -1329,5 +1437,25 @@ onBeforeUnmount(() => { mapaMini?.remove() })
   .hist-membro-row input:nth-child(4) {
     grid-column: 2;
   }
+}
+
+/* ── Seções customizadas ───────────────────────────────────── */
+.secao-admin-btns {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.secao-admin-btns .icon-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.secao-admin-btns .icon-btn:disabled:hover {
+  border-color: var(--creme-escuro);
+  color: var(--cinza);
+}
+
+.secao-add-box {
+  border: 2px dashed var(--creme-escuro);
+  box-shadow: none;
 }
 </style>
