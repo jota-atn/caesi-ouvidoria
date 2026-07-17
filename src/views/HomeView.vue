@@ -6,6 +6,11 @@ import MapaSecao from '../components/MapaSecao.vue'
 import calendarIcon from '../assets/icons/calendar.svg?raw'
 import mapPinIcon from '../assets/icons/map-pin.svg?raw'
 import instagramIcon from '../assets/icons/instagram.svg?raw'
+import bellIcon from '../assets/icons/bell.svg?raw'
+import bookOpenIcon from '../assets/icons/book-open.svg?raw'
+import messageIcon from '../assets/icons/message.svg?raw'
+import clipboardIcon from '../assets/icons/clipboard.svg?raw'
+import usersIcon from '../assets/icons/users.svg?raw'
 
 // ── Carrossel do Instagram (setas + arraste no clique) ───────
 import { ref } from 'vue'
@@ -109,6 +114,74 @@ const posts = [
             <p class="step-desc">Acompanhe avisos, fotos e novidades do dia a dia do CAESI.</p>
           </a>
         </div>
+      </div>
+    </section>
+
+    <!-- Explore o site -->
+    <section class="home-section">
+      <div class="section-label">Explore o site</div>
+      <h2 class="section-title">Tudo o que o <span>CAESI</span> oferece</h2>
+
+      <div class="explore-list">
+        <RouterLink to="/mural" class="explore-item">
+          <div class="explore-icon explore-icon--roxo" v-html="bellIcon"></div>
+          <div class="explore-card">
+            <h3 class="explore-title">Fique por dentro de tudo</h3>
+            <p class="explore-desc">
+              Acompanhe editais de monitoria, vagas de estágio, convocações
+              para assembleias e comunicados oficiais da coordenação e do CAESI.
+            </p>
+            <span class="explore-cta">Acessar o Mural →</span>
+          </div>
+        </RouterLink>
+
+        <RouterLink to="/informacoes" class="explore-item">
+          <div class="explore-icon explore-icon--amarelo" v-html="bookOpenIcon"></div>
+          <div class="explore-card">
+            <h3 class="explore-title">Sobrevivendo à Computação</h3>
+            <p class="explore-desc">
+              Guias práticos sobre disciplinas, professores, ementas e tudo o
+              que você precisa saber para não ficar perdido no curso.
+            </p>
+            <span class="explore-cta">Ver Informações →</span>
+          </div>
+        </RouterLink>
+
+        <RouterLink to="/ouvidoria" class="explore-item">
+          <div class="explore-icon explore-icon--roxo" v-html="messageIcon"></div>
+          <div class="explore-card">
+            <h3 class="explore-title">Sua voz no CAESI</h3>
+            <p class="explore-desc">
+              Problema em disciplina, infraestrutura dos laboratórios ou uma
+              sugestão? Abra um ticket anônimo ou identificado com a gestão.
+            </p>
+            <span class="explore-cta">Falar com a Ouvidoria →</span>
+          </div>
+        </RouterLink>
+
+        <RouterLink to="/formularios" class="explore-item">
+          <div class="explore-icon explore-icon--amarelo" v-html="clipboardIcon"></div>
+          <div class="explore-card">
+            <h3 class="explore-title">Burocracia descomplicada</h3>
+            <p class="explore-desc">
+              Links rápidos para trancamento, aproveitamento de disciplinas,
+              reserva de salas e outras solicitações do departamento.
+            </p>
+            <span class="explore-cta">Ver Formulários →</span>
+          </div>
+        </RouterLink>
+
+        <RouterLink to="/sobre" class="explore-item">
+          <div class="explore-icon explore-icon--roxo" v-html="usersIcon"></div>
+          <div class="explore-card">
+            <h3 class="explore-title">Quem faz o CAESI acontecer</h3>
+            <p class="explore-desc">
+              A gestão atual, o histórico de chapas, nossa missão e o
+              estatuto do Centro Acadêmico — e como falar direto com a gente.
+            </p>
+            <span class="explore-cta">Ver Sobre Nós →</span>
+          </div>
+        </RouterLink>
       </div>
     </section>
 
@@ -254,5 +327,90 @@ const posts = [
 @media (max-width: 640px) {
   .home-hero-full .hero-logo { width: 116px; height: 116px; }
   .hero-kicker { font-size: 0.68rem; letter-spacing: 0.1em; }
+}
+
+/* ── Explore o site ───────────────────────────────────────── */
+.explore-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.explore-item {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.explore-icon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.explore-icon :deep(svg) {
+  width: 28px;
+  height: 28px;
+  stroke: currentColor;
+}
+.explore-icon--roxo    { background: var(--roxo-escuro); color: var(--amarelo); }
+.explore-icon--amarelo { background: var(--amarelo);      color: var(--preto); }
+
+.explore-item:hover .explore-icon {
+  transform: translateY(-4px);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.3);
+}
+
+.explore-card {
+  flex: 1;
+  min-width: 0;
+  background: var(--creme);
+  border-radius: 2px;
+  padding: 0.9rem 1.2rem;
+  box-shadow: 3px 3px 0 var(--roxo-escuro);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.explore-item:hover .explore-card {
+  transform: translateY(-2px);
+  box-shadow: 4px 5px 0 var(--roxo-escuro);
+}
+
+.explore-title {
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--roxo-escuro);
+  margin-bottom: 0.3rem;
+}
+.explore-desc {
+  font-size: 0.86rem;
+  color: var(--preto);
+  opacity: 0.75;
+  line-height: 1.5;
+  margin-bottom: 0.4rem;
+}
+.explore-cta {
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--roxo-escuro);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 640px) {
+  .explore-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  .explore-icon { width: 64px; height: 64px; }
+  .explore-icon :deep(svg) { width: 30px; height: 30px; }
 }
 </style>
