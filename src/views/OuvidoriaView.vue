@@ -1,11 +1,16 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
-import { addMensagem } from '../stores/mensagens.js'
+import BackLink from '../components/BackLink.vue'
+import { addMensagem, mensagens, addComplemento } from '../stores/mensagens.js'
 import { isAdmin } from '../stores/auth.js'
 import { isEmail } from '../utils/validation.js'
 
+const route = useRoute()
+
+// ── Envio de ticket ──────────────────────────────────────────
 const form = ref({ tipo: '', periodo: '', mensagem: '', nome: '', email: '' })
 const errors = ref({})
 const charCount = ref(0)
@@ -44,29 +49,192 @@ function resetForm() {
   enviado.value = false
   emailEnviado.value = false
 }
+
+// ── Consultar protocolo (busca simples, embutida na página) ──
+const protocoloBusca = ref('')
+const resultado = ref(null)
+const naoEncontrado = ref(false)
+const campoVazio = ref(false)
+const complementoTexto = ref('')
+const complementoEnviado = ref(false)
+
+const tipoLabel = {
+  disciplina:     'Disciplina',
+  professores:    'Professores',
+  colegas:        'Colegas de curso',
+  infraestrutura: 'Infraestrutura',
+  ofertas:        'Ofertas e horários',
+  grupos:         'Grupos estudantis',
+  outros:         'Outros',
+}
+
+const statusLabel = {
+  pendente:      'Pendente',
+  em_andamento:  'Em andamento',
+  atendida:      'Atendida',
+}
+
+const statusClass = {
+  pendente:     'badge badge-pendente',
+  em_andamento: 'badge badge-info',
+  atendida:     'badge badge-atendida',
+}
+
+function consultar() {
+  naoEncontrado.value = false
+  resultado.value = null
+  complementoTexto.value = ''
+  complementoEnviado.value = false
+  const p = protocoloBusca.value.trim()
+  campoVazio.value = !p
+  if (!p) return
+  const found = mensagens.value.find(
+    m => m.protocolo.toLowerCase() === p.toLowerCase()
+  )
+  if (found) {
+    resultado.value = found
+  } else {
+    naoEncontrado.value = true
+  }
+}
+
+function enviarComplemento() {
+  const texto = complementoTexto.value.trim()
+  if (!texto || !resultado.value) return
+  addComplemento(resultado.value.id, texto)
+  resultado.value = mensagens.value.find(m => m.id === resultado.value.id)
+  complementoTexto.value = ''
+  complementoEnviado.value = true
+  setTimeout(() => { complementoEnviado.value = false }, 2500)
+}
+
+function consultarStatusDoTicket(p) {
+  protocoloBusca.value = p
+  consultar()
+  document.getElementById('ouvidoria-topo')?.scrollIntoView({ behavior: 'smooth' })
+}
+
+onMounted(() => {
+  if (route.query.protocolo) {
+    protocoloBusca.value = route.query.protocolo
+    consultar()
+  }
+})
 </script>
 
 <template>
   <div class="page">
     <Navbar />
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="hero-logo">
-        <img src="/logo_caesi.png" alt="CAESI" style="width:100%;height:100%;object-fit:cover;display:block;">
+    <div class="home-section" id="ouvidoria-topo" style="padding-top:2rem; scroll-margin-top:80px;">
+      <BackLink to="/" style="margin-bottom:1.2rem;" />
+
+      <div class="ouvidoria-intro">
+        <div class="section-label">Ouvidoria</div>
+        <h1 class="section-title">CAESI <span>Ouvidoria</span></h1>
+        <div class="ouvidoria-divider"></div>
+        <p class="ouvidoria-sub">
+          Fale com o Centro Acadêmico de Ciência da Computação da UFCG.
+          Envie sugestões, reclamações e elogios de forma anônima.
+        </p>
       </div>
-      <h1 class="hero-title">CAESI <span>Ouvidoria</span></h1>
-      <p class="hero-sub">
-        Fale com o Centro Acadêmico de Ciência da Computação da UFCG.<br>
-        Envie sugestões, reclamações e elogios de forma anônima.
-      </p>
-      <div class="hero-actions">
-        <a href="#enviar" class="btn btn-amarelo">Enviar mensagem →</a>
-        <RouterLink to="/ouvidoria/consulta" class="btn btn-outline btn-outline-creme">
-          Consultar protocolo →
-        </RouterLink>
+
+      <div class="ouvidoria-busca">
+        <input
+          v-model="protocoloBusca" type="text"
+          placeholder="Digite seu nº de protocolo…"
+          class="ouvidoria-busca-input"
+          autocomplete="off" spellcheck="false"
+          @input="campoVazio = false; naoEncontrado = false"
+          @keyup.enter="consultar"
+        >
+        <button type="button" class="btn btn-outline" @click="consultar">Consultar</button>
       </div>
-    </section>
+
+      <div v-if="campoVazio" class="alert-erro" style="margin-top:1rem;">
+        Informe um número de protocolo.
+      </div>
+      <div v-if="naoEncontrado" class="alert-erro" style="margin-top:1rem;">
+        Protocolo não encontrado. Verifique o número e tente novamente.
+      </div>
+
+      <div v-if="resultado" class="paper" style="margin-top:1.5rem;">
+        <div class="consulta-header">
+          <div class="protocolo-box">
+            <div class="protocolo-label">Protocolo</div>
+            <div class="protocolo-value">{{ resultado.protocolo }}</div>
+          </div>
+          <span :class="statusClass[resultado.status]">
+            {{ statusLabel[resultado.status] }}
+          </span>
+        </div>
+
+        <hr class="divider">
+
+        <div class="msg-meta">
+          <div class="msg-meta-item">
+            <span class="msg-meta-label">Data</span><br>{{ resultado.data }}
+          </div>
+          <div class="msg-meta-item">
+            <span class="msg-meta-label">Tipo de relato</span><br>{{ tipoLabel[resultado.tipo] ?? resultado.tipo }}
+          </div>
+          <div v-if="resultado.periodo" class="msg-meta-item">
+            <span class="msg-meta-label">Período</span><br>{{ resultado.periodo }}
+          </div>
+        </div>
+
+        <p class="label-sm" style="margin-bottom:8px;">Mensagem enviada</p>
+        <div class="msg-body">{{ resultado.corpo }}</div>
+
+        <template v-if="resultado.resposta">
+          <div class="alert-resposta" style="margin-top:1.5rem;">
+            <p class="label-sm" style="margin-bottom:10px;color:var(--roxo-escuro);">Resposta do CAESI</p>
+            <div style="font-size:0.93rem;line-height:1.7;color:var(--preto);white-space:pre-wrap;">{{ resultado.resposta }}</div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="alert-info" style="margin-top:1.5rem;margin-bottom:0;">
+            <strong>Aguardando resposta.</strong>
+            A equipe do CAESI ainda não respondeu esta mensagem.
+            {{ resultado.status === 'pendente' ? 'Ela está na fila de atendimento.' : 'Está sendo analisada.' }}
+          </div>
+        </template>
+
+        <template v-if="resultado.complementos?.length">
+          <hr class="divider" style="margin-top:1.5rem;">
+          <p class="label-sm" style="margin-bottom:10px;">Informações adicionadas por você</p>
+          <div class="complementos-lista">
+            <div v-for="(c, i) in resultado.complementos" :key="i" class="complemento-item">
+              <div class="complemento-data">{{ c.data }}</div>
+              <div class="complemento-texto">{{ c.texto }}</div>
+            </div>
+          </div>
+        </template>
+
+        <template v-if="resultado.status !== 'atendida'">
+          <hr class="divider" style="margin-top:1.5rem;">
+          <p class="label-sm" style="margin-bottom:4px;">Adicionar mais informações</p>
+          <p style="font-size:0.78rem;color:var(--cinza);margin-bottom:0.8rem;">
+            Esqueceu de contar algo? Complemente seu relato sem perder o protocolo.
+          </p>
+          <div v-if="complementoEnviado" class="alert-atendida">
+            <span style="font-size:1.2rem;">✓</span>
+            <div class="alert-atendida-title">Complemento enviado!</div>
+          </div>
+          <form v-else class="field" style="margin-bottom:0;" @submit.prevent="enviarComplemento">
+            <textarea v-model="complementoTexto" rows="3" maxlength="1000" placeholder="Escreva a informação adicional…"></textarea>
+            <div class="btn-row" style="margin-top:0.6rem;">
+              <button type="submit" class="btn btn-outline btn-sm" :disabled="!complementoTexto.trim()">Enviar complemento</button>
+            </div>
+          </form>
+        </template>
+        <template v-else>
+          <p style="font-size:0.78rem;color:var(--cinza);margin-top:1.2rem;">
+            Este ticket já foi atendido. Se for algo novo, abra um novo relato.
+          </p>
+        </template>
+      </div>
+    </div>
 
     <!-- Como funciona -->
     <section class="home-section">
@@ -103,7 +271,7 @@ function resetForm() {
             </svg>
           </span>
           <div class="step-title">Acompanhe o status</div>
-          <p class="step-desc">Use o número de protocolo para consultar o status e ver a resposta do CAESI a qualquer momento.</p>
+          <p class="step-desc">Use o número de protocolo pra consultar o andamento do seu relato a qualquer momento.</p>
         </div>
       </div>
     </section>
@@ -121,7 +289,7 @@ function resetForm() {
             Ticket enviado!
           </h3>
           <p style="font-size:0.9rem;color:var(--cinza);margin-bottom:1.2rem;line-height:1.6;">
-            Guarde o protocolo abaixo para acompanhar o andamento e ver a resposta do CAESI.
+            Guarde o protocolo abaixo para acompanhar o andamento do seu relato.
             <template v-if="emailEnviado"> O protocolo também será enviado para o seu e-mail.</template>
           </p>
           <div class="protocolo-box">
@@ -129,7 +297,7 @@ function resetForm() {
             <div class="protocolo-value">{{ protocolo }}</div>
           </div>
           <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:1.2rem;">
-            <RouterLink :to="`/ouvidoria/consulta?protocolo=${encodeURIComponent(protocolo)}`" class="btn btn-primary btn-sm">Consultar status →</RouterLink>
+            <button type="button" class="btn btn-primary btn-sm" @click="consultarStatusDoTicket(protocolo)">Consultar status →</button>
             <button class="btn btn-outline btn-sm" @click="resetForm">Enviar outro ticket</button>
           </div>
         </div>
@@ -147,7 +315,7 @@ function resetForm() {
         <template v-else>
           <div class="alert-info">
             A identificação é <strong style="color:var(--roxo-escuro);">opcional</strong>.
-            Após o envio você receberá um número de protocolo para acompanhar o status e a resposta do CAESI.
+            Após o envio você receberá um número de protocolo para acompanhar o status do seu relato.
           </div>
 
           <form @submit.prevent="submit" novalidate>
@@ -224,3 +392,81 @@ function resetForm() {
     <SiteFooter />
   </div>
 </template>
+
+<style scoped>
+.ouvidoria-intro {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ouvidoria-intro .section-title {
+  margin-bottom: 0;
+}
+
+.ouvidoria-divider {
+  width: 48px;
+  height: 4px;
+  background: var(--amarelo);
+  border-radius: 2px;
+  margin: 1rem 0;
+}
+
+#ouvidoria-topo .alert-erro {
+  background: var(--vermelho);
+  border: none;
+  color: var(--creme);
+  font-weight: 800;
+  box-shadow: 3px 3px 0 var(--roxo-escuro);
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ouvidoria-sub {
+  font-size: 0.95rem;
+  color: rgba(242,230,196,0.8);
+  max-width: 560px;
+  line-height: 1.6;
+  margin-bottom: 1.8rem;
+}
+
+.ouvidoria-busca {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.ouvidoria-busca-input {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 14px;
+  background: var(--branco);
+  border: 2px solid var(--creme-escuro);
+  border-radius: 2px;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1rem;
+  color: var(--preto);
+  letter-spacing: 0.04em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.ouvidoria-busca-input:focus { border-color: var(--roxo); }
+
+.consulta-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .ouvidoria-busca { flex-direction: column; }
+  .ouvidoria-busca .btn { width: 100%; justify-content: center; }
+}
+</style>
