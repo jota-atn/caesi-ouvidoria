@@ -16,7 +16,7 @@ const secoes = computed(() => [
   { to: '/informacoes/editais',            titulo: 'Editais',      icon: clipboardIcon, cor: 'roxo',       info: plural(editais.value.length, 'edital', 'editais') },
   { to: '/admin/informacoes/tamburetei',   titulo: 'Tamburetei',   icon: usersIcon,     cor: 'amarelo',     info: 'Editar texto e link' },
   { to: '/informacoes/professores',        titulo: 'Professores',  icon: userIcon,      cor: 'verde',       info: plural(professores.value.length, 'professor', 'professores') },
-  { to: '/admin/informacoes/laboratorios', titulo: 'Laboratórios', icon: flaskIcon,     cor: 'vermelho',    info: plural(laboratorios.value.length, 'laboratório', 'laboratórios') },
+  { to: '/informacoes/laboratorios',       titulo: 'Laboratórios', icon: flaskIcon,     cor: 'vermelho',    info: plural(laboratorios.value.length, 'laboratório', 'laboratórios') },
   { to: '/admin/portal',                   titulo: 'Portal',       icon: archiveIcon,   cor: 'kraft',       info: plural(artefatos.value.length, 'artefato', 'artefatos') },
 ])
 </script>
