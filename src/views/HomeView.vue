@@ -202,6 +202,45 @@ const posts = [
       <CalendarioSecao />
     </div>
 
+    <!-- Contato -->
+    <section class="home-section" id="contato" style="scroll-margin-top: 80px;">
+      <div class="section-label">Contato</div>
+      <h2 class="section-title" style="margin-bottom:0.6rem;">Fale com o <span>CAESI</span></h2>
+      <p class="contato-sub">Dúvidas, parcerias ou só quer tomar um café? Veja como nos encontrar:</p>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <span class="step-icon" v-html="instagramIcon"></span>
+          <div class="step-title">Nos acompanhe nas redes sociais</div>
+          <p class="step-desc">
+            Nem sempre tem alguém na sala pra bater um papo, mas no Instagram
+            a gente posta avisos, eventos e novidades o tempo todo.
+          </p>
+          <a href="https://instagram.com/caesiufcg" target="_blank" rel="noopener" class="contato-cta">Seguir @caesiufcg →</a>
+        </div>
+
+        <div class="step-card">
+          <span class="step-icon" v-html="mailIcon"></span>
+          <div class="step-title">Assuntos formais</div>
+          <p class="step-desc">
+            Para parcerias, convites institucionais e assuntos mais sérios,
+            manda um e-mail pra gente.
+          </p>
+          <a href="mailto:caesi@ccc.ufcg.edu.br" class="contato-cta">caesi@ccc.ufcg.edu.br</a>
+        </div>
+
+        <div class="step-card">
+          <span class="step-icon" v-html="messageIcon"></span>
+          <div class="step-title">Comunidade do WhatsApp</div>
+          <p class="step-desc">
+            É aluno do curso? Entre na nossa comunidade do WhatsApp pra
+            não perder nenhum aviso de última hora.
+          </p>
+          <a href="https://chat.whatsapp.com/KLjHDHdbA8A4ApGNUwfCuQ" target="_blank" rel="noopener" class="contato-cta">Entrar na comunidade →</a>
+        </div>
+      </div>
+    </section>
+
     <!-- Instagram -->
     <section class="home-section" id="instagram" style="scroll-margin-top: 80px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;flex-wrap:wrap;gap:12px;">
@@ -243,44 +282,6 @@ const posts = [
         </div>
 
         <button class="insta-nav-btn insta-nav-btn--next" aria-label="Próximos posts" @click="instaScrollBy(1)">&gt;</button>
-      </div>
-    </section>
-
-    <!-- Contato -->
-    <section class="home-section" id="contato" style="scroll-margin-top: 80px;">
-      <div class="section-label">Contato</div>
-      <h2 class="section-title" style="margin-bottom:0.6rem;">Fale com o <span>CAESI</span></h2>
-      <p class="contato-sub">Dúvidas, parcerias ou só quer tomar um café? Veja como nos encontrar:</p>
-
-      <div class="steps-grid">
-        <div class="step-card">
-          <span class="step-icon" v-html="mapPinIcon"></span>
-          <div class="step-title">Dê uma passada lá!</div>
-          <p class="step-desc">
-            Nossa sala fica no Bloco CP. Sempre tem alguém da gestão por lá
-            pra trocar uma ideia ou ajudar com o que precisar.
-          </p>
-        </div>
-
-        <div class="step-card">
-          <span class="step-icon" v-html="mailIcon"></span>
-          <div class="step-title">Assuntos formais</div>
-          <p class="step-desc">
-            Para parcerias, convites institucionais e assuntos mais sérios,
-            manda um e-mail pra gente.
-          </p>
-          <a href="mailto:caesi@ccc.ufcg.edu.br" class="contato-cta">caesi@ccc.ufcg.edu.br</a>
-        </div>
-
-        <div class="step-card">
-          <span class="step-icon" v-html="messageIcon"></span>
-          <div class="step-title">Redes e grupos</div>
-          <p class="step-desc">
-            Faça parte dos nossos grupos de comunicação pra não perder
-            nenhum aviso de última hora.
-          </p>
-          <a href="#" class="contato-cta">Entrar na Comunidade →</a>
-        </div>
       </div>
     </section>
 
