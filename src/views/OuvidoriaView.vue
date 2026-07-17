@@ -307,7 +307,7 @@ onMounted(() => {
             <p class="admin-no-msg-title">Administradores não enviam tickets pela ouvidoria.</p>
             <p class="admin-no-msg-sub">Use o painel para gerenciar os tickets recebidos.</p>
           </div>
-          <RouterLink to="/admin/mensagens" class="btn btn-outline btn-sm">
+          <RouterLink to="/admin/ouvidoria" class="btn btn-outline btn-sm">
             Ir ao painel →
           </RouterLink>
         </div>

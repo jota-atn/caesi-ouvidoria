@@ -126,7 +126,7 @@ onUnmounted(() => document.removeEventListener('click', onClickFora))
       <!-- Admin -->
       <template v-if="isAdmin">
         <RouterLink to="/admin/painel"      class="nav-link" :aria-current="ariaCurrent('/admin/painel')"      @click="fecharTudo">Painel</RouterLink>
-        <RouterLink to="/admin/mensagens"   class="nav-link" :aria-current="ariaCurrent('/admin/mensagens')"   @click="fecharTudo">Mensagens</RouterLink>
+        <RouterLink to="/admin/ouvidoria"   class="nav-link" :aria-current="ariaCurrent('/admin/ouvidoria')"   @click="fecharTudo">Ouvidoria</RouterLink>
         <RouterLink to="/admin/formularios" class="nav-link" :aria-current="ariaCurrent('/admin/formularios')" @click="fecharTudo">Formulários</RouterLink>
         <RouterLink to="/admin/tasks"       class="nav-link" :aria-current="ariaCurrent('/admin/tasks')"       @click="fecharTudo">Tasks</RouterLink>
         <RouterLink to="/admin/equipe"      class="nav-link" :aria-current="ariaCurrent('/admin/equipe')"      @click="fecharTudo">Equipe</RouterLink>

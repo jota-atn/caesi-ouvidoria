@@ -24,7 +24,7 @@ const router = useRouter()
 const id = Number(route.params.id)
 const mensagem = computed(() => mensagens.value.find(m => m.id === id))
 
-if (!mensagem.value) router.replace('/admin/mensagens')
+if (!mensagem.value) router.replace('/admin/ouvidoria')
 
 const status   = ref(mensagem.value?.status ?? 'pendente')
 const nota     = ref(mensagem.value?.nota ?? '')
@@ -79,7 +79,7 @@ function enviarEmail() {
 function confirmarExcluir() {
   if (confirm('Tem certeza que deseja excluir esta mensagem? Esta ação não pode ser desfeita.')) {
     deleteMensagem(id)
-    router.push('/admin/mensagens')
+    router.push('/admin/ouvidoria')
   }
 }
 </script>
@@ -92,7 +92,7 @@ function confirmarExcluir() {
     <Navbar />
 
     <div class="page-content">
-      <BackLink to="/admin/mensagens" label="Voltar ao painel" />
+      <BackLink to="/admin/ouvidoria" label="Voltar ao painel" />
 
       <div class="paper paper-mb">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">

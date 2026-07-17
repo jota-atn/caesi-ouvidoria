@@ -156,7 +156,7 @@ const temDados = computed(() => mensagens.value.length > 0 || inscricoes.value.l
       <!-- Gráficos de atividade -->
       <div v-if="temDados" class="painel-charts-grid">
         <div v-if="mensagens.length > 0" class="paper paper-sm">
-          <p class="label-sm">Mensagens por mês</p>
+          <p class="label-sm">Tickets por mês</p>
           <p v-if="tendenciaMensagens" class="painel-tendencia">
             {{ tendenciaMensagens.sobe ? '↑' : '↓' }} {{ tendenciaMensagens.pct }}% vs. mês ant.
           </p>
@@ -183,10 +183,10 @@ const temDados = computed(() => mensagens.value.length > 0 || inscricoes.value.l
 
       <div class="paper paper-flush">
 
-        <!-- Mensagens -->
+        <!-- Ouvidoria -->
         <div class="geral-row">
           <div class="geral-row-left">
-            <span class="geral-row-title">Mensagens</span>
+            <span class="geral-row-title">Ouvidoria</span>
             <span class="geral-row-badge" :class="pendentes > 0 ? 'alerta' : 'ok'">
               {{ pendentes > 0 ? `${pendentes} pendente${pendentes > 1 ? 's' : ''}` : 'Em dia' }}
             </span>
@@ -205,7 +205,7 @@ const temDados = computed(() => mensagens.value.length > 0 || inscricoes.value.l
               <span class="geral-mini-label">Atendidas</span>
             </div>
           </div>
-          <RouterLink to="/admin/mensagens" class="geral-row-link">Ver painel →</RouterLink>
+          <RouterLink to="/admin/ouvidoria" class="geral-row-link">Ver painel →</RouterLink>
         </div>
 
         <div class="geral-divider" />
