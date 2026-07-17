@@ -20,7 +20,11 @@ import { contatoInfo } from '../stores/equipe.js'
         <div class="footer-group-label">Navegação</div>
         <div class="footer-links">
           <RouterLink to="/sobre" class="footer-link">Sobre</RouterLink>
+          <RouterLink to="/ouvidoria" class="footer-link">Ouvidoria</RouterLink>
+          <RouterLink to="/mural" class="footer-link">Mural</RouterLink>
+          <RouterLink to="/mapa" class="footer-link">Mapa</RouterLink>
           <RouterLink to="/informacoes" class="footer-link">Informações</RouterLink>
+          <RouterLink to="/formularios" class="footer-link">Formulários</RouterLink>
         </div>
       </div>
 
