@@ -350,7 +350,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
     <div class="home-section" style="padding-top:2rem;flex:1;">
       <div class="sobre-topo">
         <BackLink to="/" />
-        <button v-if="isAdmin" type="button" class="btn btn-outline btn-sm" @click="editando = !editando">
+        <button v-if="isAdmin" type="button" class="btn btn-outline btn-outline-creme btn-sm" @click="editando = !editando">
           {{ editando ? 'Sair da edição' : '✎ Editar página' }}
         </button>
       </div>
@@ -793,39 +793,6 @@ onBeforeUnmount(() => { mapaMini?.remove() })
 </template>
 
 <style scoped>
-/* ── Empilhamento de papers: rebarba só no topo do 1º e na base do último ── */
-.paper--meio::before,
-.paper--fim::before {
-  content: none;
-}
-
-/* .paper--fim troca box-shadow por drop-shadow: precisa seguir o recorte
-   irregular do ::after (rebarba de baixo), o que box-shadow não acompanha. */
-.paper--fim {
-  box-shadow: none;
-  filter: drop-shadow(5px 5px 0 var(--roxo-escuro)) drop-shadow(0 8px 24px rgba(0,0,0,0.25));
-}
-
-.paper--fim::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 0;
-  right: 0;
-  height: 12px;
-  background: var(--creme);
-  transform: rotate(180deg);
-  clip-path: polygon(
-    0% 100%,
-    0% 12%, 4% 88%, 8% 8%, 12% 92%, 16% 4%,
-    20% 84%, 24% 10%, 28% 90%, 32% 6%, 36% 86%,
-    40% 14%, 44% 90%, 48% 4%, 52% 88%, 56% 14%,
-    60% 92%, 64% 6%, 68% 86%, 72% 8%, 76% 90%,
-    80% 4%, 84% 88%, 88% 10%, 92% 90%, 96% 6%,
-    100% 82%, 100% 100%
-  );
-}
-
 /* ── Missão: texto + placeholder de imagem ────────────────── */
 .sobre-missao-grid {
   display: grid;
@@ -1214,6 +1181,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
   gap: 1rem;
   margin-bottom: 1.2rem;
 }
+.sobre-topo :deep(.back-link) { margin-bottom: 0; }
 
 .equipe-titulo-row {
   display: flex;
