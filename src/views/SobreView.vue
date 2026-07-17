@@ -1047,6 +1047,8 @@ onBeforeUnmount(() => { mapaMini?.remove() })
   cursor: grab;
   flex: 1;
   min-width: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .membro-carrossel::-webkit-scrollbar { display: none; }
 .membro-carrossel--arrastando { cursor: grabbing; scroll-snap-type: none; user-select: none; }
