@@ -45,6 +45,9 @@ import mailIcon from '../assets/icons/mail.svg?raw'
 import instagramIcon from '../assets/icons/instagram.svg?raw'
 import cameraIcon from '../assets/icons/camera.svg?raw'
 import calendarIcon from '../assets/icons/calendar.svg?raw'
+import linkedinIcon from '../assets/icons/linkedin.svg?raw'
+import githubIcon from '../assets/icons/github.svg?raw'
+import graduationCapIcon from '../assets/icons/graduation-cap.svg?raw'
 
 // ── Modo de edição (admin) ──────────────────────────────────
 const route = useRoute()
@@ -640,9 +643,9 @@ onBeforeUnmount(() => { mapaMini?.remove() })
               <div v-else-if="a.periodo" class="membro-periodo">{{ a.periodo }}</div>
               <p v-if="a.descricao" class="membro-card-desc">{{ descricaoPreview(a.descricao) }}</p>
               <div v-if="a.linkedin || a.git || a.lattes" class="membro-card-plataformas">
-                <span v-if="a.linkedin" class="membro-card-dot" title="LinkedIn">in</span>
-                <span v-if="a.git" class="membro-card-dot" title="GitHub">gh</span>
-                <span v-if="a.lattes" class="membro-card-dot" title="Lattes">lt</span>
+                <span v-if="a.linkedin" class="membro-card-dot membro-card-dot--linkedin" title="LinkedIn" v-html="linkedinIcon"></span>
+                <span v-if="a.git" class="membro-card-dot membro-card-dot--github" title="GitHub" v-html="githubIcon"></span>
+                <span v-if="a.lattes" class="membro-card-dot membro-card-dot--lattes" title="Lattes" v-html="graduationCapIcon"></span>
               </div>
             </div>
           </div>
@@ -675,9 +678,9 @@ onBeforeUnmount(() => { mapaMini?.remove() })
                   </div>
                 </div>
                 <div v-if="membroModal.linkedin || membroModal.git || membroModal.lattes" class="membro-links">
-                  <a v-if="membroModal.linkedin" :href="membroModal.linkedin" target="_blank" rel="noopener" class="membro-link">LinkedIn</a>
-                  <a v-if="membroModal.git"      :href="membroModal.git"      target="_blank" rel="noopener" class="membro-link">GitHub</a>
-                  <a v-if="membroModal.lattes"   :href="membroModal.lattes"   target="_blank" rel="noopener" class="membro-link">Lattes</a>
+                  <a v-if="membroModal.linkedin" :href="membroModal.linkedin" target="_blank" rel="noopener" class="membro-link membro-link--linkedin" title="LinkedIn" aria-label="LinkedIn" v-html="linkedinIcon"></a>
+                  <a v-if="membroModal.git"      :href="membroModal.git"      target="_blank" rel="noopener" class="membro-link membro-link--github" title="GitHub" aria-label="GitHub" v-html="githubIcon"></a>
+                  <a v-if="membroModal.lattes"   :href="membroModal.lattes"   target="_blank" rel="noopener" class="membro-link membro-link--lattes" title="Lattes" aria-label="Lattes" v-html="graduationCapIcon"></a>
                 </div>
               </div>
             </div>
@@ -1261,20 +1264,19 @@ onBeforeUnmount(() => { mapaMini?.remove() })
 }
 
 .membro-card-dot {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: rgba(80,64,160,0.1);
   border: 1px solid rgba(80,64,160,0.22);
-  color: var(--roxo-escuro);
-  font-size: 0.55rem;
-  font-weight: 800;
-  font-family: 'Archivo Black', sans-serif;
-  text-transform: uppercase;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+.membro-card-dot :deep(svg) { width: 11px; height: 11px; }
+.membro-card-dot--linkedin { color: #0A66C2; border-color: rgba(10,102,194,0.3); background: rgba(10,102,194,0.1); }
+.membro-card-dot--github   { color: #181717; border-color: rgba(24,23,23,0.25); background: rgba(24,23,23,0.08); }
+.membro-card-dot--lattes   { color: var(--roxo-escuro); }
 
 .membro-desc {
   font-size: 0.78rem;
@@ -1296,19 +1298,24 @@ onBeforeUnmount(() => { mapaMini?.remove() })
 }
 
 .membro-link {
-  font-size: 0.67rem;
-  font-weight: 700;
-  font-family: 'Archivo Black', sans-serif;
-  padding: 2px 7px;
-  border-radius: 2px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1.5px solid var(--roxo);
   color: var(--roxo-escuro);
-  text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   transition: background 0.15s, color 0.15s;
 }
+.membro-link :deep(svg) { width: 16px; height: 16px; }
 .membro-link:hover { background: var(--roxo); color: var(--creme); }
+
+.membro-link--linkedin { color: #0A66C2; border-color: #0A66C2; }
+.membro-link--linkedin:hover { background: #0A66C2; color: var(--branco); }
+.membro-link--github { color: #181717; border-color: #181717; }
+.membro-link--github:hover { background: #181717; color: var(--branco); }
+.membro-link--lattes:hover { background: var(--roxo); color: var(--creme); }
 
 .gestao-header {
   display: flex;
