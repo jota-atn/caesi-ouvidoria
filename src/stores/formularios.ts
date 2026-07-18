@@ -2,7 +2,7 @@ import { ref, computed } from 'vue'
 import { upsertEventoFormulario, removeEventoByFormulario } from './calendario.ts'
 
 export type TipoFormulario = 'evento-com-certificado' | 'evento-sem-certificado' | 'venda' | 'arrecadacao'
-export type TipoCampo = 'texto' | 'numero' | 'select'
+export type TipoCampo = 'texto' | 'numero' | 'select' | 'checkbox'
 export type StatusFormulario = 'aberto' | 'encerrado'
 export type StatusComprovante = 'pendente' | 'validado' | 'arquivado'
 

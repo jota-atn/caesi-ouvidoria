@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
@@ -16,25 +16,25 @@ const formulario = computed(() => formularios.value.find(f => f.id === id))
 
 if (!formulario.value) router.replace('/formularios')
 
-const TIPO_LABEL = {
+const TIPO_LABEL: Record<string, string> = {
   'evento-com-certificado': 'Evento c/ Certificado',
   'evento-sem-certificado': 'Evento s/ Certificado',
   venda:       'Venda',
   arrecadacao: 'Arrecadação',
 }
 
-function prazoExpirado(prazo) {
+function prazoExpirado(prazo: string | null | undefined) {
   return prazo ? new Date(prazo + 'T23:59:59') < new Date() : false
 }
 
-function formatData(data) {
+function formatData(data: string | null | undefined) {
   if (!data) return ''
   const [ano, mes, dia] = data.split('-')
   return `${dia}/${mes}/${ano}`
 }
 
-function formatValor(valor) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
+function formatValor(valor: number | null | undefined) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor ?? 0)
 }
 
 const inscricoesDaForm = computed(() =>
@@ -63,27 +63,28 @@ const motivoBloqueio = computed(() => {
 const identif = ref({ nome: '', email: '', matricula: '' })
 
 // ── Campos dinâmicos ──────────────────────────────────────
-const respostas = ref(
+const respostas = ref<Record<string, unknown>>(
   Object.fromEntries((formulario.value?.campos ?? []).map(c => [c.id, c.tipo === 'checkbox' ? false : '']))
 )
 const quantidade      = ref(1)
 const comprovanteNome = ref('')
-const fileInputRef    = ref(null)
+const fileInputRef    = ref<HTMLInputElement | null>(null)
 const submitError     = ref('')
 const enviado         = ref(false)
 
 const totalEstimado = computed(() => {
   if (formulario.value?.tipo !== 'venda' || !formulario.value.pago) return null
-  return formulario.value.valor * (Number(quantidade.value) || 0)
+  return (formulario.value.valor ?? 0) * (Number(quantidade.value) || 0)
 })
 
-function onFileChange(e) {
-  const file = e.target.files?.[0]
+function onFileChange(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
   if (!file) { comprovanteNome.value = ''; return }
   const ehPdf = file.type === 'application/pdf'
   if (!ehPdf && !isValidImageFile(file)) {
     showToast('Selecione uma imagem ou PDF de até 8MB.', 'error')
-    e.target.value = ''
+    target.value = ''
     comprovanteNome.value = ''
     return
   }
@@ -101,6 +102,8 @@ onBeforeRouteLeave(() => {
 
 function submitForm() {
   submitError.value = ''
+  const form = formulario.value
+  if (!form) return
 
   if (!identif.value.nome.trim()) {
     submitError.value = 'Informe seu nome.'
@@ -114,12 +117,12 @@ function submitForm() {
     submitError.value = 'Informe um e-mail válido.'
     return
   }
-  if (formulario.value.requerMatricula && !identif.value.matricula.trim()) {
+  if (form.requerMatricula && !identif.value.matricula.trim()) {
     submitError.value = 'Informe sua matrícula.'
     return
   }
 
-  for (const campo of formulario.value.campos) {
+  for (const campo of form.campos) {
     if (campo.obrigatorio) {
       const val = respostas.value[campo.id]
       if (val === '' || val === null || val === undefined || val === false) {
@@ -129,32 +132,32 @@ function submitForm() {
     }
   }
 
-  if (formulario.value.tipo === 'venda' && (!quantidade.value || Number(quantidade.value) < 1)) {
+  if (form.tipo === 'venda' && (!quantidade.value || Number(quantidade.value) < 1)) {
     submitError.value = 'Informe uma quantidade válida.'
     return
   }
 
-  if (formulario.value.pago && !comprovanteNome.value) {
+  if (form.pago && !comprovanteNome.value) {
     submitError.value = 'Anexe o comprovante de pagamento.'
     return
   }
 
-  const todasRespostas = {
+  const todasRespostas: Record<string, unknown> = {
     _nome:       identif.value.nome.trim(),
     _email:      identif.value.email.trim(),
     _matricula:  identif.value.matricula.trim() || null,
     ...respostas.value,
   }
-  if (formulario.value.tipo === 'venda') {
+  if (form.tipo === 'venda') {
     todasRespostas.__quantidade = Number(quantidade.value)
   }
 
-  const comprovante = formulario.value.pago
+  const comprovante = form.pago
     ? { nome: comprovanteNome.value, url: null }
     : null
 
   const result = addInscricao(id, todasRespostas, comprovante)
-  if (result.error) {
+  if ('error' in result) {
     submitError.value = result.error
     return
   }
@@ -293,9 +296,9 @@ function submitForm() {
               role="button"
               tabindex="0"
               aria-label="Anexar comprovante de pagamento"
-              @click="fileInputRef.click()"
-              @keydown.enter="fileInputRef.click()"
-              @keydown.space.prevent="fileInputRef.click()"
+              @click="fileInputRef?.click()"
+              @keydown.enter="fileInputRef?.click()"
+              @keydown.space.prevent="fileInputRef?.click()"
             >
               <template v-if="comprovanteNome">
                 <div class="comprovante-filename">{{ comprovanteNome }}</div>
