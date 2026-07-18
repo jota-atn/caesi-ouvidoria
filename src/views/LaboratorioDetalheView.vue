@@ -7,7 +7,7 @@ import mailIcon     from '../assets/icons/mail.svg?raw'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
-import { laboratorios } from '../stores/informacoes.js'
+import { laboratorios } from '../stores/informacoes.ts'
 import { estruturas } from '../stores/mapa.ts'
 
 const route = useRoute()
