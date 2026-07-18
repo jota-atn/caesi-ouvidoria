@@ -1,9 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import { useRouter } from 'vue-router'
 
-const props = defineProps({
-  to: { type: String, default: '/' },
-  label: { type: String, default: 'Voltar' },
+const props = withDefaults(defineProps<{
+  to?: string
+  label?: string
+}>(), {
+  to: '/',
+  label: 'Voltar',
 })
 
 const router = useRouter()

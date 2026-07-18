@@ -1,13 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { isAdmin } from '../stores/auth.ts'
-import { eventos, proximosEventos, addEvento, updateEvento, removeEvento } from '../stores/calendario.ts'
+import { eventos, proximosEventos, addEvento, updateEvento, removeEvento, type Evento } from '../stores/calendario.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.ts'
 import { showToast } from '../stores/toast.ts'
 import calendarIcon from '../assets/icons/calendar.svg?raw'
 
+interface Celula {
+  iso: string
+  dia: number
+  outroMes: boolean
+  hoje: boolean
+  eventos: Evento[]
+}
+
+type Teaser = (Evento & { passado: boolean; placeholder?: false }) | { id: string; placeholder: true }
+
 const MESES_ABREV = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
-function diaMes(data) {
+function diaMes(data: string) {
   const [, mes, dia] = data.split('-').map(Number)
   return { dia, mes: MESES_ABREV[mes - 1] }
 }
@@ -15,8 +25,8 @@ function diaMes(data) {
 const DIAS_SEMANA = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
 const MESES_EXT   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
 
-const padCal = n => String(n).padStart(2, '0')
-const fmtISOCal = d => `${d.getFullYear()}-${padCal(d.getMonth() + 1)}-${padCal(d.getDate())}`
+const padCal = (n: number) => String(n).padStart(2, '0')
+const fmtISOCal = (d: Date) => `${d.getFullYear()}-${padCal(d.getMonth() + 1)}-${padCal(d.getDate())}`
 
 const agoraCal = new Date()
 const anoAtualCal = ref(agoraCal.getFullYear())
@@ -31,7 +41,7 @@ function mesSeguinteCal() {
 }
 
 const eventosPorDiaCal = computed(() => {
-  const mapa = {}
+  const mapa: Record<string, Evento[]> = {}
   for (const e of eventos.value) {
     if (!mapa[e.data]) mapa[e.data] = []
     mapa[e.data].push(e)
@@ -39,7 +49,7 @@ const eventosPorDiaCal = computed(() => {
   return mapa
 })
 
-const celulasCal = computed(() => {
+const celulasCal = computed<Celula[]>(() => {
   const primeiroDia = new Date(anoAtualCal.value, mesAtualCal.value, 1)
   const offset = primeiroDia.getDay()
   const inicio = new Date(anoAtualCal.value, mesAtualCal.value, 1 - offset)
@@ -72,7 +82,7 @@ const passadosCal = computed(() =>
     .sort((a, b) => b.data.localeCompare(a.data))
 )
 
-const teasersRealCal = computed(() => {
+const teasersRealCal = computed<Teaser[]>(() => {
   const prox = proximosEventos.value.slice(0, 6).map(e => ({ ...e, passado: false }))
   if (prox.length >= 6) return prox
   const passadosPreenchimento = passadosCal.value.slice(0, 6 - prox.length).map(e => ({ ...e, passado: true }))
@@ -81,24 +91,24 @@ const teasersRealCal = computed(() => {
 
 // Completa até 6 quadradinhos com placeholders vazios (sem esticar/centralizar
 // o pouco conteúdo real) quando há menos de 6 eventos reais no total.
-const teasersGridCal = computed(() => {
+const teasersGridCal = computed<Teaser[]>(() => {
   const reais = teasersRealCal.value
   if (reais.length === 0) return []
   const faltam = 6 - reais.length
-  const placeholders = Array.from({ length: faltam }, (_, i) => ({ id: `placeholder-${i}`, placeholder: true }))
+  const placeholders: Teaser[] = Array.from({ length: faltam }, (_, i) => ({ id: `placeholder-${i}`, placeholder: true as const }))
   return [...reais, ...placeholders]
 })
 
-const eventoModal = ref(null)
-const diaModal = ref(null)
-const novoEventoModal = ref(null) // { iso } quando admin está criando um evento numa data
+const eventoModal = ref<Evento | null>(null)
+const diaModal = ref<Celula | null>(null)
+const novoEventoModal = ref<{ iso: string } | null>(null) // quando admin está criando um evento numa data
 
-function abrirEvento(e) {
+function abrirEvento(e: Evento) {
   diaModal.value = null
   eventoModal.value = e
   eventoModoEdicao.value = false
 }
-function abrirDia(celula) {
+function abrirDia(celula: Celula) {
   if (celula.eventos.length === 0) {
     if (isAdmin.value) abrirNovoEvento(celula.iso)
     return
@@ -109,16 +119,16 @@ function abrirDia(celula) {
 function fecharEventoModal() { eventoModal.value = null; eventoModoEdicao.value = false }
 function fecharDiaModal() { diaModal.value = null }
 
-function formatDataExtCal(iso) {
+function formatDataExtCal(iso: string) {
   const [ano, mes, dia] = iso.split('-').map(Number)
   return `${dia} de ${MESES_EXT[mes - 1]} de ${ano}`
 }
 
-function baixarIcs(evento) {
+function baixarIcs(evento: Evento) {
   const [ano, mes, dia] = evento.data.split('-')
   const dtstart = `${ano}${mes}${dia}`
   const uid = `evento-${evento.id}@caesi.ufcg`
-  const esc = s => String(s ?? '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
+  const esc = (s: unknown) => String(s ?? '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
 
   const ics = [
     'BEGIN:VCALENDAR',
@@ -148,12 +158,14 @@ const eventoModoEdicao = ref(false)
 const eventoEditForm   = ref({ nome: '', descricao: '' })
 
 function iniciarEdicaoEvento() {
+  if (!eventoModal.value) return
   eventoEditForm.value = { nome: eventoModal.value.nome, descricao: eventoModal.value.descricao ?? '' }
   eventoModoEdicao.value = true
 }
 function cancelarEdicaoEvento() { eventoModoEdicao.value = false }
 
 function salvarEdicaoEvento() {
+  if (!eventoModal.value) return
   if (!eventoEditForm.value.nome.trim()) { showToast('Informe o nome do evento.', 'error'); return }
   updateEvento(eventoModal.value.id, {
     nome: eventoEditForm.value.nome.trim(),
@@ -165,6 +177,7 @@ function salvarEdicaoEvento() {
 }
 
 function excluirEvento() {
+  if (!eventoModal.value) return
   if (!confirm(`Remover "${eventoModal.value.nome}" do calendário?`)) return
   removeEvento(eventoModal.value.id)
   showToast('Evento removido.', 'info')
@@ -174,7 +187,7 @@ function excluirEvento() {
 // ── Admin: criar evento numa data ────────────────────────
 const novoEventoForm = ref({ nome: '', descricao: '' })
 
-function abrirNovoEvento(iso) {
+function abrirNovoEvento(iso: string) {
   diaModal.value = null
   novoEventoForm.value = { nome: '', descricao: '' }
   novoEventoModal.value = { iso }
@@ -182,6 +195,7 @@ function abrirNovoEvento(iso) {
 function fecharNovoEventoModal() { novoEventoModal.value = null }
 
 function salvarNovoEvento() {
+  if (!novoEventoModal.value) return
   if (!novoEventoForm.value.nome.trim()) { showToast('Informe o nome do evento.', 'error'); return }
   addEvento({
     nome: novoEventoForm.value.nome.trim(),
@@ -220,7 +234,7 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
           <button
             v-for="e in teasersGridCal" :key="e.id"
             class="evento-teaser"
-            :class="{ 'evento-teaser--passado': e.passado, 'evento-teaser--placeholder': e.placeholder }"
+            :class="{ 'evento-teaser--passado': !e.placeholder && e.passado, 'evento-teaser--placeholder': e.placeholder }"
             :disabled="e.placeholder"
             @click="!e.placeholder && abrirEvento(e)"
           >
