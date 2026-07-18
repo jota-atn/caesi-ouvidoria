@@ -11,7 +11,8 @@ const props = withDefaults(defineProps<{
 
 const router = useRouter()
 function voltar() {
-  window.history.state?.back ? router.back() : router.push(props.to)
+  if (window.history.state?.back) router.back()
+  else router.push(props.to)
 }
 </script>
 
