@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
@@ -12,7 +12,7 @@ import archiveIcon   from '../assets/icons/archive.svg?raw'
 import { editais, professores, laboratorios } from '../stores/informacoes.ts'
 import { artefatos } from '../stores/portal.ts'
 
-function plural(n, singular, pluralForm) { return `${n} ${n === 1 ? singular : pluralForm}` }
+function plural(n: number, singular: string, pluralForm: string) { return `${n} ${n === 1 ? singular : pluralForm}` }
 
 const secoes = computed(() => [
   { to: '/informacoes/editais',      titulo: 'Editais',       icon: clipboardIcon, cor: 'roxo',        info: plural(editais.value.length, 'edital', 'editais') },

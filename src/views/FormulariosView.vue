@@ -1,57 +1,57 @@
-<script setup>
-import { ref, computed } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
-import { formularios, inscricoes } from '../stores/formularios.ts'
+import { formularios, inscricoes, type Formulario } from '../stores/formularios.ts'
 import { usePersistedFilter } from '../composables/usePersistedFilter.ts'
 
 const filtro = usePersistedFilter('caesi-forms-filtro', 'todos')
 const busca  = usePersistedFilter('caesi-forms-busca', '')
 
-const TIPO_LABEL = {
+const TIPO_LABEL: Record<string, string> = {
   'evento-com-certificado': 'Evento c/ Certificado',
   'evento-sem-certificado': 'Evento s/ Certificado',
   venda:       'Venda',
   arrecadacao: 'Arrecadação',
 }
 
-function prazoExpirado(prazo) {
+function prazoExpirado(prazo: string | null) {
   return prazo ? new Date(prazo + 'T23:59:59') < new Date() : false
 }
 
-function inscricoesCount(id) {
+function inscricoesCount(id: number) {
   return inscricoes.value.filter(i => i.formularioId === id).length
 }
 
-function vagasEsgotadas(f) {
+function vagasEsgotadas(f: Formulario) {
   return f.limiteVagas != null && inscricoesCount(f.id) >= f.limiteVagas
 }
 
-function disponivel(f) {
+function disponivel(f: Formulario) {
   return f.status === 'aberto' && !prazoExpirado(f.prazoInscricao) && !vagasEsgotadas(f)
 }
 
-function badgeIndisponivel(f) {
+function badgeIndisponivel(f: Formulario) {
   if (f.status !== 'aberto')          return 'Encerrado'
   if (prazoExpirado(f.prazoInscricao)) return 'Prazo esgotado'
   if (vagasEsgotadas(f))               return 'Vagas esgotadas'
   return null
 }
 
-function formatData(data) {
+function formatData(data: string | null | undefined) {
   if (!data) return ''
   const [ano, mes, dia] = data.split('-')
   return `${dia}/${mes}/${ano}`
 }
 
-function diasParaFechamento(prazo) {
+function diasParaFechamento(prazo: string | null) {
   if (!prazo) return null
-  return Math.ceil((new Date(prazo + 'T23:59:59') - new Date()) / 86400000)
+  return Math.ceil((new Date(prazo + 'T23:59:59').getTime() - new Date().getTime()) / 86400000)
 }
 
-function formatValor(valor) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
+function formatValor(valor: number | null) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor ?? 0)
 }
 
 const formulariosFiltrados = computed(() =>
@@ -116,9 +116,9 @@ const formulariosFiltrados = computed(() =>
               {{ badgeIndisponivel(f) }}
             </span>
             <span
-              v-if="disponivel(f) && diasParaFechamento(f.prazoInscricao) !== null && diasParaFechamento(f.prazoInscricao) <= 3"
+              v-if="disponivel(f) && (diasParaFechamento(f.prazoInscricao) ?? 999) <= 3"
               class="prazo-urgente-badge"
-            >Fecha em {{ diasParaFechamento(f.prazoInscricao) === 1 ? '1 dia' : diasParaFechamento(f.prazoInscricao) + ' dias' }}</span>
+            >Fecha em {{ diasParaFechamento(f.prazoInscricao) === 1 ? '1 dia' : diasParaFechamento(f.prazoInscricao)! + ' dias' }}</span>
           </div>
           <div class="form-card-title">{{ f.titulo }}</div>
           <div class="form-card-desc">{{ f.descricao }}</div>

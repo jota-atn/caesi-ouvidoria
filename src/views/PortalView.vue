@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, watch } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
@@ -37,10 +37,10 @@ const lista = computed(() => {
 
 const { page, totalPages, paginated, next, prev, goTo } = usePagination(lista, 12)
 
-function formatValor(valor) {
+function formatValor(valor: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
 }
-function formatData(data) {
+function formatData(data: string | null | undefined) {
   if (!data) return ''
   const [ano, mes, dia] = data.split('-')
   return `${dia}/${mes}/${ano}`

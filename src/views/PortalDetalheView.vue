@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
@@ -11,10 +11,10 @@ const route  = useRoute()
 
 const artefato = computed(() => artefatos.value.find(a => a.id === Number(route.params.id)))
 
-function formatValor(valor) {
+function formatValor(valor: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
 }
-function formatData(data) {
+function formatData(data: string | null | undefined) {
   if (!data) return ''
   const [ano, mes, dia] = data.split('-')
   return `${dia}/${mes}/${ano}`
