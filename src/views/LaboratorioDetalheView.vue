@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import cameraIcon   from '../assets/icons/camera.svg?raw'
@@ -22,17 +22,17 @@ const nomeEstrutura = computed(() =>
 
 const todasImagens = computed(() => {
   if (!laboratorio.value) return []
-  return [laboratorio.value.imagem, ...(laboratorio.value.imagens ?? [])].filter(Boolean)
+  return [laboratorio.value.imagem, ...(laboratorio.value.imagens ?? [])].filter(Boolean) as string[]
 })
 
 // Lightbox
-const lightboxIdx = ref(null)
-function abrirLightbox(i) { lightboxIdx.value = i }
+const lightboxIdx = ref<number | null>(null)
+function abrirLightbox(i: number) { lightboxIdx.value = i }
 function fecharLightbox() { lightboxIdx.value = null }
-function prevImg() { lightboxIdx.value = (lightboxIdx.value - 1 + todasImagens.value.length) % todasImagens.value.length }
-function nextImg() { lightboxIdx.value = (lightboxIdx.value + 1) % todasImagens.value.length }
+function prevImg() { lightboxIdx.value = (lightboxIdx.value! - 1 + todasImagens.value.length) % todasImagens.value.length }
+function nextImg() { lightboxIdx.value = (lightboxIdx.value! + 1) % todasImagens.value.length }
 
-function onKey(e) {
+function onKey(e: KeyboardEvent) {
   if (lightboxIdx.value === null) return
   if (e.key === 'Escape')     fecharLightbox()
   if (e.key === 'ArrowLeft')  prevImg()
