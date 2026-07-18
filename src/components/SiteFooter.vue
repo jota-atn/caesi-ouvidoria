@@ -2,7 +2,7 @@
 import mapPinIcon from '../assets/icons/map-pin.svg?raw'
 import mailIcon from '../assets/icons/mail.svg?raw'
 import instagramIcon from '../assets/icons/instagram.svg?raw'
-import { contatoInfo } from '../stores/equipe.js'
+import { contatoInfo } from '../stores/equipe.ts'
 </script>
 
 <template>

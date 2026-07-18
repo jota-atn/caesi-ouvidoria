@@ -17,7 +17,7 @@ import {
   arquivarGestaoAtual, removerGestaoHistorico, adicionarGestaoManual,
   missaoTexto, saveMissao, missaoImagem, saveMissaoImagem, contatoInfo, saveContato, periodoFormatado,
   secoesCustom, addSecao, updateSecao, removeSecao, moverSecao,
-} from '../stores/equipe.js'
+} from '../stores/equipe.ts'
 import { CENTRO_PADRAO } from '../stores/mapa.ts'
 import { markdownParaHtmlSeguro } from '../utils/markdown.js'
 import { isAdmin } from '../stores/auth.ts'

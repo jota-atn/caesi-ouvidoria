@@ -7,7 +7,7 @@ import {
   CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement,
 } from 'chart.js'
 import { mensagens } from '../../stores/mensagens.ts'
-import { membros } from '../../stores/equipe.js'
+import { membros } from '../../stores/equipe.ts'
 import { formularios, inscricoes } from '../../stores/formularios.ts'
 import { tasks } from '../../stores/tasks.ts'
 import { publicacoes } from '../../stores/mural.ts'
