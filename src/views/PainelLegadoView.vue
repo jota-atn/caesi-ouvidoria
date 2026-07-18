@@ -5,7 +5,7 @@ import BackLink from '../components/BackLink.vue'
 import Modal from '../components/Modal.vue'
 import { showToast } from '../stores/toast.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.ts'
-import { marcarCobrinhaZerada } from '../stores/conquistas.ts'
+import { marcarConquistaSecreta } from '../stores/conquistas.ts'
 import capeloIcon from '../assets/icons/graduation-cap.svg?raw'
 
 interface Posicao { x: number; y: number }
@@ -650,7 +650,7 @@ function tick() {
         chefesDerrotados.value += 1
         if (chefesDerrotados.value >= 3) {
           estado.value = 'vencido'
-          if (marcarCobrinhaZerada()) {
+          if (marcarConquistaSecreta()) {
             showToast('Conquista desbloqueada! Veja o troféu no topo do site.', 'success')
           }
           return

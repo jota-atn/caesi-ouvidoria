@@ -2,7 +2,7 @@ import { onMounted, onUnmounted } from 'vue'
 
 const SEQUENCIA = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']
 
-export function useKonamiCode(onSucesso: () => void) {
+export function useSequenciaSecreta(onSucesso: () => void) {
   let buffer: string[] = []
 
   function onKeydown(e: KeyboardEvent) {

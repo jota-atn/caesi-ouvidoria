@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { isAdmin, logout } from '../stores/auth.ts'
-import { cobrinhaZerada } from '../stores/conquistas.ts'
+import { conquistaSecretaDesbloqueada } from '../stores/conquistas.ts'
 import awardIcon from '../assets/icons/award.svg?raw'
 
 interface Confete {
@@ -64,9 +64,9 @@ function ariaCurrent(path: string) {
           CAESI <span>{{ isAdmin ? 'Admin' : 'Home' }}</span>
         </span>
         <span
-          v-if="!isAdmin && cobrinhaZerada"
+          v-if="!isAdmin && conquistaSecretaDesbloqueada"
           class="navbar-badge"
-          title="Você zerou o Easter Egg da cobrinha!"
+          title="Você desbloqueou uma conquista secreta!"
           @click.stop.prevent="explodirConfete"
         >
           <span v-html="awardIcon"></span>

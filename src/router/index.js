@@ -29,7 +29,7 @@ const routes = [
   { path: '/admin/tasks',            component: () => import('../views/admin/TasksView.vue'),               meta: { admin: true } },
   { path: '/admin/portal',          component: () => import('../views/admin/PortalView.vue'),               meta: { admin: true } },
   { path: '/workspace/:token',       component: () => import('../views/WorkspaceView.vue') },
-  { path: '/cobrinha-caesi',         component: () => import('../views/CobrinhaView.vue') },
+  { path: '/painel-legado',          component: () => import('../views/PainelLegadoView.vue') },
   { path: '/:pathMatch(.*)*',        component: () => import('../views/NotFoundView.vue') },
 ]
 

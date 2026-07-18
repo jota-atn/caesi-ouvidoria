@@ -11,37 +11,37 @@ describe('stores/conquistas', () => {
     localStorage.clear()
   })
 
-  it('começa como não zerada quando não há nada no localStorage', async () => {
-    const { cobrinhaZerada } = await storeLimpa()
-    expect(cobrinhaZerada.value).toBe(false)
+  it('começa como não desbloqueada quando não há nada no localStorage', async () => {
+    const { conquistaSecretaDesbloqueada } = await storeLimpa()
+    expect(conquistaSecretaDesbloqueada.value).toBe(false)
   })
 
-  it('marcarCobrinhaZerada marca como zerada e retorna true na primeira vez', async () => {
-    const { cobrinhaZerada, marcarCobrinhaZerada } = await storeLimpa()
+  it('marcarConquistaSecreta marca como desbloqueada e retorna true na primeira vez', async () => {
+    const { conquistaSecretaDesbloqueada, marcarConquistaSecreta } = await storeLimpa()
 
-    const desbloqueouAgora = marcarCobrinhaZerada()
+    const desbloqueouAgora = marcarConquistaSecreta()
 
     expect(desbloqueouAgora).toBe(true)
-    expect(cobrinhaZerada.value).toBe(true)
-    expect(localStorage.getItem('caesi_cobrinha_zerou')).toBe('true')
+    expect(conquistaSecretaDesbloqueada.value).toBe(true)
+    expect(localStorage.getItem('caesi_conquista_secreta')).toBe('true')
   })
 
-  it('marcarCobrinhaZerada retorna false quando já estava zerada', async () => {
-    const { marcarCobrinhaZerada } = await storeLimpa()
+  it('marcarConquistaSecreta retorna false quando já estava desbloqueada', async () => {
+    const { marcarConquistaSecreta } = await storeLimpa()
 
-    marcarCobrinhaZerada()
-    const segundaChamada = marcarCobrinhaZerada()
+    marcarConquistaSecreta()
+    const segundaChamada = marcarConquistaSecreta()
 
     expect(segundaChamada).toBe(false)
   })
 
-  it('lê o estado já zerado do localStorage ao recarregar a store', async () => {
-    const { marcarCobrinhaZerada } = await storeLimpa()
-    marcarCobrinhaZerada()
+  it('lê o estado já desbloqueado do localStorage ao recarregar a store', async () => {
+    const { marcarConquistaSecreta } = await storeLimpa()
+    marcarConquistaSecreta()
 
     vi.resetModules()
-    const { cobrinhaZerada } = await import('./conquistas.ts')
+    const { conquistaSecretaDesbloqueada } = await import('./conquistas.ts')
 
-    expect(cobrinhaZerada.value).toBe(true)
+    expect(conquistaSecretaDesbloqueada.value).toBe(true)
   })
 })
