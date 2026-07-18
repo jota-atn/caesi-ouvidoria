@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import { useEscapeKey } from '../composables/useEscapeKey.ts'
@@ -17,6 +17,7 @@ import {
   arquivarGestaoAtual, removerGestaoHistorico, adicionarGestaoManual,
   missaoTexto, saveMissao, missaoImagem, saveMissaoImagem, contatoInfo, saveContato, periodoFormatado,
   secoesCustom, addSecao, updateSecao, removeSecao, moverSecao,
+  type Membro, type GestaoInfo, type SecaoCustom, type MembroHistorico,
 } from '../stores/equipe.ts'
 import { CENTRO_PADRAO } from '../stores/mapa.ts'
 import { markdownParaHtmlSeguro } from '../utils/markdown.ts'
@@ -27,18 +28,18 @@ import pencilIcon from '../assets/icons/pencil.svg?raw'
 import xIcon from '../assets/icons/x.svg?raw'
 
 const missaoHtml = computed(() => markdownParaHtmlSeguro(missaoTexto.value))
-function descricaoHtml(texto) { return markdownParaHtmlSeguro(texto) }
+function descricaoHtml(texto: string) { return markdownParaHtmlSeguro(texto) }
 
-function descricaoPreview(md, max = 62) {
+function descricaoPreview(md: string, max = 62) {
   const texto = markdownParaHtmlSeguro(md).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
   return texto.length > max ? texto.slice(0, max).trim() + '…' : texto
 }
 
-delete L.Icon.Default.prototype._getIconUrl
+delete (L.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl
 L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl })
 
-const expandido = ref(null)
-function toggleGestao(id) { expandido.value = expandido.value === id ? null : id }
+const expandido = ref<number | null>(null)
+function toggleGestao(id: number) { expandido.value = expandido.value === id ? null : id }
 
 import mapPinIcon from '../assets/icons/map-pin.svg?raw'
 import mailIcon from '../assets/icons/mail.svg?raw'
@@ -56,14 +57,15 @@ const editando = ref(isAdmin.value && route.query.editar === '1')
 // --- Missão e história ---
 const missaoEdit = ref(missaoTexto.value)
 const missaoImagemEdit = ref(missaoImagem.value)
-const fileMissaoRef = ref(null)
+const fileMissaoRef = ref<HTMLInputElement | null>(null)
 
-async function onFotoMissao(e) {
-  const file = e.target.files[0]
+async function onFotoMissao(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
   if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); e.target.value = ''; return }
+  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); target.value = ''; return }
   missaoImagemEdit.value = await comprimirImagem(file)
-  e.target.value = ''
+  target.value = ''
 }
 function removerFotoMissao() { missaoImagemEdit.value = '' }
 
@@ -85,18 +87,18 @@ function salvarContato() {
 }
 
 // --- Informações da gestão ---
-const info      = ref({ ...gestaoInfo.value })
+const info      = ref<GestaoInfo>({ ...gestaoInfo.value })
 const descricao = ref(descricaoGestao.value)
-const errosInfo = ref({})
+const errosInfo = ref<Record<string, string>>({})
 
-function validarAno(ano) {
+function validarAno(ano: string) {
   if (!ano) return ''
   const n = Number(ano)
   return (n < 1990 || n > 2099) ? 'Ano deve estar entre 1990 e 2099.' : ''
 }
 
 function validarInfo() {
-  const e = {}
+  const e: Record<string, string> = {}
   e.anoInicio = validarAno(info.value.anoInicio)
   e.anoFim    = validarAno(info.value.anoFim)
   if (!e.anoInicio && !e.anoFim && info.value.anoInicio && info.value.anoFim) {
@@ -125,7 +127,7 @@ function salvarInfo() {
 }
 
 // --- Utilitário compartilhado ---
-function comprimirImagem(file) {
+function comprimirImagem(file: File): Promise<string> {
   return new Promise(resolve => {
     const reader = new FileReader()
     reader.onload = ev => {
@@ -137,26 +139,32 @@ function comprimirImagem(file) {
         else if (h > MAX)     { w = Math.round(w * MAX / h); h = MAX }
         const canvas = document.createElement('canvas')
         canvas.width = w; canvas.height = h
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+        canvas.getContext('2d')!.drawImage(img, 0, 0, w, h)
         resolve(canvas.toDataURL('image/jpeg', 0.75))
       }
-      img.src = ev.target.result
+      img.src = ev.target!.result as string
     }
     reader.readAsDataURL(file)
   })
 }
 
-function validarUrlOpcional(url) {
+function validarUrlOpcional(url: string) {
   return !!(url.trim() && !isUrl(url))
 }
 
 // --- Editar membro existente ---
-const editandoMembroId = ref(null)
-const editForm    = ref(null)
-const errorsEdit  = ref({})
-const fileEditRef = ref(null)
+interface MembroFormRascunho extends Membro {
+  linkedin: string
+  git: string
+  lattes: string
+}
 
-function iniciarEdicaoMembro(membro) {
+const editandoMembroId = ref<number | null>(null)
+const editForm    = ref<MembroFormRascunho | null>(null)
+const errorsEdit  = ref<Record<string, boolean>>({})
+const fileEditRef = ref<HTMLInputElement | null>(null)
+
+function iniciarEdicaoMembro(membro: Membro) {
   editandoMembroId.value = membro.id
   editForm.value   = { linkedin: '', git: '', lattes: '', ...membro }
   errorsEdit.value = {}
@@ -168,18 +176,20 @@ function cancelarEdicaoMembro() {
   errorsEdit.value = {}
 }
 
-async function onFotoEdit(e) {
-  const file = e.target.files[0]
-  if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); e.target.value = ''; return }
+async function onFotoEdit(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file || !editForm.value) return
+  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); target.value = ''; return }
   editForm.value.foto = await comprimirImagem(file)
-  e.target.value = ''
+  target.value = ''
 }
 
-function removerFotoEdit() { editForm.value.foto = '' }
+function removerFotoEdit() { if (editForm.value) editForm.value.foto = '' }
 
 function salvarEdicaoMembro() {
-  const e = {}
+  if (!editForm.value || editandoMembroId.value === null) return
+  const e: Record<string, boolean> = {}
   if (!editForm.value.nome.trim())    e.nome  = true
   if (!isEmail(editForm.value.email)) e.email = true
   if (validarUrlOpcional(editForm.value.linkedin)) e.linkedin = true
@@ -192,7 +202,7 @@ function salvarEdicaoMembro() {
   cancelarEdicaoMembro()
 }
 
-function confirmarRemocaoMembro(id, nome) {
+function confirmarRemocaoMembro(id: number, nome: string) {
   if (confirm(`Remover "${nome}" da equipe?`)) {
     if (editandoMembroId.value === id) cancelarEdicaoMembro()
     removeMembro(id)
@@ -200,8 +210,8 @@ function confirmarRemocaoMembro(id, nome) {
 }
 
 // --- Modal de detalhes do membro ---
-const membroModal = ref(null)
-function abrirMembroModal(membro) { membroModal.value = membro }
+const membroModal = ref<Membro | null>(null)
+function abrirMembroModal(membro: Membro) { membroModal.value = membro }
 function fecharMembroModal() { membroModal.value = null }
 
 const algumModalMembroAberto = computed(() => !!membroModal.value || !!editandoMembroId.value)
@@ -212,16 +222,16 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
 useEscapeKey(() => { fecharMembroModal(); if (editandoMembroId.value) cancelarEdicaoMembro() })
 
 // --- Carrossel de membros (setas + arraste no clique) ───────
-const membroScrollEl = ref(null)
+const membroScrollEl = ref<HTMLElement | null>(null)
 const membroDragging = ref(false)
 let membroStartX = 0
 let membroScrollStart = 0
 let membroMoved = false
 
-function membroScrollBy(dir) {
+function membroScrollBy(dir: number) {
   const el = membroScrollEl.value
   if (!el) return
-  const card = el.querySelector('.membro-card')
+  const card = el.querySelector<HTMLElement>('.membro-card')
   const passo = card ? card.offsetWidth + 16 : 200
   const maxScroll = el.scrollWidth - el.clientWidth
   if (dir > 0 && el.scrollLeft >= maxScroll - 20) { el.scrollTo({ left: 0, behavior: 'smooth' }); return }
@@ -229,21 +239,21 @@ function membroScrollBy(dir) {
   el.scrollBy({ left: dir * passo, behavior: 'smooth' })
 }
 
-function membroDragStart(e) {
+function membroDragStart(e: MouseEvent) {
   if (!membroScrollEl.value) return
   membroDragging.value = true
   membroMoved = false
   membroStartX = e.pageX
   membroScrollStart = membroScrollEl.value.scrollLeft
 }
-function membroDragMove(e) {
-  if (!membroDragging.value) return
+function membroDragMove(e: MouseEvent) {
+  if (!membroDragging.value || !membroScrollEl.value) return
   const dx = e.pageX - membroStartX
   if (Math.abs(dx) > 4) membroMoved = true
   membroScrollEl.value.scrollLeft = membroScrollStart - dx
 }
 function membroDragEnd() { membroDragging.value = false }
-function membroClickGuard(a) {
+function membroClickGuard(a: Membro) {
   if (membroMoved) { membroMoved = false; return }
   if (!editando.value) abrirMembroModal(a)
 }
@@ -251,8 +261,8 @@ function membroClickGuard(a) {
 // --- Adicionar novo membro ---
 const mostraFormAdd = ref(false)
 const formAdd = ref({ nome: '', email: '', diretoria: '', periodo: '', foto: '', descricao: '', linkedin: '', git: '', lattes: '' })
-const errorsAdd  = ref({})
-const fileAddRef = ref(null)
+const errorsAdd  = ref<Record<string, boolean>>({})
+const fileAddRef = ref<HTMLInputElement | null>(null)
 
 function toggleFormAdd() {
   mostraFormAdd.value = !mostraFormAdd.value
@@ -260,22 +270,23 @@ function toggleFormAdd() {
 }
 
 function resetFormAdd() {
-  formAdd.value  = { nome: '', email: '', periodo: '', foto: '', descricao: '', linkedin: '', git: '', lattes: '' }
+  formAdd.value  = { nome: '', email: '', diretoria: '', periodo: '', foto: '', descricao: '', linkedin: '', git: '', lattes: '' }
   errorsAdd.value = {}
 }
 
-async function onFotoAdd(e) {
-  const file = e.target.files[0]
+async function onFotoAdd(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
   if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); e.target.value = ''; return }
+  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); target.value = ''; return }
   formAdd.value.foto = await comprimirImagem(file)
-  e.target.value = ''
+  target.value = ''
 }
 
 function removerFotoAdd() { formAdd.value.foto = '' }
 
 function cadastrarMembro() {
-  const e = {}
+  const e: Record<string, boolean> = {}
   if (!formAdd.value.nome.trim())  e.nome  = true
   if (!isEmail(formAdd.value.email)) e.email = true
   if (validarUrlOpcional(formAdd.value.linkedin)) e.linkedin = true
@@ -294,24 +305,22 @@ const confirmandoArquivar = ref(false)
 const mostraFormManual    = ref(false)
 
 const formManual = ref({ nomeChapa: '', periodo: '', descricao: '' })
-const membrosManual = ref([])
+const membrosManual = ref<MembroHistorico[]>([])
 
 function addMembroManual() {
   membrosManual.value.push({ nome: '', diretoria: '', periodo: '', foto: '' })
 }
 
-async function onFotoMembroManual(e, i) {
-  const file = e.target.files[0]
+async function onFotoMembroManual(e: Event, i: number) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
   if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); e.target.value = ''; return }
+  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); target.value = ''; return }
   membrosManual.value[i].foto = await comprimirImagem(file)
-  e.target.value = ''
+  target.value = ''
 }
 
-function removerFotoMembroManual(i) {
-  membrosManual.value[i].foto = ''
-}
-function removeMembroManual(i) {
+function removeMembroManual(i: number) {
   membrosManual.value.splice(i, 1)
 }
 
@@ -325,7 +334,7 @@ function salvarManual() {
     periodo:   formManual.value.periodo.trim(),
     descricao: formManual.value.descricao.trim(),
     membros:   membrosManual.value
-      .map(m => ({ nome: m.nome.trim(), diretoria: m.diretoria.trim(), periodo: m.periodo.trim() }))
+      .map(m => ({ nome: m.nome.trim(), diretoria: m.diretoria.trim(), periodo: m.periodo.trim(), foto: m.foto }))
       .filter(m => m.nome),
   })
   formManual.value = { nomeChapa: '', periodo: '', descricao: '' }
@@ -343,19 +352,20 @@ function arquivar() {
 // --- Seções customizadas ---
 const mostraFormSecao = ref(false)
 const formSecao = ref({ titulo: '', conteudo: '', imagem: '' })
-const fileSecaoAddRef = ref(null)
+const fileSecaoAddRef = ref<HTMLInputElement | null>(null)
 
 function toggleFormSecao() {
   mostraFormSecao.value = !mostraFormSecao.value
   if (!mostraFormSecao.value) formSecao.value = { titulo: '', conteudo: '', imagem: '' }
 }
 
-async function onFotoSecaoAdd(e) {
-  const file = e.target.files[0]
+async function onFotoSecaoAdd(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
   if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); e.target.value = ''; return }
+  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); target.value = ''; return }
   formSecao.value.imagem = await comprimirImagem(file)
-  e.target.value = ''
+  target.value = ''
 }
 function removerFotoSecaoAdd() { formSecao.value.imagem = '' }
 
@@ -374,13 +384,13 @@ function cadastrarSecao() {
   showToast('Seção adicionada.', 'success')
 }
 
-const editandoSecaoId = ref(null)
-const editFormSecao = ref(null)
-const fileSecaoEditRef = ref(null)
+const editandoSecaoId = ref<number | null>(null)
+const editFormSecao = ref<SecaoCustom | null>(null)
+const fileSecaoEditRef = ref<HTMLInputElement | null>(null)
 
-function iniciarEdicaoSecao(secao) {
+function iniciarEdicaoSecao(secao: SecaoCustom) {
   editandoSecaoId.value = secao.id
-  editFormSecao.value = { imagem: '', ...secao }
+  editFormSecao.value = { ...secao }
 }
 
 function cancelarEdicaoSecao() {
@@ -388,16 +398,18 @@ function cancelarEdicaoSecao() {
   editFormSecao.value = null
 }
 
-async function onFotoSecaoEdit(e) {
-  const file = e.target.files[0]
-  if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); e.target.value = ''; return }
+async function onFotoSecaoEdit(e: Event) {
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (!file || !editFormSecao.value) return
+  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); target.value = ''; return }
   editFormSecao.value.imagem = await comprimirImagem(file)
-  e.target.value = ''
+  target.value = ''
 }
-function removerFotoSecaoEdit() { editFormSecao.value.imagem = '' }
+function removerFotoSecaoEdit() { if (editFormSecao.value) editFormSecao.value.imagem = '' }
 
 function salvarEdicaoSecao() {
+  if (!editFormSecao.value || editandoSecaoId.value === null) return
   if (!editFormSecao.value.titulo.trim()) {
     showToast('Informe o título da seção.', 'error')
     return
@@ -411,15 +423,15 @@ function salvarEdicaoSecao() {
   cancelarEdicaoSecao()
 }
 
-function confirmarRemocaoSecao(id, titulo) {
+function confirmarRemocaoSecao(id: number, titulo: string) {
   if (confirm(`Remover a seção "${titulo}"?`)) {
     if (editandoSecaoId.value === id) cancelarEdicaoSecao()
     removeSecao(id)
   }
 }
 
-const mapaMiniEl = ref(null)
-let mapaMini = null
+const mapaMiniEl = ref<HTMLElement | null>(null)
+let mapaMini: L.Map | null = null
 
 onMounted(() => {
   if (!mapaMiniEl.value) return
@@ -474,7 +486,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
               <span v-html="cameraIcon"></span>
               <p>Foto histórica ou da sala do CAESI</p>
             </div>
-            <button type="button" class="btn-foto" style="margin-top:8px;" @click="fileMissaoRef.click()">
+            <button type="button" class="btn-foto" style="margin-top:8px;" @click="fileMissaoRef?.click()">
               {{ missaoImagemEdit ? 'Trocar foto' : '+ Adicionar foto' }}
             </button>
             <input ref="fileMissaoRef" type="file" accept="image/*" style="display:none" @change="onFotoMissao">
@@ -604,7 +616,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
                 <img v-if="formAdd.foto" :src="formAdd.foto" class="avatar-img" alt="">
                 <span v-else class="avatar-initial">{{ formAdd.nome?.[0]?.toUpperCase() || '?' }}</span>
               </div>
-              <button class="btn-foto" @click="fileAddRef.click()">{{ formAdd.foto ? 'Trocar foto' : 'Escolher foto' }}</button>
+              <button class="btn-foto" @click="fileAddRef?.click()">{{ formAdd.foto ? 'Trocar foto' : 'Escolher foto' }}</button>
               <button v-if="formAdd.foto" class="btn-remover-foto" @click="removerFotoAdd">Remover</button>
               <input ref="fileAddRef" type="file" accept="image/*" style="display:none" @change="onFotoAdd">
             </div>
@@ -694,7 +706,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
 
       <!-- Modal: editar membro -->
       <Teleport to="body">
-        <div v-if="editandoMembroId" class="modal-overlay" @click.self="cancelarEdicaoMembro">
+        <div v-if="editForm" class="modal-overlay" @click.self="cancelarEdicaoMembro">
           <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
             <p class="secao-sep" style="margin-top:0;">Editar membro</p>
             <div class="field">
@@ -741,7 +753,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
                   <img v-if="editForm.foto" :src="editForm.foto" class="avatar-img" alt="">
                   <span v-else class="avatar-initial">{{ editForm.nome?.[0]?.toUpperCase() || '?' }}</span>
                 </div>
-                <button class="btn-foto" @click="fileEditRef.click()">{{ editForm.foto ? 'Trocar foto' : 'Escolher foto' }}</button>
+                <button class="btn-foto" @click="fileEditRef?.click()">{{ editForm.foto ? 'Trocar foto' : 'Escolher foto' }}</button>
                 <button v-if="editForm.foto" class="btn-remover-foto" @click="removerFotoEdit">Remover</button>
                 <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onFotoEdit">
               </div>
@@ -759,7 +771,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
           <h2 class="paper-title" style="margin-bottom:0;">Gestões anteriores</h2>
           <div v-if="editando" class="hist-cabecalho-acoes">
             <label class="hist-toggle-label">
-              <input type="checkbox" :checked="historicoVisivel" @change="setHistoricoVisivel($event.target.checked)">
+              <input type="checkbox" :checked="historicoVisivel" @change="setHistoricoVisivel(($event.target as HTMLInputElement).checked)">
               Visível no Sobre
             </label>
             <button class="btn btn-outline btn-sm" @click="mostraFormManual = !mostraFormManual">
@@ -878,20 +890,20 @@ onBeforeUnmount(() => { mapaMini?.remove() })
           <p class="secao-sep" style="margin-top:0;">Editar seção</p>
           <div class="field">
             <label>Título</label>
-            <input v-model="editFormSecao.titulo" type="text" maxlength="80">
+            <input v-model="editFormSecao!.titulo" type="text" maxlength="80">
           </div>
           <div class="field">
             <label>Conteúdo <span class="field-hint">(Markdown)</span></label>
-            <textarea v-model="editFormSecao.conteudo" rows="6"></textarea>
+            <textarea v-model="editFormSecao!.conteudo" rows="6"></textarea>
           </div>
           <div class="field">
             <label>Foto <span class="field-hint">(opcional)</span></label>
-            <div v-if="editFormSecao.imagem" class="sobre-img-preview" style="max-width:260px;">
-              <img :src="editFormSecao.imagem" alt="" class="sobre-img-preview-img">
+            <div v-if="editFormSecao!.imagem" class="sobre-img-preview" style="max-width:260px;">
+              <img :src="editFormSecao!.imagem" alt="" class="sobre-img-preview-img">
               <button type="button" class="img-thumb-remove" @click="removerFotoSecaoEdit">×</button>
             </div>
-            <button type="button" class="btn-foto" style="margin-top:8px;" @click="fileSecaoEditRef.click()">
-              {{ editFormSecao.imagem ? 'Trocar foto' : '+ Adicionar foto' }}
+            <button type="button" class="btn-foto" style="margin-top:8px;" @click="fileSecaoEditRef?.click()">
+              {{ editFormSecao!.imagem ? 'Trocar foto' : '+ Adicionar foto' }}
             </button>
             <input ref="fileSecaoEditRef" type="file" accept="image/*" style="display:none" @change="onFotoSecaoEdit">
           </div>
@@ -923,7 +935,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
               <img :src="formSecao.imagem" alt="" class="sobre-img-preview-img">
               <button type="button" class="img-thumb-remove" @click="removerFotoSecaoAdd">×</button>
             </div>
-            <button type="button" class="btn-foto" style="margin-top:8px;" @click="fileSecaoAddRef.click()">
+            <button type="button" class="btn-foto" style="margin-top:8px;" @click="fileSecaoAddRef?.click()">
               {{ formSecao.imagem ? 'Trocar foto' : '+ Adicionar foto' }}
             </button>
             <input ref="fileSecaoAddRef" type="file" accept="image/*" style="display:none" @change="onFotoSecaoAdd">
