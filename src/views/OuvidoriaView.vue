@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import { addMensagem, mensagens, addComplemento } from '../stores/mensagens.ts'
-import { isAdmin } from '../stores/auth.js'
+import { isAdmin } from '../stores/auth.ts'
 import { isEmail } from '../utils/validation.js'
 
 const route = useRoute()

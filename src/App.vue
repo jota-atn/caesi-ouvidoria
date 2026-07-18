@@ -3,7 +3,7 @@ import { watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import BackToTop from './components/BackToTop.vue'
 import ToastContainer from './components/ToastContainer.vue'
-import { isAdmin } from './stores/auth.js'
+import { isAdmin } from './stores/auth.ts'
 import { useKonamiCode } from './composables/useKonamiCode.js'
 
 watchEffect(() => {

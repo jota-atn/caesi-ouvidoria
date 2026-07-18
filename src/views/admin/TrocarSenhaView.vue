@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { trocarSenha } from '../../stores/auth.js'
+import { trocarSenha } from '../../stores/auth.ts'
 
 const router = useRouter()
 const novaSenha     = ref('')

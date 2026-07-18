@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { loginAdmin, loginComGoogle } from '../../stores/auth.js'
+import { loginAdmin, loginComGoogle } from '../../stores/auth.ts'
 import googleIcon from '../../assets/icons/google.svg?raw'
 
 const router = useRouter()

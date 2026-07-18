@@ -1,5 +1,11 @@
 import { ref, computed } from 'vue'
 
+export interface AuthUser {
+  role: 'admin'
+  nome: string
+  email: string
+}
+
 const MOCK_EMAIL    = 'caesi@ccc.ufcg.edu.br'
 const MOCK_PASSWORD = 'caesi2025'
 const KEY_SENHA       = 'caesi_admin_senha'
@@ -11,16 +17,16 @@ const _mustChange = ref(!!localStorage.getItem(KEY_MUST_CHANGE))
 export const isAdmin            = computed(() => _admin.value)
 export const isLoggedIn         = computed(() => _admin.value)
 export const mustChangePassword = computed(() => _mustChange.value)
-export const user               = computed(() => _admin.value ? { role: 'admin', nome: 'Admin', email: 'admin' } : null)
+export const user               = computed<AuthUser | null>(() => _admin.value ? { role: 'admin', nome: 'Admin', email: 'admin' } : null)
 
-function senhaAtual() {
+function senhaAtual(): string {
   return localStorage.getItem(KEY_SENHA) || MOCK_PASSWORD
 }
 
 // Mock do front: em produção quem decide "primeiro login" é o back (senha
 // aleatória gerada no cadastro do admin), aqui simulamos com a senha padrão
 // de fábrica ainda não ter sido trocada.
-export function loginAdmin(email, senha) {
+export function loginAdmin(email: string, senha: string): boolean {
   if (email.trim().toLowerCase() !== MOCK_EMAIL || senha !== senhaAtual()) return false
   _admin.value = true
   localStorage.setItem('caesi_admin', '1')
@@ -32,7 +38,7 @@ export function loginAdmin(email, senha) {
   return true
 }
 
-export function trocarSenha(novaSenha) {
+export function trocarSenha(novaSenha: string) {
   localStorage.setItem(KEY_SENHA, novaSenha)
   localStorage.removeItem(KEY_MUST_CHANGE)
   _mustChange.value = false

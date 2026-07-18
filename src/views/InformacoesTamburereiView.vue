@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import { tamburetei, saveTamburetei } from '../stores/informacoes.js'
-import { isAdmin } from '../stores/auth.js'
+import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
 import { isUrl } from '../utils/validation.js'
 

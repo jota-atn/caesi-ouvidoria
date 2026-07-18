@@ -20,7 +20,7 @@ import {
 } from '../stores/equipe.js'
 import { CENTRO_PADRAO } from '../stores/mapa.ts'
 import { markdownParaHtmlSeguro } from '../utils/markdown.js'
-import { isAdmin } from '../stores/auth.js'
+import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
 import { isEmail, isUrl, isValidImageFile } from '../utils/validation.js'
 import pencilIcon from '../assets/icons/pencil.svg?raw'

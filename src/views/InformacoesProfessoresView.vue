@@ -7,7 +7,7 @@ import BackLink from '../components/BackLink.vue'
 import mapPinIcon from '../assets/icons/map-pin.svg?raw'
 import { professores, addProfessor, updateProfessor, deleteProfessor } from '../stores/informacoes.js'
 import { estruturas } from '../stores/mapa.ts'
-import { isAdmin } from '../stores/auth.js'
+import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
 import { isEmail, isUrl, isValidImageFile } from '../utils/validation.js'
 

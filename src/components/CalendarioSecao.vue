@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
-import { isAdmin } from '../stores/auth.js'
+import { isAdmin } from '../stores/auth.ts'
 import { eventos, proximosEventos, addEvento, updateEvento, removeEvento } from '../stores/calendario.js'
 import { useEscapeKey } from '../composables/useEscapeKey.js'
 import { showToast } from '../stores/toast.ts'

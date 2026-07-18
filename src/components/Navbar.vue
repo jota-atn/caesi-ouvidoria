@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { isAdmin, logout } from '../stores/auth.js'
+import { isAdmin, logout } from '../stores/auth.ts'
 import { cobrinhaZerada } from '../stores/conquistas.ts'
 import awardIcon from '../assets/icons/award.svg?raw'
 

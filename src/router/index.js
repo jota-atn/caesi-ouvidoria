@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { isAdmin, mustChangePassword } from '../stores/auth.js'
+import { isAdmin, mustChangePassword } from '../stores/auth.ts'
 
 const routes = [
   { path: '/',                       component: () => import('../views/HomeView.vue') },
