@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
@@ -14,13 +14,13 @@ const titulos = [
   { id: 'titulo-7', num: 'VII', texto: 'Anexos' },
 ]
 
-function ir(id) {
+function ir(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
 const activeId   = ref('titulo-1')
 const tocAberto  = ref(true)
-let observer
+let observer: IntersectionObserver | undefined
 
 onMounted(() => {
   const sections = document.querySelectorAll('.est-titulo')
@@ -32,7 +32,7 @@ onMounted(() => {
     },
     { rootMargin: '-10% 0px -80% 0px', threshold: 0 }
   )
-  sections.forEach(s => observer.observe(s))
+  sections.forEach(s => observer!.observe(s))
 })
 
 onBeforeUnmount(() => {
