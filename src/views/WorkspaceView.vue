@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { tasks, membros, atualizarStatus, salvarAnotacao, autoAlocar } from '../stores/tasks.ts'
+import { tasks, membros, atualizarStatus, salvarAnotacao, autoAlocar, type StatusTask } from '../stores/tasks.ts'
 import { showToast } from '../stores/toast.ts'
 import lockIcon      from '../assets/icons/lock.svg?raw'
 import clipboardIcon from '../assets/icons/clipboard.svg?raw'
@@ -15,7 +15,8 @@ const membro = computed(() => membros.value.find(m => m.token === route.params.t
 
 const minhasTasks = computed(() => {
   if (!membro.value) return []
-  return tasks.value.filter(t => t.alocados.includes(membro.value.id))
+  const membroId = membro.value.id
+  return tasks.value.filter(t => t.alocados.includes(membroId))
 })
 
 const primeiroNome = computed(() => membro.value?.nome.split(' ')[0] ?? '')
@@ -46,68 +47,72 @@ const contagem = computed(() => ({
 // ── Tasks disponíveis para seleção ───────────────────────
 const tasksDisponiveis = computed(() => {
   if (!membro.value) return []
+  const membroId = membro.value.id
   return tasks.value.filter(t =>
     t.selecionavel &&
     t.status !== 'concluida' &&
-    !t.alocados.includes(membro.value.id)
+    !t.alocados.includes(membroId)
   )
 })
 
-function pegarTask(taskId) {
+function pegarTask(taskId: string) {
+  if (!membro.value) return
   autoAlocar(taskId, membro.value.id)
   showToast('Task adicionada ao seu workspace!', 'success')
 }
 
 // ── Anotações ─────────────────────────────────────────────
-const notasEdit = ref({}) // taskId → texto em edição
+const notasEdit = ref<Record<string, string>>({}) // taskId → texto em edição
 
-function getAnotacao(taskId) {
+function getAnotacao(taskId: string) {
   const task = tasks.value.find(t => t.id === taskId)
-  return task?.anotacoes?.[membro.value?.id]?.texto ?? ''
+  const membroId = membro.value?.id
+  return (membroId && task?.anotacoes?.[membroId]?.texto) ?? ''
 }
 
-function editarNota(taskId) {
+function editarNota(taskId: string) {
   notasEdit.value = { ...notasEdit.value, [taskId]: getAnotacao(taskId) }
 }
 
-function cancelarNota(taskId) {
+function cancelarNota(taskId: string) {
   const copia = { ...notasEdit.value }
   delete copia[taskId]
   notasEdit.value = copia
 }
 
-function salvarNota(taskId) {
+function salvarNota(taskId: string) {
+  if (!membro.value) return
   salvarAnotacao(taskId, membro.value.id, notasEdit.value[taskId] ?? '')
   cancelarNota(taskId)
   showToast('Nota salva.', 'success')
 }
 
-function estaEditandoNota(taskId) {
+function estaEditandoNota(taskId: string) {
   return taskId in notasEdit.value
 }
 
 // ── Helpers visuais ───────────────────────────────────────
-const labelPrioridade = { alta: 'Alta', media: 'Média', baixa: 'Baixa' }
-const labelCategoria  = { gestao: 'Gestão', formularios: 'Formulários', ouvidoria: 'Ouvidoria' }
-const labelStatus     = { pendente: 'Pendente', 'em-andamento': 'Em andamento', concluida: 'Concluída' }
+const labelPrioridade: Record<string, string> = { alta: 'Alta', media: 'Média', baixa: 'Baixa' }
+const labelCategoria: Record<string, string>  = { gestao: 'Gestão', formularios: 'Formulários', ouvidoria: 'Ouvidoria' }
+const labelStatus: Record<string, string>     = { pendente: 'Pendente', 'em-andamento': 'Em andamento', concluida: 'Concluída' }
 
-function prazoFormatado(prazo) {
+function prazoFormatado(prazo: string) {
   const [ano, mes, dia] = prazo.split('-')
   return `${dia}/${mes}/${ano}`
 }
 
-function prazoAlerta(prazo) {
+function prazoAlerta(prazo: string) {
   if (!prazo) return null
   const hoje = new Date(); hoje.setHours(0,0,0,0)
   const d    = new Date(prazo + 'T00:00:00')
-  const diff = (d - hoje) / 86400000
+  const diff = (d.getTime() - hoje.getTime()) / 86400000
   return diff < 0 ? 'vencida' : diff <= 3 ? 'proxima' : null
 }
 
-function diasRestantes(prazo) {
+function diasRestantes(prazo: string) {
   const hoje = new Date(); hoje.setHours(0,0,0,0)
   const d    = new Date(prazo + 'T00:00:00')
-  return Math.ceil((d - hoje) / 86400000)
+  return Math.ceil((d.getTime() - hoje.getTime()) / 86400000)
 }
 </script>
 
@@ -239,7 +244,7 @@ function diasRestantes(prazo) {
             <select
               class="ws-status-select"
               :value="t.status"
-              @change="atualizarStatus(t.id, $event.target.value)"
+              @change="atualizarStatus(t.id, ($event.target as HTMLSelectElement).value as StatusTask)"
             >
               <option value="pendente">Pendente</option>
               <option value="em-andamento">Em andamento</option>
