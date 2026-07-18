@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
+import Modal from './Modal.vue'
 import { isAdmin } from '../stores/auth.ts'
 import { eventos, proximosEventos, addEvento, updateEvento, removeEvento, type Evento } from '../stores/calendario.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.ts'
@@ -300,99 +301,87 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
   </section>
 
   <!-- Modal: detalhe de um evento -->
-  <Teleport to="body">
-    <div v-if="eventoModal" class="modal-overlay" @click.self="fecharEventoModal">
-      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-evento-title" v-focus-trap>
-        <template v-if="!eventoModoEdicao">
-          <div class="modal-title" id="modal-evento-title">{{ eventoModal.nome }}</div>
-          <div class="modal-body">
-            <p style="font-size:0.85rem;color:var(--cinza);margin-bottom:0.6rem;">{{ formatDataExtCal(eventoModal.data) }}</p>
-            <p v-if="eventoModal.descricao">{{ eventoModal.descricao }}</p>
-            <p v-else style="color:var(--cinza);font-style:italic;">Sem descrição cadastrada.</p>
-            <p v-if="eventoModal.formularioId" style="font-size:0.78rem;color:var(--cinza);margin-top:0.8rem;">
-              Vinculado a um formulário — edite a data por lá pra manter tudo sincronizado.
-            </p>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-outline btn-sm" @click="fecharEventoModal">Fechar</button>
-            <template v-if="isAdmin && !eventoModal.formularioId">
-              <button class="btn btn-outline btn-sm" @click="iniciarEdicaoEvento">Editar</button>
-              <button class="btn btn-danger btn-sm" @click="excluirEvento">Excluir</button>
-            </template>
-            <RouterLink
-              v-if="eventoModal.formularioId"
-              :to="isAdmin ? `/admin/formularios/${eventoModal.formularioId}` : `/formularios/${eventoModal.formularioId}`"
-              class="btn btn-outline btn-sm"
-            >
-              {{ isAdmin ? 'Editar formulário →' : 'Ver formulário →' }}
-            </RouterLink>
-            <button class="btn btn-primary btn-sm" @click="baixarIcs(eventoModal)">
-              <span class="btn-icon" v-html="calendarIcon"></span> Adicionar ao calendário
-            </button>
-          </div>
-        </template>
-
-        <template v-else>
-          <div class="modal-title">Editar evento</div>
-          <div class="modal-body">
-            <div class="field">
-              <label>Nome *</label>
-              <input v-model="eventoEditForm.nome" type="text" maxlength="100">
-            </div>
-            <div class="field">
-              <label>Descrição</label>
-              <textarea v-model="eventoEditForm.descricao" rows="3"></textarea>
-            </div>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-outline btn-sm" @click="cancelarEdicaoEvento">Cancelar</button>
-            <button class="btn btn-primary btn-sm" @click="salvarEdicaoEvento">Salvar →</button>
-          </div>
-        </template>
+  <Modal v-if="eventoModal" title-id="modal-evento-title" @close="fecharEventoModal">
+    <template v-if="!eventoModoEdicao">
+      <div class="modal-title" id="modal-evento-title">{{ eventoModal.nome }}</div>
+      <div class="modal-body">
+        <p style="font-size:0.85rem;color:var(--cinza);margin-bottom:0.6rem;">{{ formatDataExtCal(eventoModal.data) }}</p>
+        <p v-if="eventoModal.descricao">{{ eventoModal.descricao }}</p>
+        <p v-else style="color:var(--cinza);font-style:italic;">Sem descrição cadastrada.</p>
+        <p v-if="eventoModal.formularioId" style="font-size:0.78rem;color:var(--cinza);margin-top:0.8rem;">
+          Vinculado a um formulário — edite a data por lá pra manter tudo sincronizado.
+        </p>
       </div>
-    </div>
-  </Teleport>
+      <div class="modal-actions">
+        <button class="btn btn-outline btn-sm" @click="fecharEventoModal">Fechar</button>
+        <template v-if="isAdmin && !eventoModal.formularioId">
+          <button class="btn btn-outline btn-sm" @click="iniciarEdicaoEvento">Editar</button>
+          <button class="btn btn-danger btn-sm" @click="excluirEvento">Excluir</button>
+        </template>
+        <RouterLink
+          v-if="eventoModal.formularioId"
+          :to="isAdmin ? `/admin/formularios/${eventoModal.formularioId}` : `/formularios/${eventoModal.formularioId}`"
+          class="btn btn-outline btn-sm"
+        >
+          {{ isAdmin ? 'Editar formulário →' : 'Ver formulário →' }}
+        </RouterLink>
+        <button class="btn btn-primary btn-sm" @click="baixarIcs(eventoModal)">
+          <span class="btn-icon" v-html="calendarIcon"></span> Adicionar ao calendário
+        </button>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="modal-title">Editar evento</div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Nome *</label>
+          <input v-model="eventoEditForm.nome" type="text" maxlength="100">
+        </div>
+        <div class="field">
+          <label>Descrição</label>
+          <textarea v-model="eventoEditForm.descricao" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline btn-sm" @click="cancelarEdicaoEvento">Cancelar</button>
+        <button class="btn btn-primary btn-sm" @click="salvarEdicaoEvento">Salvar →</button>
+      </div>
+    </template>
+  </Modal>
 
   <!-- Modal: lista de eventos de um dia -->
-  <Teleport to="body">
-    <div v-if="diaModal" class="modal-overlay" @click.self="fecharDiaModal">
-      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-dia-title" v-focus-trap>
-        <div class="modal-title" id="modal-dia-title">{{ formatDataExtCal(diaModal.iso) }}</div>
-        <div class="modal-body">
-          <button
-            v-for="e in diaModal.eventos" :key="e.id"
-            class="cal-home-dia-evento-item"
-            @click="abrirEvento(e)"
-          >{{ e.nome }}</button>
-        </div>
-        <div class="modal-actions">
-          <button v-if="isAdmin" class="btn btn-outline btn-sm" @click="abrirNovoEvento(diaModal.iso)">+ Adicionar evento</button>
-          <button class="btn btn-outline btn-sm" @click="fecharDiaModal">Fechar</button>
-        </div>
-      </div>
+  <Modal v-if="diaModal" title-id="modal-dia-title" @close="fecharDiaModal">
+    <div class="modal-title" id="modal-dia-title">{{ formatDataExtCal(diaModal.iso) }}</div>
+    <div class="modal-body">
+      <button
+        v-for="e in diaModal.eventos" :key="e.id"
+        class="cal-home-dia-evento-item"
+        @click="abrirEvento(e)"
+      >{{ e.nome }}</button>
     </div>
-  </Teleport>
+    <div class="modal-actions">
+      <button v-if="isAdmin" class="btn btn-outline btn-sm" @click="abrirNovoEvento(diaModal.iso)">+ Adicionar evento</button>
+      <button class="btn btn-outline btn-sm" @click="fecharDiaModal">Fechar</button>
+    </div>
+  </Modal>
 
   <!-- Modal: novo evento (admin) -->
-  <Teleport to="body">
-    <div v-if="novoEventoModal" class="modal-overlay" @click.self="fecharNovoEventoModal">
-      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-novo-evento-title" v-focus-trap>
-        <div class="modal-title" id="modal-novo-evento-title">Novo evento — {{ formatDataExtCal(novoEventoModal.iso) }}</div>
-        <div class="modal-body">
-          <div class="field">
-            <label>Nome *</label>
-            <input v-model="novoEventoForm.nome" type="text" maxlength="100" placeholder="Ex.: Maratona de Programação">
-          </div>
-          <div class="field">
-            <label>Descrição <span class="field-hint">(opcional)</span></label>
-            <textarea v-model="novoEventoForm.descricao" rows="3" placeholder="Detalhes do evento…"></textarea>
-          </div>
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-outline btn-sm" @click="fecharNovoEventoModal">Cancelar</button>
-          <button class="btn btn-primary btn-sm" @click="salvarNovoEvento">Salvar →</button>
-        </div>
+  <Modal v-if="novoEventoModal" title-id="modal-novo-evento-title" @close="fecharNovoEventoModal">
+    <div class="modal-title" id="modal-novo-evento-title">Novo evento — {{ formatDataExtCal(novoEventoModal.iso) }}</div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Nome *</label>
+        <input v-model="novoEventoForm.nome" type="text" maxlength="100" placeholder="Ex.: Maratona de Programação">
+      </div>
+      <div class="field">
+        <label>Descrição <span class="field-hint">(opcional)</span></label>
+        <textarea v-model="novoEventoForm.descricao" rows="3" placeholder="Detalhes do evento…"></textarea>
       </div>
     </div>
-  </Teleport>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" @click="fecharNovoEventoModal">Cancelar</button>
+      <button class="btn btn-primary btn-sm" @click="salvarNovoEvento">Salvar →</button>
+    </div>
+  </Modal>
 </template>

@@ -10,6 +10,7 @@ import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
+import Modal from '../components/Modal.vue'
 import {
   membros, addMembro, removeMembro, updateMembro,
   descricaoGestao, saveDescricao, gestaoInfo, saveInfo, MESES,
@@ -646,105 +647,97 @@ onBeforeUnmount(() => { mapaMini?.remove() })
       </div>
 
       <!-- Modal: detalhes do membro -->
-      <Teleport to="body">
-        <div v-if="membroModal" class="modal-overlay" @click.self="fecharMembroModal">
-          <div class="modal-box membro-modal-box" role="dialog" aria-modal="true" v-focus-trap>
-            <div class="membro-modal-grid">
-              <div class="membro-modal-foto-col">
-                <div class="membro-modal-avatar">
-                  <img v-if="membroModal.foto" :src="membroModal.foto" :alt="membroModal.nome" class="membro-foto">
-                  <span v-else class="membro-inicial">{{ membroModal.nome?.[0]?.toUpperCase() || '?' }}</span>
-                </div>
-                <div class="modal-title membro-modal-nome">{{ membroModal.nome }}</div>
-              </div>
+      <Modal v-if="membroModal" class="membro-modal-box" @close="fecharMembroModal">
+        <div class="membro-modal-grid">
+          <div class="membro-modal-foto-col">
+            <div class="membro-modal-avatar">
+              <img v-if="membroModal.foto" :src="membroModal.foto" :alt="membroModal.nome" class="membro-foto">
+              <span v-else class="membro-inicial">{{ membroModal.nome?.[0]?.toUpperCase() || '?' }}</span>
+            </div>
+            <div class="modal-title membro-modal-nome">{{ membroModal.nome }}</div>
+          </div>
 
-              <div class="membro-modal-info-col">
-                <div v-if="membroModal.diretoria" class="membro-modal-diretoria">{{ membroModal.diretoria }}</div>
-                <div v-if="membroModal.descricao" class="modal-body membro-modal-desc" v-html="descricaoHtml(membroModal.descricao)"></div>
-                <div class="membro-modal-meta">
-                  <div v-if="membroModal.email" class="membro-modal-meta-item">
-                    <span v-html="mailIcon"></span> {{ membroModal.email }}
-                  </div>
-                  <div v-if="membroModal.periodo" class="membro-modal-meta-item">
-                    <span v-html="calendarIcon"></span> {{ membroModal.periodo }}
-                  </div>
-                </div>
-                <div v-if="membroModal.linkedin || membroModal.git || membroModal.lattes" class="membro-links">
-                  <a v-if="membroModal.linkedin" :href="membroModal.linkedin" target="_blank" rel="noopener" class="membro-link membro-link--linkedin" title="LinkedIn" aria-label="LinkedIn" v-html="linkedinIcon"></a>
-                  <a v-if="membroModal.git"      :href="membroModal.git"      target="_blank" rel="noopener" class="membro-link membro-link--github" title="GitHub" aria-label="GitHub" v-html="githubIcon"></a>
-                  <a v-if="membroModal.lattes"   :href="membroModal.lattes"   target="_blank" rel="noopener" class="membro-link membro-link--lattes" title="Lattes" aria-label="Lattes" v-html="graduationCapIcon"></a>
-                </div>
+          <div class="membro-modal-info-col">
+            <div v-if="membroModal.diretoria" class="membro-modal-diretoria">{{ membroModal.diretoria }}</div>
+            <div v-if="membroModal.descricao" class="modal-body membro-modal-desc" v-html="descricaoHtml(membroModal.descricao)"></div>
+            <div class="membro-modal-meta">
+              <div v-if="membroModal.email" class="membro-modal-meta-item">
+                <span v-html="mailIcon"></span> {{ membroModal.email }}
+              </div>
+              <div v-if="membroModal.periodo" class="membro-modal-meta-item">
+                <span v-html="calendarIcon"></span> {{ membroModal.periodo }}
               </div>
             </div>
-
-            <div class="modal-actions">
-              <button class="btn btn-outline btn-sm" @click="fecharMembroModal">Fechar</button>
+            <div v-if="membroModal.linkedin || membroModal.git || membroModal.lattes" class="membro-links">
+              <a v-if="membroModal.linkedin" :href="membroModal.linkedin" target="_blank" rel="noopener" class="membro-link membro-link--linkedin" title="LinkedIn" aria-label="LinkedIn" v-html="linkedinIcon"></a>
+              <a v-if="membroModal.git"      :href="membroModal.git"      target="_blank" rel="noopener" class="membro-link membro-link--github" title="GitHub" aria-label="GitHub" v-html="githubIcon"></a>
+              <a v-if="membroModal.lattes"   :href="membroModal.lattes"   target="_blank" rel="noopener" class="membro-link membro-link--lattes" title="Lattes" aria-label="Lattes" v-html="graduationCapIcon"></a>
             </div>
           </div>
         </div>
-      </Teleport>
+
+        <div class="modal-actions">
+          <button class="btn btn-outline btn-sm" @click="fecharMembroModal">Fechar</button>
+        </div>
+      </Modal>
 
       <!-- Modal: editar membro -->
-      <Teleport to="body">
-        <div v-if="editForm" class="modal-overlay" @click.self="cancelarEdicaoMembro">
-          <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
-            <p class="secao-sep" style="margin-top:0;">Editar membro</p>
-            <div class="field">
-              <label>Nome *</label>
-              <input v-model="editForm.nome" type="text" maxlength="80" :class="{ invalid: errorsEdit.nome }">
-              <span class="error-msg">Preencha o nome.</span>
+      <Modal v-if="editForm" @close="cancelarEdicaoMembro">
+        <p class="secao-sep" style="margin-top:0;">Editar membro</p>
+        <div class="field">
+          <label>Nome *</label>
+          <input v-model="editForm.nome" type="text" maxlength="80" :class="{ invalid: errorsEdit.nome }">
+          <span class="error-msg">Preencha o nome.</span>
+        </div>
+        <div class="field">
+          <label>E-mail *</label>
+          <input v-model="editForm.email" type="email" :class="{ invalid: errorsEdit.email }">
+          <span class="error-msg">Informe um e-mail válido.</span>
+        </div>
+        <div class="field">
+          <label>Diretoria</label>
+          <input v-model="editForm.diretoria" type="text" maxlength="60">
+        </div>
+        <div class="field">
+          <label>Período <span class="field-hint">(ex.: 2024.2)</span></label>
+          <input v-model="editForm.periodo" type="text" maxlength="10">
+        </div>
+        <div class="field">
+          <label>Descrição <span class="field-hint">(Markdown)</span></label>
+          <textarea v-model="editForm.descricao" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label>LinkedIn</label>
+          <input v-model="editForm.linkedin" type="url" placeholder="https://linkedin.com/in/..." :class="{ invalid: errorsEdit.linkedin }">
+          <span class="error-msg">Informe um link válido.</span>
+        </div>
+        <div class="field">
+          <label>GitHub</label>
+          <input v-model="editForm.git" type="url" placeholder="https://github.com/..." :class="{ invalid: errorsEdit.git }">
+          <span class="error-msg">Informe um link válido.</span>
+        </div>
+        <div class="field">
+          <label>Lattes</label>
+          <input v-model="editForm.lattes" type="url" placeholder="http://lattes.cnpq.br/..." :class="{ invalid: errorsEdit.lattes }">
+          <span class="error-msg">Informe um link válido.</span>
+        </div>
+        <div class="field">
+          <label>Foto</label>
+          <div class="foto-row">
+            <div class="avatar-sm">
+              <img v-if="editForm.foto" :src="editForm.foto" class="avatar-img" alt="">
+              <span v-else class="avatar-initial">{{ editForm.nome?.[0]?.toUpperCase() || '?' }}</span>
             </div>
-            <div class="field">
-              <label>E-mail *</label>
-              <input v-model="editForm.email" type="email" :class="{ invalid: errorsEdit.email }">
-              <span class="error-msg">Informe um e-mail válido.</span>
-            </div>
-            <div class="field">
-              <label>Diretoria</label>
-              <input v-model="editForm.diretoria" type="text" maxlength="60">
-            </div>
-            <div class="field">
-              <label>Período <span class="field-hint">(ex.: 2024.2)</span></label>
-              <input v-model="editForm.periodo" type="text" maxlength="10">
-            </div>
-            <div class="field">
-              <label>Descrição <span class="field-hint">(Markdown)</span></label>
-              <textarea v-model="editForm.descricao" rows="2"></textarea>
-            </div>
-            <div class="field">
-              <label>LinkedIn</label>
-              <input v-model="editForm.linkedin" type="url" placeholder="https://linkedin.com/in/..." :class="{ invalid: errorsEdit.linkedin }">
-              <span class="error-msg">Informe um link válido.</span>
-            </div>
-            <div class="field">
-              <label>GitHub</label>
-              <input v-model="editForm.git" type="url" placeholder="https://github.com/..." :class="{ invalid: errorsEdit.git }">
-              <span class="error-msg">Informe um link válido.</span>
-            </div>
-            <div class="field">
-              <label>Lattes</label>
-              <input v-model="editForm.lattes" type="url" placeholder="http://lattes.cnpq.br/..." :class="{ invalid: errorsEdit.lattes }">
-              <span class="error-msg">Informe um link válido.</span>
-            </div>
-            <div class="field">
-              <label>Foto</label>
-              <div class="foto-row">
-                <div class="avatar-sm">
-                  <img v-if="editForm.foto" :src="editForm.foto" class="avatar-img" alt="">
-                  <span v-else class="avatar-initial">{{ editForm.nome?.[0]?.toUpperCase() || '?' }}</span>
-                </div>
-                <button class="btn-foto" @click="fileEditRef?.click()">{{ editForm.foto ? 'Trocar foto' : 'Escolher foto' }}</button>
-                <button v-if="editForm.foto" class="btn-remover-foto" @click="removerFotoEdit">Remover</button>
-                <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onFotoEdit">
-              </div>
-            </div>
-            <div class="btn-row">
-              <button class="btn btn-primary btn-sm" @click="salvarEdicaoMembro">Salvar →</button>
-              <button class="btn btn-outline btn-sm" @click="cancelarEdicaoMembro">Cancelar</button>
-            </div>
+            <button class="btn-foto" @click="fileEditRef?.click()">{{ editForm.foto ? 'Trocar foto' : 'Escolher foto' }}</button>
+            <button v-if="editForm.foto" class="btn-remover-foto" @click="removerFotoEdit">Remover</button>
+            <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onFotoEdit">
           </div>
         </div>
-      </Teleport>
+        <div class="btn-row">
+          <button class="btn btn-primary btn-sm" @click="salvarEdicaoMembro">Salvar →</button>
+          <button class="btn btn-outline btn-sm" @click="cancelarEdicaoMembro">Cancelar</button>
+        </div>
+      </Modal>
 
       <div v-if="editando || (historicoVisivel && historicoGestoes.length)" class="paper paper-mb-lg paper--meio">
         <div class="hist-cabecalho">
@@ -1141,8 +1134,6 @@ onBeforeUnmount(() => { mapaMini?.remove() })
 .membro-modal-avatar .membro-inicial { font-size: 2.8rem; }
 
 /* ── Modal de membro: foto à esquerda, info à direita ─────── */
-.membro-modal-box { max-width: 560px; }
-
 .membro-modal-grid {
   display: grid;
   grid-template-columns: 150px 1fr;

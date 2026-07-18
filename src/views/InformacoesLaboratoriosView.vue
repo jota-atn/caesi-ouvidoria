@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
+import Modal from '../components/Modal.vue'
 import { laboratorios, addLaboratorio, updateLaboratorio, deleteLaboratorio, type Laboratorio } from '../stores/informacoes.ts'
 import { estruturas } from '../stores/mapa.ts'
 import { isAdmin } from '../stores/auth.ts'
@@ -279,73 +280,69 @@ useEscapeKey(() => fecharEdit())
     <SiteFooter />
 
     <!-- Admin: editar laboratório -->
-    <Teleport to="body">
-      <div v-if="editModal" class="modal-overlay" @click.self="fecharEdit">
-        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-edit-lab-title" v-focus-trap>
-          <div class="modal-title" id="modal-edit-lab-title">Editar laboratório</div>
-          <div class="modal-body">
-            <div class="field">
-              <label>Nome *</label>
-              <input v-model="formEdit.nome" type="text">
-              <span v-if="errosEdit.nome" class="error-msg" style="display:block;">{{ errosEdit.nome }}</span>
-            </div>
-            <div class="field">
-              <label>Sigla</label>
-              <input v-model="formEdit.sigla" type="text" style="max-width:160px;">
-            </div>
-            <div class="field">
-              <label>Descrição</label>
-              <textarea v-model="formEdit.descricao" rows="4"></textarea>
-            </div>
-            <div class="field">
-              <label>Link externo</label>
-              <input v-model="formEdit.linkExterno" type="url" :class="{ invalid: errosEdit.linkExterno }">
-              <span v-if="errosEdit.linkExterno" class="error-msg" style="display:block;">{{ errosEdit.linkExterno }}</span>
-            </div>
-            <div class="field">
-              <label>Sala / Localização</label>
-              <select v-model="formEdit.estruturaId">
-                <option value="">Nenhuma</option>
-                <option v-for="e in estruturas" :key="e.id" :value="e.id">{{ e.nome }}</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Foto de capa</label>
-              <div v-if="formEdit.imagem" class="imagens-preview">
-                <div class="img-thumb-wrap">
-                  <img :src="formEdit.imagem" class="img-thumb" alt="">
-                  <button type="button" class="img-thumb-remove" @click="removerImagemEdit">×</button>
-                </div>
-              </div>
-              <button type="button" class="btn-foto" @click="triggerFileEdit()" style="margin-top:8px;">
-                {{ formEdit.imagem ? 'Trocar foto' : '+ Adicionar foto de capa' }}
-              </button>
-              <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onImagemEdit">
-            </div>
-            <div class="field">
-              <label>Fotos extras <span class="field-hint">(equipe, eventos etc.)</span></label>
-              <div v-if="formEdit.imagens.length > 0" class="imagens-preview">
-                <div v-for="(img, i) in formEdit.imagens" :key="i" class="img-thumb-wrap">
-                  <img :src="img" class="img-thumb" :alt="`Foto ${i + 1}`">
-                  <button type="button" class="img-thumb-remove" @click="removerGaleriaEdit(i)">×</button>
-                </div>
-              </div>
-              <button type="button" class="btn-foto" @click="triggerGaleriaEdit()" style="margin-top:8px;">+ Adicionar fotos</button>
-              <input ref="fileGaleriaEditRef" type="file" accept="image/*" multiple style="display:none" @change="onGaleriaEdit">
-            </div>
-            <div class="field">
-              <label>E-mail de contato</label>
-              <input v-model="formEdit.email" type="email" :class="{ invalid: errosEdit.email }">
-              <span v-if="errosEdit.email" class="error-msg" style="display:block;">{{ errosEdit.email }}</span>
+    <Modal v-if="editModal" title-id="modal-edit-lab-title" @close="fecharEdit">
+      <div class="modal-title" id="modal-edit-lab-title">Editar laboratório</div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Nome *</label>
+          <input v-model="formEdit.nome" type="text">
+          <span v-if="errosEdit.nome" class="error-msg" style="display:block;">{{ errosEdit.nome }}</span>
+        </div>
+        <div class="field">
+          <label>Sigla</label>
+          <input v-model="formEdit.sigla" type="text" style="max-width:160px;">
+        </div>
+        <div class="field">
+          <label>Descrição</label>
+          <textarea v-model="formEdit.descricao" rows="4"></textarea>
+        </div>
+        <div class="field">
+          <label>Link externo</label>
+          <input v-model="formEdit.linkExterno" type="url" :class="{ invalid: errosEdit.linkExterno }">
+          <span v-if="errosEdit.linkExterno" class="error-msg" style="display:block;">{{ errosEdit.linkExterno }}</span>
+        </div>
+        <div class="field">
+          <label>Sala / Localização</label>
+          <select v-model="formEdit.estruturaId">
+            <option value="">Nenhuma</option>
+            <option v-for="e in estruturas" :key="e.id" :value="e.id">{{ e.nome }}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Foto de capa</label>
+          <div v-if="formEdit.imagem" class="imagens-preview">
+            <div class="img-thumb-wrap">
+              <img :src="formEdit.imagem" class="img-thumb" alt="">
+              <button type="button" class="img-thumb-remove" @click="removerImagemEdit">×</button>
             </div>
           </div>
-          <div class="modal-actions">
-            <button class="btn btn-outline btn-sm" @click="fecharEdit">Cancelar</button>
-            <button class="btn btn-primary btn-sm" @click="salvarEdit">Salvar →</button>
+          <button type="button" class="btn-foto" @click="triggerFileEdit()" style="margin-top:8px;">
+            {{ formEdit.imagem ? 'Trocar foto' : '+ Adicionar foto de capa' }}
+          </button>
+          <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onImagemEdit">
+        </div>
+        <div class="field">
+          <label>Fotos extras <span class="field-hint">(equipe, eventos etc.)</span></label>
+          <div v-if="formEdit.imagens.length > 0" class="imagens-preview">
+            <div v-for="(img, i) in formEdit.imagens" :key="i" class="img-thumb-wrap">
+              <img :src="img" class="img-thumb" :alt="`Foto ${i + 1}`">
+              <button type="button" class="img-thumb-remove" @click="removerGaleriaEdit(i)">×</button>
+            </div>
           </div>
+          <button type="button" class="btn-foto" @click="triggerGaleriaEdit()" style="margin-top:8px;">+ Adicionar fotos</button>
+          <input ref="fileGaleriaEditRef" type="file" accept="image/*" multiple style="display:none" @change="onGaleriaEdit">
+        </div>
+        <div class="field">
+          <label>E-mail de contato</label>
+          <input v-model="formEdit.email" type="email" :class="{ invalid: errosEdit.email }">
+          <span v-if="errosEdit.email" class="error-msg" style="display:block;">{{ errosEdit.email }}</span>
         </div>
       </div>
-    </Teleport>
+      <div class="modal-actions">
+        <button class="btn btn-outline btn-sm" @click="fecharEdit">Cancelar</button>
+        <button class="btn btn-primary btn-sm" @click="salvarEdit">Salvar →</button>
+      </div>
+    </Modal>
   </div>
 </template>
 

@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
+import Modal from '../../components/Modal.vue'
 import { formularios, inscricoes, updateStatusComprovante, updateFormulario, deleteFormulario, emitirCertificados, aprovarCancelamento, recusarCancelamento, type Inscricao, type StatusComprovante } from '../../stores/formularios.ts'
 import { showToast } from '../../stores/toast.ts'
 import { useEscapeKey } from '../../composables/useEscapeKey.ts'
@@ -514,56 +515,52 @@ function excluirFormulario() {
   </div>
 
   <!-- Modal: cancelamento de inscrição -->
-  <Teleport to="body">
-    <div v-if="modalCancelamento" class="modal-overlay" @click.self="modalCancelamento = null">
-      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-admin-cancel-title" v-focus-trap>
-        <div class="modal-title" id="modal-admin-cancel-title">
-          {{ modalCancelamento.acao === 'aprovar' ? 'Aprovar cancelamento' : 'Recusar solicitação' }}
-        </div>
-        <div class="modal-body">
-          <p v-if="modalCancelamento.acao === 'aprovar'">
-            Confirme o cancelamento e informe ao aluno como será feito o reembolso. A inscrição será removida.
-          </p>
-          <p v-else>
-            A solicitação será recusada e o aluno será notificado. A inscrição continua ativa.
-          </p>
-          <div class="modal-contato">
-            <div class="modal-contato-label">Contato do aluno</div>
-            <div class="modal-contato-nome">{{ dadosInscrito(modalCancelamento.inscricao)?.nome ?? modalCancelamento.inscricao.userEmail }}</div>
-            <div class="modal-contato-email">{{ modalCancelamento.inscricao.userEmail }}</div>
-          </div>
-          <div v-if="modalCancelamento.inscricao.cancelamento?.motivo" style="margin-top:10px;font-size:0.82rem;color:var(--cinza);">
-            Motivo: <em>"{{ modalCancelamento.inscricao.cancelamento.motivo }}"</em>
-          </div>
-        </div>
-        <div class="field" style="margin-bottom:1.2rem;">
-          <label style="font-size:0.84rem;font-weight:600;margin-bottom:4px;display:block;">
-            Mensagem para o aluno
-            <span v-if="modalCancelamento.acao === 'recusar'" style="font-weight:400;color:var(--cinza);"> (opcional)</span>
-            <span v-else style="color:var(--vermelho);"> *</span>
-          </label>
-          <textarea
-            v-model="msgCancelamento"
-            rows="3"
-            :placeholder="modalCancelamento.acao === 'aprovar'
-              ? 'Ex: Faremos o reembolso via PIX em até 5 dias úteis. Entre em contato pelo e-mail do CAESI informando seu PIX.'
-              : 'Ex: O pagamento já foi processado e o reembolso não é possível neste momento.'"
-            style="width:100%;min-height:76px;"
-          />
-          <p v-if="modalCancelamento.acao === 'aprovar'" style="font-size:0.77rem;color:var(--cinza);margin-top:4px;">
-            Esta mensagem chegará como notificação ao aluno. Use-a para combinar o reembolso.
-          </p>
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-outline btn-sm" @click="modalCancelamento = null">Cancelar</button>
-          <button
-            class="btn btn-sm"
-            :class="modalCancelamento.acao === 'aprovar' ? 'btn-danger' : 'btn-primary'"
-            :disabled="modalCancelamento.acao === 'aprovar' && !msgCancelamento.trim()"
-            @click="confirmarModalCancelamento"
-          >{{ modalCancelamento.acao === 'aprovar' ? 'Confirmar aprovação' : 'Confirmar recusa' }}</button>
-        </div>
+  <Modal v-if="modalCancelamento" title-id="modal-admin-cancel-title" @close="modalCancelamento = null">
+    <div class="modal-title" id="modal-admin-cancel-title">
+      {{ modalCancelamento.acao === 'aprovar' ? 'Aprovar cancelamento' : 'Recusar solicitação' }}
+    </div>
+    <div class="modal-body">
+      <p v-if="modalCancelamento.acao === 'aprovar'">
+        Confirme o cancelamento e informe ao aluno como será feito o reembolso. A inscrição será removida.
+      </p>
+      <p v-else>
+        A solicitação será recusada e o aluno será notificado. A inscrição continua ativa.
+      </p>
+      <div class="modal-contato">
+        <div class="modal-contato-label">Contato do aluno</div>
+        <div class="modal-contato-nome">{{ dadosInscrito(modalCancelamento.inscricao)?.nome ?? modalCancelamento.inscricao.userEmail }}</div>
+        <div class="modal-contato-email">{{ modalCancelamento.inscricao.userEmail }}</div>
+      </div>
+      <div v-if="modalCancelamento.inscricao.cancelamento?.motivo" style="margin-top:10px;font-size:0.82rem;color:var(--cinza);">
+        Motivo: <em>"{{ modalCancelamento.inscricao.cancelamento.motivo }}"</em>
       </div>
     </div>
-  </Teleport>
+    <div class="field" style="margin-bottom:1.2rem;">
+      <label style="font-size:0.84rem;font-weight:600;margin-bottom:4px;display:block;">
+        Mensagem para o aluno
+        <span v-if="modalCancelamento.acao === 'recusar'" style="font-weight:400;color:var(--cinza);"> (opcional)</span>
+        <span v-else style="color:var(--vermelho);"> *</span>
+      </label>
+      <textarea
+        v-model="msgCancelamento"
+        rows="3"
+        :placeholder="modalCancelamento.acao === 'aprovar'
+          ? 'Ex: Faremos o reembolso via PIX em até 5 dias úteis. Entre em contato pelo e-mail do CAESI informando seu PIX.'
+          : 'Ex: O pagamento já foi processado e o reembolso não é possível neste momento.'"
+        style="width:100%;min-height:76px;"
+      />
+      <p v-if="modalCancelamento.acao === 'aprovar'" style="font-size:0.77rem;color:var(--cinza);margin-top:4px;">
+        Esta mensagem chegará como notificação ao aluno. Use-a para combinar o reembolso.
+      </p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" @click="modalCancelamento = null">Cancelar</button>
+      <button
+        class="btn btn-sm"
+        :class="modalCancelamento.acao === 'aprovar' ? 'btn-danger' : 'btn-primary'"
+        :disabled="modalCancelamento.acao === 'aprovar' && !msgCancelamento.trim()"
+        @click="confirmarModalCancelamento"
+      >{{ modalCancelamento.acao === 'aprovar' ? 'Confirmar aprovação' : 'Confirmar recusa' }}</button>
+    </div>
+  </Modal>
 </template>

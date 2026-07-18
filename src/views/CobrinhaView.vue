@@ -2,6 +2,7 @@
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BackLink from '../components/BackLink.vue'
+import Modal from '../components/Modal.vue'
 import { showToast } from '../stores/toast.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.ts'
 import { marcarCobrinhaZerada } from '../stores/conquistas.ts'
@@ -966,26 +967,22 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <div v-if="modalBoasVindas" class="modal-overlay" @click.self="fecharModalBoasVindas">
-      <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
-        <h2 class="modal-title">Parabéns! Você encontrou um Easter Egg!</h2>
-        <p class="modal-body">Existe um código secreto escondido no site do CAESI, e você acabou de descobrir pra onde ele leva. Não conta pra ninguém, viu? Haha.</p>
-        <div class="modal-actions">
-          <button class="btn btn-amarelo" @click="fecharModalBoasVindas">Jogar</button>
-        </div>
+    <Modal v-if="modalBoasVindas" @close="fecharModalBoasVindas">
+      <h2 class="modal-title">Parabéns! Você encontrou um Easter Egg!</h2>
+      <p class="modal-body">Existe um código secreto escondido no site do CAESI, e você acabou de descobrir pra onde ele leva. Não conta pra ninguém, viu? Haha.</p>
+      <div class="modal-actions">
+        <button class="btn btn-amarelo" @click="fecharModalBoasVindas">Jogar</button>
       </div>
-    </div>
+    </Modal>
 
-    <div v-if="modalConfirmarSaida" class="modal-overlay" @click.self="fecharConfirmarSaida">
-      <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
-        <h2 class="modal-title">Sair da cobrinha?</h2>
-        <p class="modal-body">Você vai voltar pra página inicial do site.</p>
-        <div class="modal-actions">
-          <button class="btn btn-outline" @click="fecharConfirmarSaida">Cancelar</button>
-          <button class="btn btn-amarelo" @click="router.push('/')">Sair</button>
-        </div>
+    <Modal v-if="modalConfirmarSaida" @close="fecharConfirmarSaida">
+      <h2 class="modal-title">Sair da cobrinha?</h2>
+      <p class="modal-body">Você vai voltar pra página inicial do site.</p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" @click="fecharConfirmarSaida">Cancelar</button>
+        <button class="btn btn-amarelo" @click="router.push('/')">Sair</button>
       </div>
-    </div>
+    </Modal>
   </div>
 </template>
 

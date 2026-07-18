@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import Modal from './Modal.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
@@ -327,36 +328,32 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
   </section>
 
   <!-- Modal: detalhe da estrutura (público — admin edita no painel lateral) -->
-  <Teleport to="body">
-    <div v-if="estruturaModal" class="modal-overlay" @click.self="fecharModal">
-      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-estrutura-title" v-focus-trap>
-        <div class="modal-title" id="modal-estrutura-title">{{ estruturaModal.nome }}</div>
-        <div class="modal-body">
-          <div v-if="estruturaModal.imagens?.length" class="mapa-modal-galeria">
-            <img :src="estruturaModal.imagens[imagemAtivaIdx]" :alt="estruturaModal.nome" class="mapa-modal-hero">
-            <div v-if="estruturaModal.imagens.length > 1" class="mapa-modal-thumbs">
-              <button
-                v-for="(img, i) in estruturaModal.imagens" :key="i"
-                class="mapa-modal-thumb-btn"
-                :class="{ 'mapa-modal-thumb-btn--ativo': i === imagemAtivaIdx }"
-                @click="imagemAtivaIdx = i"
-              >
-                <img :src="img" :alt="`Imagem ${i + 1}`" class="mapa-modal-thumb-img">
-              </button>
-            </div>
-          </div>
-          <p v-if="estruturaModal.descricao">{{ estruturaModal.descricao }}</p>
-          <p v-else style="color:var(--cinza);font-style:italic;">Sem descrição cadastrada.</p>
-        </div>
-        <div class="modal-actions">
-          <button class="btn btn-outline btn-sm" @click="fecharModal">Fechar</button>
-          <a :href="rotaUrl(estruturaModal)" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
-            Ver rota →
-          </a>
+  <Modal v-if="estruturaModal" title-id="modal-estrutura-title" @close="fecharModal">
+    <div class="modal-title" id="modal-estrutura-title">{{ estruturaModal.nome }}</div>
+    <div class="modal-body">
+      <div v-if="estruturaModal.imagens?.length" class="mapa-modal-galeria">
+        <img :src="estruturaModal.imagens[imagemAtivaIdx]" :alt="estruturaModal.nome" class="mapa-modal-hero">
+        <div v-if="estruturaModal.imagens.length > 1" class="mapa-modal-thumbs">
+          <button
+            v-for="(img, i) in estruturaModal.imagens" :key="i"
+            class="mapa-modal-thumb-btn"
+            :class="{ 'mapa-modal-thumb-btn--ativo': i === imagemAtivaIdx }"
+            @click="imagemAtivaIdx = i"
+          >
+            <img :src="img" :alt="`Imagem ${i + 1}`" class="mapa-modal-thumb-img">
+          </button>
         </div>
       </div>
+      <p v-if="estruturaModal.descricao">{{ estruturaModal.descricao }}</p>
+      <p v-else style="color:var(--cinza);font-style:italic;">Sem descrição cadastrada.</p>
     </div>
-  </Teleport>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" @click="fecharModal">Fechar</button>
+      <a :href="rotaUrl(estruturaModal)" target="_blank" rel="noopener" class="btn btn-primary btn-sm">
+        Ver rota →
+      </a>
+    </div>
+  </Modal>
 </template>
 
 <style scoped>

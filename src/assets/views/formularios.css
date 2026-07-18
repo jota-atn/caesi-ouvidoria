@@ -326,6 +326,7 @@
   justify-content: flex-end;
   flex-wrap: wrap;
 }
+.membro-modal-box { max-width: 560px; }
 .modal-contato {
   margin-top: 10px;
   padding: 10px 12px;

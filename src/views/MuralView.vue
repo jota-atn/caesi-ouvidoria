@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import Pagination from '../components/Pagination.vue'
+import Modal from '../components/Modal.vue'
 import { usePagination } from '../composables/usePagination.ts'
 import { usePersistedFilter } from '../composables/usePersistedFilter.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.ts'
@@ -266,45 +267,41 @@ function textoPlano(md: string) {
     <SiteFooter />
 
     <!-- Admin: editar publicação -->
-    <Teleport to="body">
-      <div v-if="editModal" class="modal-overlay" @click.self="fecharEdit">
-        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-edit-mural-title" v-focus-trap>
-          <div class="modal-title" id="modal-edit-mural-title">Editar publicação</div>
-          <div class="modal-body">
-            <div class="field">
-              <label>Título *</label>
-              <input v-model="formEdit.titulo" type="text" maxlength="120">
-              <span v-if="errosEdit.titulo" class="error-msg" style="display:block;">{{ errosEdit.titulo }}</span>
+    <Modal v-if="editModal" title-id="modal-edit-mural-title" @close="fecharEdit">
+      <div class="modal-title" id="modal-edit-mural-title">Editar publicação</div>
+      <div class="modal-body">
+        <div class="field">
+          <label>Título *</label>
+          <input v-model="formEdit.titulo" type="text" maxlength="120">
+          <span v-if="errosEdit.titulo" class="error-msg" style="display:block;">{{ errosEdit.titulo }}</span>
+        </div>
+        <div class="field">
+          <label>Tipo de publicação</label>
+          <input v-model="formEdit.tipo" type="text" placeholder="Ex.: Edital, Comunicado, Evento…" list="mural-tipos">
+        </div>
+        <div class="field">
+          <label>Mensagem *</label>
+          <textarea v-model="formEdit.mensagem" rows="7"></textarea>
+          <span v-if="errosEdit.mensagem" class="error-msg" style="display:block;">{{ errosEdit.mensagem }}</span>
+        </div>
+        <div class="field">
+          <label>Imagens</label>
+          <button type="button" class="btn-foto" @click="fileEditRef?.click()">+ Adicionar imagens</button>
+          <input ref="fileEditRef" type="file" accept="image/*" multiple style="display:none" @change="onImagensEdit">
+          <div v-if="formEdit.imagens.length > 0" class="imagens-preview">
+            <div v-for="(img, i) in formEdit.imagens" :key="i" class="img-thumb-wrap">
+              <img :src="img" class="img-thumb" :alt="`Imagem ${i+1}`">
+              <button type="button" class="img-thumb-remove" @click="removerImagemEdit(i)">×</button>
+              <span v-if="i === 0" class="img-thumb-capa">capa</span>
             </div>
-            <div class="field">
-              <label>Tipo de publicação</label>
-              <input v-model="formEdit.tipo" type="text" placeholder="Ex.: Edital, Comunicado, Evento…" list="mural-tipos">
-            </div>
-            <div class="field">
-              <label>Mensagem *</label>
-              <textarea v-model="formEdit.mensagem" rows="7"></textarea>
-              <span v-if="errosEdit.mensagem" class="error-msg" style="display:block;">{{ errosEdit.mensagem }}</span>
-            </div>
-            <div class="field">
-              <label>Imagens</label>
-              <button type="button" class="btn-foto" @click="fileEditRef?.click()">+ Adicionar imagens</button>
-              <input ref="fileEditRef" type="file" accept="image/*" multiple style="display:none" @change="onImagensEdit">
-              <div v-if="formEdit.imagens.length > 0" class="imagens-preview">
-                <div v-for="(img, i) in formEdit.imagens" :key="i" class="img-thumb-wrap">
-                  <img :src="img" class="img-thumb" :alt="`Imagem ${i+1}`">
-                  <button type="button" class="img-thumb-remove" @click="removerImagemEdit(i)">×</button>
-                  <span v-if="i === 0" class="img-thumb-capa">capa</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn-outline btn-sm" @click="fecharEdit">Cancelar</button>
-            <button class="btn btn-primary btn-sm" @click="salvarEdit">Salvar →</button>
           </div>
         </div>
       </div>
-    </Teleport>
+      <div class="modal-actions">
+        <button class="btn btn-outline btn-sm" @click="fecharEdit">Cancelar</button>
+        <button class="btn btn-primary btn-sm" @click="salvarEdit">Salvar →</button>
+      </div>
+    </Modal>
   </div>
 </template>
 

@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
+import Modal from '../../components/Modal.vue'
 import { showToast } from '../../stores/toast.ts'
 import { useEscapeKey } from '../../composables/useEscapeKey.ts'
 import {
@@ -435,8 +436,7 @@ useEscapeKey(() => {
     </div>
 
     <!-- ── Modal: Criar / Editar ──────────────────────────────── -->
-    <div v-if="modalForm" class="modal-overlay" @click.self="modalForm = false">
-      <div class="modal-box modal-box--lg" role="dialog" aria-modal="true" v-focus-trap>
+    <Modal v-if="modalForm" large @close="modalForm = false">
         <h2 class="modal-title">{{ editandoId ? 'Editar task' : 'Nova task' }}</h2>
 
         <div class="field">
@@ -528,37 +528,32 @@ useEscapeKey(() => {
             {{ editandoId ? 'Salvar' : 'Criar task' }}
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
 
     <!-- ── Modal: Confirmar exclusão ─────────────────────────── -->
-    <div v-if="modalExcluir" class="modal-overlay" @click.self="modalExcluir = null">
-      <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
-        <h2 class="modal-title">Excluir task</h2>
-        <p class="modal-body">
-          Excluir <strong>{{ modalExcluir.titulo }}</strong>? Essa ação não pode ser desfeita.
-        </p>
-        <div class="modal-actions">
-          <button class="btn btn-outline" @click="modalExcluir = null">Cancelar</button>
-          <button class="btn btn-vermelho" @click="excluirConfirmado">Excluir</button>
-        </div>
+    <Modal v-if="modalExcluir" @close="modalExcluir = null">
+      <h2 class="modal-title">Excluir task</h2>
+      <p class="modal-body">
+        Excluir <strong>{{ modalExcluir.titulo }}</strong>? Essa ação não pode ser desfeita.
+      </p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" @click="modalExcluir = null">Cancelar</button>
+        <button class="btn btn-vermelho" @click="excluirConfirmado">Excluir</button>
       </div>
-    </div>
+    </Modal>
 
     <!-- ── Modal: Remover membro ──────────────────────────────── -->
-    <div v-if="confirmarRmMembro" class="modal-overlay" @click.self="confirmarRmMembro = null">
-      <div class="modal-box" role="dialog" aria-modal="true" v-focus-trap>
-        <h2 class="modal-title">Remover membro</h2>
-        <p class="modal-body">
-          Remover <strong>{{ confirmarRmMembro.nome }}</strong>?
-          O link de acesso será invalidado e suas alocações removidas.
-        </p>
-        <div class="modal-actions">
-          <button class="btn btn-outline" @click="confirmarRmMembro = null">Cancelar</button>
-          <button class="btn btn-vermelho" @click="removerConfirmado">Remover</button>
-        </div>
+    <Modal v-if="confirmarRmMembro" @close="confirmarRmMembro = null">
+      <h2 class="modal-title">Remover membro</h2>
+      <p class="modal-body">
+        Remover <strong>{{ confirmarRmMembro.nome }}</strong>?
+        O link de acesso será invalidado e suas alocações removidas.
+      </p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" @click="confirmarRmMembro = null">Cancelar</button>
+        <button class="btn btn-vermelho" @click="removerConfirmado">Remover</button>
       </div>
-    </div>
+    </Modal>
   </div>
 </template>
 
@@ -864,7 +859,6 @@ useEscapeKey(() => {
 }
 
 /* ── Modal ───────────────────────────────────────────────── */
-.modal-box--lg { max-width: 620px; padding-bottom: 2.5rem; }
 .modal-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .modal-row .field { margin-bottom: 0; }
 .obrig { color: var(--vermelho); }
