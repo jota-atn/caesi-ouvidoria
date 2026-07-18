@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
-import { formularios, inscricoes, addFormulario } from '../../stores/formularios.ts'
+import { formularios, inscricoes, addFormulario, type TipoFormulario, type TipoCampo } from '../../stores/formularios.ts'
 import { usePersistedFilter } from '../../composables/usePersistedFilter.ts'
 import { showToast } from '../../stores/toast.ts'
 import { isTodayOrFuture } from '../../utils/validation.ts'
@@ -11,7 +11,7 @@ import { isTodayOrFuture } from '../../utils/validation.ts'
 const filtro = usePersistedFilter('caesi-admin-forms-filtro', 'todos')
 const busca  = usePersistedFilter('caesi-admin-forms-busca', '')
 
-const TIPO_LABEL = {
+const TIPO_LABEL: Record<string, string> = {
   'evento-com-certificado': 'Evento c/ Certificado',
   'evento-sem-certificado': 'Evento s/ Certificado',
   venda: 'Venda',
@@ -32,39 +32,59 @@ const formulariosFiltrados = computed(() =>
 const totalAbertos   = computed(() => formularios.value.filter(f => f.status === 'aberto').length)
 const totalPendentes = computed(() => inscricoes.value.filter(i => i.comprovante?.status === 'pendente').length)
 
-function inscricoesCount(id) {
+function inscricoesCount(id: number) {
   return inscricoes.value.filter(i => i.formularioId === id).length
 }
-function pendenteCount(id) {
+function pendenteCount(id: number) {
   return inscricoes.value.filter(i => i.formularioId === id && i.comprovante?.status === 'pendente').length
 }
-function formatValor(valor) {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
+function formatValor(valor: number | null) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor ?? 0)
 }
-function formatData(data) {
+function formatData(data: string | null | undefined) {
   if (!data) return ''
   const [ano, mes, dia] = data.split('-')
   return `${dia}/${mes}/${ano}`
 }
 
 // ── Criação de formulário ────────────────────────────────
+interface CampoRascunho {
+  _id: number
+  label: string
+  tipo: TipoCampo
+  opcoesStr: string
+  obrigatorio: boolean
+}
+
+interface NovoFormRascunho {
+  titulo: string
+  tipo: TipoFormulario | ''
+  descricao: string
+  pago: boolean
+  valor: string
+  prazoInscricao: string
+  dataEvento: string
+  limiteVagas: string
+  requerMatricula: boolean
+  campos: CampoRascunho[]
+}
+
+function formVazio(): NovoFormRascunho {
+  return { titulo: '', tipo: '', descricao: '', pago: false, valor: '', prazoInscricao: '', dataEvento: '', limiteVagas: '', requerMatricula: false, campos: [] }
+}
+
 const showNovoForm    = ref(false)
-const novoFormErrors  = ref({})
-const novoForm = ref({
-  titulo: '', tipo: '', descricao: '',
-  pago: false, valor: '', prazoInscricao: '', dataEvento: '',
-  limiteVagas: '', requerMatricula: false,
-  campos: [],
-})
+const novoFormErrors  = ref<Record<string, boolean>>({})
+const novoForm = ref<NovoFormRascunho>(formVazio())
 
 function cancelNovoForm() {
   showNovoForm.value = false
   novoFormErrors.value = {}
-  novoForm.value = { titulo: '', tipo: '', descricao: '', pago: false, valor: '', prazoInscricao: '', dataEvento: '', limiteVagas: '', requerMatricula: false, campos: [] }
+  novoForm.value = formVazio()
 }
 
 const TIPOS_EVENTO = ['evento-com-certificado', 'evento-sem-certificado']
-function ehTipoEvento(tipo) {
+function ehTipoEvento(tipo: string) {
   return TIPOS_EVENTO.includes(tipo)
 }
 
@@ -77,7 +97,7 @@ function addCampo() {
   novoForm.value.campos.push({ _id: Date.now(), label: '', tipo: 'texto', opcoesStr: '', obrigatorio: false })
 }
 
-function removeCampo(index) {
+function removeCampo(index: number) {
   novoForm.value.campos.splice(index, 1)
 }
 
@@ -96,7 +116,7 @@ onBeforeRouteLeave(() => {
 })
 
 function submitNovoForm() {
-  const e = {}
+  const e: Record<string, boolean> = {}
   if (!novoForm.value.titulo.trim()) e.titulo = true
   if (!novoForm.value.tipo)          e.tipo = true
   if (novoForm.value.pago && (!novoForm.value.valor || Number(novoForm.value.valor) <= 0)) e.valor = true
@@ -107,7 +127,7 @@ function submitNovoForm() {
     e.campos = true
   }
   novoFormErrors.value = e
-  if (Object.keys(e).length > 0) return
+  if (Object.keys(e).length > 0 || !novoForm.value.tipo) return
 
   const campos = novoForm.value.campos
     .filter(c => c.label.trim())
