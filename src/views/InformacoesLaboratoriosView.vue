@@ -6,13 +6,14 @@ import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import EmptyState from '../components/EmptyState.vue'
 import Modal from '../components/Modal.vue'
+import FotoUpload from '../components/FotoUpload.vue'
+import GaleriaImagens from '../components/GaleriaImagens.vue'
 import { laboratorios, addLaboratorio, updateLaboratorio, deleteLaboratorio, type Laboratorio } from '../stores/informacoes.ts'
 import { estruturas } from '../stores/mapa.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.ts'
-import { isValidImageFile, validarNome, validarEmailOpcional, validarUrlOpcional } from '../utils/validation.ts'
-import { comprimirImagem } from '../utils/imagem.ts'
+import { validarNome, validarEmailOpcional, validarUrlOpcional } from '../utils/validation.ts'
 
 const route = useRoute()
 const busca = ref(String(route.query.busca ?? ''))
@@ -41,31 +42,8 @@ function formVazio(): LaboratorioFormRascunho {
 
 // ── Admin: novo laboratório ────────────────────────────────
 const mostrarForm = ref(false)
-const fileAddRef  = ref<HTMLInputElement | null>(null)
-const fileGaleriaAddRef = ref<HTMLInputElement | null>(null)
 const formAdd = reactive<LaboratorioFormRascunho>(formVazio())
 const erros   = reactive({ nome: '', email: '', linkExterno: '' })
-
-async function onImagemAdd(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); (e.target as HTMLInputElement).value = ''; return }
-  formAdd.imagem = await comprimirImagem(file)
-  ;(e.target as HTMLInputElement).value = ''
-}
-function removerImagemAdd() { formAdd.imagem = '' }
-
-async function onGaleriaAdd(e: Event) {
-  let invalido = false
-  const files = (e.target as HTMLInputElement).files
-  for (const file of files ?? []) {
-    if (!isValidImageFile(file)) { invalido = true; continue }
-    formAdd.imagens.push(await comprimirImagem(file))
-  }
-  if (invalido) showToast('Alguns arquivos foram ignorados (precisam ser imagens de até 8MB).', 'error')
-  ;(e.target as HTMLInputElement).value = ''
-}
-function removerGaleriaAdd(i: number) { formAdd.imagens.splice(i, 1) }
 
 function publicar() {
   erros.nome        = validarNome(formAdd.nome)
@@ -95,17 +73,8 @@ function cancelarAdd() {
 
 // ── Admin: editar/excluir laboratório (via modal) ─────────
 const editModal = ref<Laboratorio | null>(null)
-const fileEditRef = ref<HTMLInputElement | null>(null)
-const fileGaleriaEditRef = ref<HTMLInputElement | null>(null)
 const formEdit  = reactive<LaboratorioFormRascunho>(formVazio())
 const errosEdit = reactive({ nome: '', email: '', linkExterno: '' })
-
-function triggerFileEdit() {
-  fileEditRef.value?.click()
-}
-function triggerGaleriaEdit() {
-  fileGaleriaEditRef.value?.click()
-}
 
 function abrirEdit(l: Laboratorio) {
   Object.assign(errosEdit, { nome: '', email: '', linkExterno: '' })
@@ -117,27 +86,6 @@ function abrirEdit(l: Laboratorio) {
   editModal.value = l
 }
 function fecharEdit() { editModal.value = null }
-
-async function onImagemEdit(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); (e.target as HTMLInputElement).value = ''; return }
-  formEdit.imagem = await comprimirImagem(file)
-  ;(e.target as HTMLInputElement).value = ''
-}
-function removerImagemEdit() { formEdit.imagem = '' }
-
-async function onGaleriaEdit(e: Event) {
-  let invalido = false
-  const files = (e.target as HTMLInputElement).files
-  for (const file of files ?? []) {
-    if (!isValidImageFile(file)) { invalido = true; continue }
-    formEdit.imagens.push(await comprimirImagem(file))
-  }
-  if (invalido) showToast('Alguns arquivos foram ignorados (precisam ser imagens de até 8MB).', 'error')
-  ;(e.target as HTMLInputElement).value = ''
-}
-function removerGaleriaEdit(i: number) { formEdit.imagens.splice(i, 1) }
 
 function salvarEdit() {
   errosEdit.nome        = validarNome(formEdit.nome)
@@ -213,28 +161,12 @@ useEscapeKey(() => fecharEdit())
         </div>
         <div class="field">
           <label class="label">Foto de capa <span class="field-hint">(opcional)</span></label>
-          <div v-if="formAdd.imagem" class="imagens-preview">
-            <div class="img-thumb-wrap">
-              <img :src="formAdd.imagem" class="img-thumb" alt="">
-              <button type="button" class="img-thumb-remove" @click="removerImagemAdd">×</button>
-            </div>
-          </div>
-          <button type="button" class="btn-foto" @click="fileAddRef?.click()" style="margin-top:8px;">
-            {{ formAdd.imagem ? 'Trocar foto' : '+ Adicionar foto de capa' }}
-          </button>
-          <input ref="fileAddRef" type="file" accept="image/*" style="display:none" @change="onImagemAdd">
+          <FotoUpload v-model="formAdd.imagem" label-add="+ Adicionar foto de capa" />
         </div>
 
         <div class="field">
           <label class="label">Fotos extras <span class="field-hint">(opcional — equipe, eventos etc.)</span></label>
-          <div v-if="formAdd.imagens.length > 0" class="imagens-preview">
-            <div v-for="(img, i) in formAdd.imagens" :key="i" class="img-thumb-wrap">
-              <img :src="img" class="img-thumb" :alt="`Foto ${i + 1}`">
-              <button type="button" class="img-thumb-remove" @click="removerGaleriaAdd(i)">×</button>
-            </div>
-          </div>
-          <button type="button" class="btn-foto" @click="fileGaleriaAddRef?.click()" style="margin-top:8px;">+ Adicionar fotos</button>
-          <input ref="fileGaleriaAddRef" type="file" accept="image/*" multiple style="display:none" @change="onGaleriaAdd">
+          <GaleriaImagens v-model="formAdd.imagens" label="+ Adicionar fotos" alt-prefix="Foto" preview-first />
         </div>
 
         <div class="field">
@@ -312,27 +244,11 @@ useEscapeKey(() => fecharEdit())
         </div>
         <div class="field">
           <label>Foto de capa</label>
-          <div v-if="formEdit.imagem" class="imagens-preview">
-            <div class="img-thumb-wrap">
-              <img :src="formEdit.imagem" class="img-thumb" alt="">
-              <button type="button" class="img-thumb-remove" @click="removerImagemEdit">×</button>
-            </div>
-          </div>
-          <button type="button" class="btn-foto" @click="triggerFileEdit()" style="margin-top:8px;">
-            {{ formEdit.imagem ? 'Trocar foto' : '+ Adicionar foto de capa' }}
-          </button>
-          <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onImagemEdit">
+          <FotoUpload v-model="formEdit.imagem" label-add="+ Adicionar foto de capa" />
         </div>
         <div class="field">
           <label>Fotos extras <span class="field-hint">(equipe, eventos etc.)</span></label>
-          <div v-if="formEdit.imagens.length > 0" class="imagens-preview">
-            <div v-for="(img, i) in formEdit.imagens" :key="i" class="img-thumb-wrap">
-              <img :src="img" class="img-thumb" :alt="`Foto ${i + 1}`">
-              <button type="button" class="img-thumb-remove" @click="removerGaleriaEdit(i)">×</button>
-            </div>
-          </div>
-          <button type="button" class="btn-foto" @click="triggerGaleriaEdit()" style="margin-top:8px;">+ Adicionar fotos</button>
-          <input ref="fileGaleriaEditRef" type="file" accept="image/*" multiple style="display:none" @change="onGaleriaEdit">
+          <GaleriaImagens v-model="formEdit.imagens" label="+ Adicionar fotos" alt-prefix="Foto" preview-first />
         </div>
         <div class="field">
           <label>E-mail de contato</label>
@@ -411,28 +327,6 @@ useEscapeKey(() => fecharEdit())
 
 /* ── Admin: form, modal de edição e ações ─────────────────── */
 .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 0.8rem; }
-
-.btn-foto {
-  padding: 7px 14px;
-  background: var(--branco);
-  border: 2px dashed var(--roxo);
-  border-radius: 2px;
-  font-family: 'Archivo', sans-serif;
-  font-size: 0.84rem;
-  color: var(--roxo-escuro);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.btn-foto:hover { background: rgba(80,64,160,0.07); }
-
-.imagens-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-.img-thumb-wrap { position: relative; flex-shrink: 0; }
-.img-thumb { width: 90px; height: 60px; object-fit: cover; border-radius: 2px; border: 1.5px solid var(--creme-escuro); display: block; }
-.img-thumb-remove {
-  position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%;
-  background: var(--preto); color: var(--branco); border: none; font-size: 0.75rem; line-height: 1;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-}
 
 .pub-card-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.6rem; position: relative; z-index: 1; }
 .pub-card-btn { padding: 5px 14px; font-size: 0.82rem; }

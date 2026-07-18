@@ -10,6 +10,7 @@
 @import './components/footer.css';
 @import './components/toast.css';
 @import './components/pagination.css';
+@import './components/upload.css';
 
 @import './views/home.css';
 @import './views/admin-geral.css';

@@ -7,35 +7,20 @@ import BackLink from '../components/BackLink.vue'
 import Pagination from '../components/Pagination.vue'
 import Modal from '../components/Modal.vue'
 import EmptyState from '../components/EmptyState.vue'
+import GaleriaImagens from '../components/GaleriaImagens.vue'
 import { usePagination } from '../composables/usePagination.ts'
 import { usePersistedFilter } from '../composables/usePersistedFilter.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.ts'
 import { publicacoes, addPublicacao, updatePublicacao, deletePublicacao, type Publicacao } from '../stores/mural.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
-import { isValidImageFile } from '../utils/validation.ts'
-import { comprimirImagem } from '../utils/imagem.ts'
-
 function validarTitulo(titulo: string)     { return titulo.trim().length < 3     ? 'Título obrigatório (mín. 3 caracteres).'     : '' }
 function validarMensagem(mensagem: string) { return mensagem.trim().length < 10 ? 'Mensagem obrigatória (mín. 10 caracteres).' : '' }
 
 // ── Admin: publicar nova ──────────────────────────────────
 const mostrarForm = ref(false)
-const fileAddRef  = ref<HTMLInputElement | null>(null)
 const formAdd = reactive({ titulo: '', tipo: '', mensagem: '', imagens: [] as string[] })
 const erros   = reactive({ titulo: '', mensagem: '' })
-
-async function onImagensAdd(e: Event) {
-  let invalido = false
-  const files = (e.target as HTMLInputElement).files
-  for (const file of files ?? []) {
-    if (!isValidImageFile(file)) { invalido = true; continue }
-    formAdd.imagens.push(await comprimirImagem(file))
-  }
-  if (invalido) showToast('Alguns arquivos foram ignorados (precisam ser imagens de até 8MB).', 'error')
-  ;(e.target as HTMLInputElement).value = ''
-}
-function removerImagemAdd(i: number) { formAdd.imagens.splice(i, 1) }
 
 function publicar() {
   erros.titulo   = validarTitulo(formAdd.titulo)
@@ -55,7 +40,6 @@ function cancelarAdd() {
 
 // ── Admin: editar/excluir publicação (via modal) ──────────
 const editModal  = ref<Publicacao | null>(null)
-const fileEditRef = ref<HTMLInputElement | null>(null)
 const formEdit  = reactive({ titulo: '', tipo: '', mensagem: '', imagens: [] as string[] })
 const errosEdit = reactive({ titulo: '', mensagem: '' })
 
@@ -70,18 +54,6 @@ function abrirEdit(p: Publicacao) {
   editModal.value = p
 }
 function fecharEdit() { editModal.value = null }
-
-async function onImagensEdit(e: Event) {
-  let invalido = false
-  const files = (e.target as HTMLInputElement).files
-  for (const file of files ?? []) {
-    if (!isValidImageFile(file)) { invalido = true; continue }
-    formEdit.imagens.push(await comprimirImagem(file))
-  }
-  if (invalido) showToast('Alguns arquivos foram ignorados (precisam ser imagens de até 8MB).', 'error')
-  ;(e.target as HTMLInputElement).value = ''
-}
-function removerImagemEdit(i: number) { formEdit.imagens.splice(i, 1) }
 
 function salvarEdit() {
   errosEdit.titulo   = validarTitulo(formEdit.titulo)
@@ -180,15 +152,7 @@ function textoPlano(md: string) {
 
         <div class="field">
           <label class="label">Imagens</label>
-          <button type="button" class="btn-foto" @click="fileAddRef?.click()">+ Adicionar imagens</button>
-          <input ref="fileAddRef" type="file" accept="image/*" multiple style="display:none" @change="onImagensAdd">
-          <div v-if="formAdd.imagens.length > 0" class="imagens-preview">
-            <div v-for="(img, i) in formAdd.imagens" :key="i" class="img-thumb-wrap">
-              <img :src="img" class="img-thumb" :alt="`Imagem ${i+1}`">
-              <button type="button" class="img-thumb-remove" @click="removerImagemAdd(i)">×</button>
-              <span v-if="i === 0" class="img-thumb-capa">capa</span>
-            </div>
-          </div>
+          <GaleriaImagens v-model="formAdd.imagens" mostrar-capa />
         </div>
 
         <div class="form-actions">
@@ -288,15 +252,7 @@ function textoPlano(md: string) {
         </div>
         <div class="field">
           <label>Imagens</label>
-          <button type="button" class="btn-foto" @click="fileEditRef?.click()">+ Adicionar imagens</button>
-          <input ref="fileEditRef" type="file" accept="image/*" multiple style="display:none" @change="onImagensEdit">
-          <div v-if="formEdit.imagens.length > 0" class="imagens-preview">
-            <div v-for="(img, i) in formEdit.imagens" :key="i" class="img-thumb-wrap">
-              <img :src="img" class="img-thumb" :alt="`Imagem ${i+1}`">
-              <button type="button" class="img-thumb-remove" @click="removerImagemEdit(i)">×</button>
-              <span v-if="i === 0" class="img-thumb-capa">capa</span>
-            </div>
-          </div>
+          <GaleriaImagens v-model="formEdit.imagens" mostrar-capa />
         </div>
       </div>
       <div class="modal-actions">
@@ -506,71 +462,4 @@ function textoPlano(md: string) {
 
 .mural-card-btn--danger { color: var(--vermelho, #c0392b); border-color: var(--vermelho, #c0392b); }
 .mural-card-btn--danger:hover { background: var(--vermelho, #c0392b); color: var(--branco); }
-
-.btn-foto {
-  padding: 7px 14px;
-  background: var(--branco);
-  border: 2px dashed var(--roxo);
-  border-radius: 2px;
-  font-family: 'Archivo', sans-serif;
-  font-size: 0.84rem;
-  color: var(--roxo-escuro);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.btn-foto:hover { background: rgba(80,64,160,0.07); }
-
-.imagens-preview {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.img-thumb-wrap {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.img-thumb {
-  width: 90px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 2px;
-  border: 1.5px solid var(--creme-escuro);
-  display: block;
-}
-
-.img-thumb-remove {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--preto);
-  color: var(--branco);
-  border: none;
-  font-size: 0.75rem;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.img-thumb-capa {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(80,64,160,0.8);
-  color: #fff;
-  font-size: 0.6rem;
-  font-weight: 700;
-  font-family: 'Archivo Black', sans-serif;
-  text-align: center;
-  padding: 1px 0;
-  letter-spacing: 0.04em;
-}
 </style>

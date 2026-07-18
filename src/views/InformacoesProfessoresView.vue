@@ -5,13 +5,13 @@ import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import EmptyState from '../components/EmptyState.vue'
+import FotoUpload from '../components/FotoUpload.vue'
 import mapPinIcon from '../assets/icons/map-pin.svg?raw'
 import { professores, addProfessor, updateProfessor, deleteProfessor, type Professor } from '../stores/informacoes.ts'
 import { estruturas } from '../stores/mapa.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
-import { isValidImageFile, validarNome, validarEmailOpcional, validarUrlOpcional } from '../utils/validation.ts'
-import { comprimirImagem } from '../utils/imagem.ts'
+import { validarNome, validarEmailOpcional, validarUrlOpcional } from '../utils/validation.ts'
 
 const route = useRoute()
 const busca = ref(String(route.query.busca ?? ''))
@@ -41,18 +41,8 @@ function formVazio(): ProfessorFormRascunho {
 
 // ── Admin: novo professor ─────────────────────────────────
 const mostrarForm = ref(false)
-const fileAddRef  = ref<HTMLInputElement | null>(null)
 const formAdd = reactive<ProfessorFormRascunho>(formVazio())
 const erros   = reactive({ nome: '', email: '', lattes: '', googleAcademico: '', linkedin: '' })
-
-async function onFotoAdd(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); (e.target as HTMLInputElement).value = ''; return }
-  formAdd.foto = await comprimirImagem(file)
-  ;(e.target as HTMLInputElement).value = ''
-}
-function removerFotoAdd() { formAdd.foto = '' }
 
 function publicar() {
   erros.nome            = validarNome(formAdd.nome)
@@ -85,13 +75,8 @@ function cancelarAdd() {
 
 // ── Admin: editar/excluir professor ───────────────────────
 const editandoId  = ref<number | null>(null)
-const fileEditRef = ref<HTMLInputElement | null>(null)
 const formEdit  = reactive<ProfessorFormRascunho>(formVazio())
 const errosEdit = reactive({ nome: '', email: '', lattes: '', googleAcademico: '', linkedin: '' })
-
-function triggerFileEdit() {
-  fileEditRef.value?.click()
-}
 
 function abrirEdit(p: Professor) {
   editandoId.value = p.id
@@ -108,15 +93,6 @@ function abrirEdit(p: Professor) {
     linkedin: p.linkedin ?? '',
   })
 }
-
-async function onFotoEdit(e: Event) {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); (e.target as HTMLInputElement).value = ''; return }
-  formEdit.foto = await comprimirImagem(file)
-  ;(e.target as HTMLInputElement).value = ''
-}
-function removerFotoEdit() { formEdit.foto = '' }
 
 function salvarEdit(id: number) {
   errosEdit.nome            = validarNome(formEdit.nome)
@@ -175,16 +151,7 @@ function excluir(p: Professor) {
 
         <div class="field">
           <label class="label">Foto <span class="field-hint">(opcional)</span></label>
-          <div v-if="formAdd.foto" class="imagens-preview">
-            <div class="img-thumb-wrap">
-              <img :src="formAdd.foto" class="img-thumb img-thumb--avatar" alt="">
-              <button type="button" class="img-thumb-remove" @click="removerFotoAdd">×</button>
-            </div>
-          </div>
-          <button type="button" class="btn-foto" @click="fileAddRef?.click()" style="margin-top:8px;">
-            {{ formAdd.foto ? 'Trocar foto' : '+ Adicionar foto' }}
-          </button>
-          <input ref="fileAddRef" type="file" accept="image/*" style="display:none" @change="onFotoAdd">
+          <FotoUpload v-model="formAdd.foto" avatar />
         </div>
 
         <div class="field">
@@ -252,16 +219,7 @@ function excluir(p: Professor) {
             </div>
             <div class="field">
               <label class="label">Foto</label>
-              <div v-if="formEdit.foto" class="imagens-preview">
-                <div class="img-thumb-wrap">
-                  <img :src="formEdit.foto" class="img-thumb img-thumb--avatar" alt="">
-                  <button type="button" class="img-thumb-remove" @click="removerFotoEdit">×</button>
-                </div>
-              </div>
-              <button type="button" class="btn-foto" @click="triggerFileEdit()" style="margin-top:8px;">
-                {{ formEdit.foto ? 'Trocar foto' : '+ Adicionar foto' }}
-              </button>
-              <input ref="fileEditRef" type="file" accept="image/*" style="display:none" @change="onFotoEdit">
+              <FotoUpload v-model="formEdit.foto" avatar />
             </div>
             <div class="field">
               <label class="label">Sala <span class="field-hint">(opcional)</span></label>
@@ -417,29 +375,6 @@ function excluir(p: Professor) {
 
 /* ── Admin: form, edição inline e ações ───────────────────── */
 .form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 0.8rem; }
-
-.btn-foto {
-  padding: 7px 14px;
-  background: var(--branco);
-  border: 2px dashed var(--roxo);
-  border-radius: 2px;
-  font-family: 'Archivo', sans-serif;
-  font-size: 0.84rem;
-  color: var(--roxo-escuro);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.btn-foto:hover { background: rgba(80,64,160,0.07); }
-
-.imagens-preview { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-.img-thumb-wrap { position: relative; flex-shrink: 0; }
-.img-thumb { width: 90px; height: 60px; object-fit: cover; border-radius: 2px; border: 1.5px solid var(--creme-escuro); display: block; }
-.img-thumb--avatar { width: 72px; height: 72px; border-radius: 50%; }
-.img-thumb-remove {
-  position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%;
-  background: var(--preto); color: var(--branco); border: none; font-size: 0.75rem; line-height: 1;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-}
 
 .pub-card-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.8rem; }
 .pub-card-btn { padding: 5px 14px; font-size: 0.82rem; }

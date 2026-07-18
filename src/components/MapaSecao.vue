@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Modal from './Modal.vue'
 import EmptyState from './EmptyState.vue'
+import GaleriaImagens from './GaleriaImagens.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
@@ -12,8 +13,6 @@ import { isAdmin } from '../stores/auth.ts'
 import { estruturas, CENTRO_PADRAO, addEstrutura, updateEstrutura, removeEstrutura, type Estrutura } from '../stores/mapa.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.ts'
 import { showToast } from '../stores/toast.ts'
-import { isValidImageFile } from '../utils/validation.ts'
-import { comprimirImagem } from '../utils/imagem.ts'
 import crosshairIcon from '../assets/icons/crosshair.svg?raw'
 import mapPinIcon from '../assets/icons/map-pin.svg?raw'
 
@@ -47,34 +46,8 @@ const selecionadoId = ref<number | null>(null) // id da estrutura em edição no
 const pendingPoint  = ref<PendingPoint | null>(null) // ponto vazio clicado, aguardando "Nova estrutura"
 const estruturaEditForm = ref<EstruturaFormRascunho>({ nome: '', descricao: '', imagens: [] })
 const novaEstruturaForm = ref<EstruturaFormRascunho>({ nome: '', descricao: '', imagens: [] })
-const fileNovaRef = ref<HTMLInputElement | null>(null)
-const fileEditRef = ref<HTMLInputElement | null>(null)
 
 const estruturaSelecionada = computed(() => estruturas.value.find(e => e.id === selecionadoId.value) ?? null)
-
-async function onImagensNova(e: Event) {
-  let invalido = false
-  const files = (e.target as HTMLInputElement).files
-  for (const file of files ?? []) {
-    if (!isValidImageFile(file)) { invalido = true; continue }
-    novaEstruturaForm.value.imagens.push(await comprimirImagem(file))
-  }
-  if (invalido) showToast('Alguns arquivos foram ignorados (precisam ser imagens de até 8MB).', 'error')
-  ;(e.target as HTMLInputElement).value = ''
-}
-function removerImagemNova(i: number) { novaEstruturaForm.value.imagens.splice(i, 1) }
-
-async function onImagensEdit(e: Event) {
-  let invalido = false
-  const files = (e.target as HTMLInputElement).files
-  for (const file of files ?? []) {
-    if (!isValidImageFile(file)) { invalido = true; continue }
-    estruturaEditForm.value.imagens.push(await comprimirImagem(file))
-  }
-  if (invalido) showToast('Alguns arquivos foram ignorados (precisam ser imagens de até 8MB).', 'error')
-  ;(e.target as HTMLInputElement).value = ''
-}
-function removerImagemEdit(i: number) { estruturaEditForm.value.imagens.splice(i, 1) }
 
 const resultadosBusca = computed(() => {
   const t = buscaMapa.value.toLowerCase().trim()
@@ -261,14 +234,7 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
           </div>
           <div class="field">
             <label>Imagens <span class="field-hint">(opcional)</span></label>
-            <button type="button" class="btn-foto" @click="fileNovaRef?.click()">+ Adicionar imagens</button>
-            <input ref="fileNovaRef" type="file" accept="image/*" multiple style="display:none" @change="onImagensNova">
-            <div v-if="novaEstruturaForm.imagens.length > 0" class="imagens-preview">
-              <div v-for="(img, i) in novaEstruturaForm.imagens" :key="i" class="img-thumb-wrap">
-                <img :src="img" class="img-thumb" :alt="`Imagem ${i+1}`">
-                <button type="button" class="img-thumb-remove" @click="removerImagemNova(i)">×</button>
-              </div>
-            </div>
+            <GaleriaImagens v-model="novaEstruturaForm.imagens" class="mapa-galeria-compacta" />
           </div>
           <div class="btn-row">
             <button class="btn btn-primary btn-sm" @click="salvarNovaEstrutura">Salvar →</button>
@@ -289,14 +255,7 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
           </div>
           <div class="field">
             <label>Imagens <span class="field-hint">(opcional)</span></label>
-            <button type="button" class="btn-foto" @click="fileEditRef?.click()">+ Adicionar imagens</button>
-            <input ref="fileEditRef" type="file" accept="image/*" multiple style="display:none" @change="onImagensEdit">
-            <div v-if="estruturaEditForm.imagens.length > 0" class="imagens-preview">
-              <div v-for="(img, i) in estruturaEditForm.imagens" :key="i" class="img-thumb-wrap">
-                <img :src="img" class="img-thumb" :alt="`Imagem ${i+1}`">
-                <button type="button" class="img-thumb-remove" @click="removerImagemEdit(i)">×</button>
-              </div>
-            </div>
+            <GaleriaImagens v-model="estruturaEditForm.imagens" class="mapa-galeria-compacta" />
           </div>
           <div class="btn-row">
             <button class="btn btn-primary btn-sm" @click="salvarEdicaoEstrutura">Salvar →</button>
@@ -360,55 +319,9 @@ onBeforeUnmount(() => { document.body.style.overflow = '' })
 </template>
 
 <style scoped>
-.btn-foto {
-  padding: 7px 14px;
-  background: var(--branco);
-  border: 2px dashed var(--roxo);
-  border-radius: 2px;
-  font-family: 'Archivo', sans-serif;
-  font-size: 0.84rem;
-  color: var(--roxo-escuro);
-  cursor: pointer;
-  transition: background 0.15s;
-}
-.btn-foto:hover { background: rgba(80,64,160,0.07); }
-
-.imagens-preview {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.img-thumb-wrap {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.img-thumb {
+/* painel lateral é estreito — thumbnails menores que o padrão de GaleriaImagens */
+.mapa-galeria-compacta :deep(.img-thumb) {
   width: 74px;
   height: 50px;
-  object-fit: cover;
-  border-radius: 2px;
-  border: 1.5px solid var(--creme-escuro);
-  display: block;
-}
-
-.img-thumb-remove {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--preto);
-  color: var(--branco);
-  border: none;
-  font-size: 0.75rem;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 </style>
