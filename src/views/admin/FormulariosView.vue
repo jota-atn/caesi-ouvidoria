@@ -166,7 +166,7 @@ function submitNovoForm() {
     <Navbar />
 
     <div class="page-content">
-      <BackLink to="/admin/painel" style="margin-bottom:1.2rem;" />
+      <BackLink to="/admin/painel" />
       <div class="page-heading">
         <h2>Formulários <span>e Eventos</span></h2>
         <button class="btn btn-amarelo btn-sm" @click="showNovoForm ? cancelNovoForm() : (showNovoForm = true)">

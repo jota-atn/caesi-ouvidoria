@@ -38,7 +38,7 @@ const lightboxIdx = ref<number | null>(null)
     <Navbar />
 
     <div v-if="!laboratorio" class="page-content">
-      <BackLink to="/informacoes/laboratorios" style="margin-bottom:1.4rem;" />
+      <BackLink to="/informacoes/laboratorios" />
       <EmptyState title="Laboratório não encontrado." subtitle="Ele pode ter sido removido." />
     </div>
 

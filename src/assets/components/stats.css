@@ -61,6 +61,10 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .filter-btn.active,
 .filter-btn:hover {

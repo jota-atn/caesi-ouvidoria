@@ -805,7 +805,7 @@ onUnmounted(() => {
     <div class="deco-star" style="bottom:15%;left:2%;font-size:1.1rem;opacity:0.3;">✦</div>
 
     <div class="page-content">
-      <BackLink to="/" style="margin-bottom:1.2rem;" />
+      <BackLink to="/" />
       <div class="page-heading">
         <h2>Cobrinha do <span>CAESI</span></h2>
         <div class="cobrinha-hud" v-if="ehDesktop">

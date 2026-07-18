@@ -136,7 +136,7 @@ const lista = computed(() => {
     <Navbar />
 
     <div class="page-content">
-      <BackLink to="/admin/painel" style="margin-bottom:1.2rem;" />
+      <BackLink to="/admin/painel" />
       <div class="page-heading">
         <h2>Portal <span>Admin</span></h2>
         <button class="btn btn-primary" @click="mostrarForm = !mostrarForm">

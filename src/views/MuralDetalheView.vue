@@ -43,7 +43,7 @@ const lightboxIdx = ref<number | null>(null)
     <Navbar />
 
     <div v-if="!publicacao" class="page-content">
-      <BackLink to="/mural" style="margin-bottom:1.4rem;" />
+      <BackLink to="/mural" />
       <EmptyState title="Publicação não encontrada." subtitle="Ela pode ter sido removida." />
     </div>
 

@@ -230,7 +230,7 @@ useEscapeKey(() => {
 
     <div class="kanban-wrapper">
 
-      <BackLink to="/admin/painel" style="margin-bottom:1.2rem;" />
+      <BackLink to="/admin/painel" />
       <div class="page-heading">
         <h2>Mural de <span>Tasks</span></h2>
         <button class="btn btn-amarelo" @click="abrirCriar">+ Nova task</button>

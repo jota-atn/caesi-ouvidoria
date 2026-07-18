@@ -76,7 +76,7 @@ const formulariosFiltrados = computed(() =>
     <Navbar />
 
     <div class="page-content">
-      <BackLink to="/" style="margin-bottom:1.2rem;" />
+      <BackLink to="/" />
       <div class="page-heading">
         <h2>Formulários <span>e Eventos</span></h2>
       </div>

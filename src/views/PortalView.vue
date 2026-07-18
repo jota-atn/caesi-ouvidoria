@@ -56,7 +56,7 @@ function formatData(data: string | null | undefined) {
     <Navbar />
 
     <div class="page-content">
-      <BackLink to="/" style="margin-bottom:1.2rem;" />
+      <BackLink to="/" />
       <div class="page-heading">
         <h2>Portal do <span>CAESI</span></h2>
       </div>
@@ -153,6 +153,10 @@ function formatData(data: string | null | undefined) {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .mural-data { font-size: 0.74rem; color: var(--cinza); flex-shrink: 0; }

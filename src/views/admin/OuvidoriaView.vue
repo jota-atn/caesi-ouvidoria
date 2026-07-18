@@ -155,7 +155,7 @@ const barOptions = {
     <Navbar />
 
     <div class="page-content">
-      <BackLink to="/admin/painel" style="margin-bottom:1.2rem;" />
+      <BackLink to="/admin/painel" />
       <div class="page-heading">
         <h2>Painel da <span>Ouvidoria</span></h2>
         <button class="btn btn-outline btn-sm" :disabled="mensagens.length === 0" @click="exportarCSV">

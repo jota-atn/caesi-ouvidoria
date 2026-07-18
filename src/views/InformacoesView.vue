@@ -56,7 +56,7 @@ const resultados = computed(() => {
     <Navbar />
 
     <div class="page-content">
-      <BackLink to="/" style="margin-bottom:1.2rem;" />
+      <BackLink to="/" />
       <div class="page-heading">
         <h2>Informações do <span>CAESI</span></h2>
       </div>
