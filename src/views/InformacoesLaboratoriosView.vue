@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
-import { laboratorios, addLaboratorio, updateLaboratorio, deleteLaboratorio } from '../stores/informacoes.ts'
+import { laboratorios, addLaboratorio, updateLaboratorio, deleteLaboratorio, type Laboratorio } from '../stores/informacoes.ts'
 import { estruturas } from '../stores/mapa.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
@@ -12,7 +12,7 @@ import { useEscapeKey } from '../composables/useEscapeKey.ts'
 import { isEmail, isUrl, isValidImageFile } from '../utils/validation.ts'
 
 const route = useRoute()
-const busca = ref(route.query.busca ?? '')
+const busca = ref(String(route.query.busca ?? ''))
 
 const lista = computed(() => {
   const t = busca.value.toLowerCase().trim()
@@ -21,7 +21,7 @@ const lista = computed(() => {
   return base.filter(l => l.nome.toLowerCase().includes(t) || (l.sigla ?? '').toLowerCase().includes(t))
 })
 
-function comprimirImagem(file) {
+function comprimirImagem(file: File): Promise<string> {
   return new Promise(resolve => {
     const reader = new FileReader()
     reader.onload = ev => {
@@ -33,45 +33,61 @@ function comprimirImagem(file) {
         else if (h > MAX)     { w = Math.round(w * MAX / h); h = MAX }
         const canvas = document.createElement('canvas')
         canvas.width = w; canvas.height = h
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+        canvas.getContext('2d')!.drawImage(img, 0, 0, w, h)
         resolve(canvas.toDataURL('image/jpeg', 0.82))
       }
-      img.src = ev.target.result
+      img.src = ev.target!.result as string
     }
     reader.readAsDataURL(file)
   })
 }
 
-function validarNome(nome) { return nome.trim().length < 2 ? 'Nome obrigatório (mínimo 2 caracteres).' : '' }
-function validarEmailOpcional(email) { return email.trim() && !isEmail(email) ? 'Informe um e-mail válido.' : '' }
-function validarUrlOpcional(url)     { return url.trim() && !isUrl(url) ? 'Informe um link válido.' : '' }
+function validarNome(nome: string) { return nome.trim().length < 2 ? 'Nome obrigatório (mínimo 2 caracteres).' : '' }
+function validarEmailOpcional(email: string) { return email.trim() && !isEmail(email) ? 'Informe um e-mail válido.' : '' }
+function validarUrlOpcional(url: string)     { return url.trim() && !isUrl(url) ? 'Informe um link válido.' : '' }
+
+interface LaboratorioFormRascunho {
+  nome: string
+  sigla: string
+  descricao: string
+  imagem: string
+  imagens: string[]
+  email: string
+  linkExterno: string
+  estruturaId: number | string
+}
+
+function formVazio(): LaboratorioFormRascunho {
+  return { nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' }
+}
 
 // ── Admin: novo laboratório ────────────────────────────────
 const mostrarForm = ref(false)
-const fileAddRef  = ref(null)
-const fileGaleriaAddRef = ref(null)
-const formAdd = reactive({ nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
+const fileAddRef  = ref<HTMLInputElement | null>(null)
+const fileGaleriaAddRef = ref<HTMLInputElement | null>(null)
+const formAdd = reactive<LaboratorioFormRascunho>(formVazio())
 const erros   = reactive({ nome: '', email: '', linkExterno: '' })
 
-async function onImagemAdd(e) {
-  const file = e.target.files?.[0]
+async function onImagemAdd(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); e.target.value = ''; return }
+  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); (e.target as HTMLInputElement).value = ''; return }
   formAdd.imagem = await comprimirImagem(file)
-  e.target.value = ''
+  ;(e.target as HTMLInputElement).value = ''
 }
 function removerImagemAdd() { formAdd.imagem = '' }
 
-async function onGaleriaAdd(e) {
+async function onGaleriaAdd(e: Event) {
   let invalido = false
-  for (const file of e.target.files) {
+  const files = (e.target as HTMLInputElement).files
+  for (const file of files ?? []) {
     if (!isValidImageFile(file)) { invalido = true; continue }
     formAdd.imagens.push(await comprimirImagem(file))
   }
   if (invalido) showToast('Alguns arquivos foram ignorados (precisam ser imagens de até 8MB).', 'error')
-  e.target.value = ''
+  ;(e.target as HTMLInputElement).value = ''
 }
-function removerGaleriaAdd(i) { formAdd.imagens.splice(i, 1) }
+function removerGaleriaAdd(i: number) { formAdd.imagens.splice(i, 1) }
 
 function publicar() {
   erros.nome        = validarNome(formAdd.nome)
@@ -88,34 +104,32 @@ function publicar() {
     linkExterno: formAdd.linkExterno.trim(),
     estruturaId: formAdd.estruturaId ? Number(formAdd.estruturaId) : null,
   })
-  Object.assign(formAdd, { nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
+  Object.assign(formAdd, formVazio())
   mostrarForm.value = false
   showToast('Laboratório cadastrado.', 'success')
 }
 
 function cancelarAdd() {
-  Object.assign(formAdd, { nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
+  Object.assign(formAdd, formVazio())
   Object.assign(erros, { nome: '', email: '', linkExterno: '' })
   mostrarForm.value = false
 }
 
 // ── Admin: editar/excluir laboratório (via modal) ─────────
-const editModal = ref(null)
-const fileEditRef = ref(null)
-const fileGaleriaEditRef = ref(null)
-const formEdit  = reactive({ nome: '', sigla: '', descricao: '', imagem: '', imagens: [], email: '', linkExterno: '', estruturaId: '' })
+const editModal = ref<Laboratorio | null>(null)
+const fileEditRef = ref<HTMLInputElement | null>(null)
+const fileGaleriaEditRef = ref<HTMLInputElement | null>(null)
+const formEdit  = reactive<LaboratorioFormRascunho>(formVazio())
 const errosEdit = reactive({ nome: '', email: '', linkExterno: '' })
 
 function triggerFileEdit() {
-  const el = Array.isArray(fileEditRef.value) ? fileEditRef.value[0] : fileEditRef.value
-  el?.click()
+  fileEditRef.value?.click()
 }
 function triggerGaleriaEdit() {
-  const el = Array.isArray(fileGaleriaEditRef.value) ? fileGaleriaEditRef.value[0] : fileGaleriaEditRef.value
-  el?.click()
+  fileGaleriaEditRef.value?.click()
 }
 
-function abrirEdit(l) {
+function abrirEdit(l: Laboratorio) {
   Object.assign(errosEdit, { nome: '', email: '', linkExterno: '' })
   Object.assign(formEdit, {
     nome: l.nome, sigla: l.sigla ?? '', descricao: l.descricao ?? '',
@@ -126,32 +140,33 @@ function abrirEdit(l) {
 }
 function fecharEdit() { editModal.value = null }
 
-async function onImagemEdit(e) {
-  const file = e.target.files?.[0]
+async function onImagemEdit(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); e.target.value = ''; return }
+  if (!isValidImageFile(file)) { showToast('Selecione uma imagem de até 8MB.', 'error'); (e.target as HTMLInputElement).value = ''; return }
   formEdit.imagem = await comprimirImagem(file)
-  e.target.value = ''
+  ;(e.target as HTMLInputElement).value = ''
 }
 function removerImagemEdit() { formEdit.imagem = '' }
 
-async function onGaleriaEdit(e) {
+async function onGaleriaEdit(e: Event) {
   let invalido = false
-  for (const file of e.target.files) {
+  const files = (e.target as HTMLInputElement).files
+  for (const file of files ?? []) {
     if (!isValidImageFile(file)) { invalido = true; continue }
     formEdit.imagens.push(await comprimirImagem(file))
   }
   if (invalido) showToast('Alguns arquivos foram ignorados (precisam ser imagens de até 8MB).', 'error')
-  e.target.value = ''
+  ;(e.target as HTMLInputElement).value = ''
 }
-function removerGaleriaEdit(i) { formEdit.imagens.splice(i, 1) }
+function removerGaleriaEdit(i: number) { formEdit.imagens.splice(i, 1) }
 
 function salvarEdit() {
   errosEdit.nome        = validarNome(formEdit.nome)
   errosEdit.email       = validarEmailOpcional(formEdit.email)
   errosEdit.linkExterno = validarUrlOpcional(formEdit.linkExterno)
   if (errosEdit.nome || errosEdit.email || errosEdit.linkExterno) return
-  updateLaboratorio(editModal.value.id, {
+  updateLaboratorio(editModal.value!.id, {
     nome: formEdit.nome.trim(),
     sigla: formEdit.sigla.trim(),
     descricao: formEdit.descricao.trim(),
@@ -165,7 +180,7 @@ function salvarEdit() {
   showToast('Laboratório atualizado.', 'success')
 }
 
-function excluir(l) {
+function excluir(l: Laboratorio) {
   if (!confirm(`Remover "${l.nome}" dos laboratórios?`)) return
   deleteLaboratorio(l.id)
   showToast('Laboratório removido.', 'info')
@@ -226,7 +241,7 @@ useEscapeKey(() => fecharEdit())
               <button type="button" class="img-thumb-remove" @click="removerImagemAdd">×</button>
             </div>
           </div>
-          <button type="button" class="btn-foto" @click="fileAddRef.click()" style="margin-top:8px;">
+          <button type="button" class="btn-foto" @click="fileAddRef?.click()" style="margin-top:8px;">
             {{ formAdd.imagem ? 'Trocar foto' : '+ Adicionar foto de capa' }}
           </button>
           <input ref="fileAddRef" type="file" accept="image/*" style="display:none" @change="onImagemAdd">
@@ -240,7 +255,7 @@ useEscapeKey(() => fecharEdit())
               <button type="button" class="img-thumb-remove" @click="removerGaleriaAdd(i)">×</button>
             </div>
           </div>
-          <button type="button" class="btn-foto" @click="fileGaleriaAddRef.click()" style="margin-top:8px;">+ Adicionar fotos</button>
+          <button type="button" class="btn-foto" @click="fileGaleriaAddRef?.click()" style="margin-top:8px;">+ Adicionar fotos</button>
           <input ref="fileGaleriaAddRef" type="file" accept="image/*" multiple style="display:none" @change="onGaleriaAdd">
         </div>
 
