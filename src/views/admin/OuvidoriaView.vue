@@ -6,7 +6,7 @@ import MsgCard from '../../components/MsgCard.vue'
 import Pagination from '../../components/Pagination.vue'
 import { usePagination } from '../../composables/usePagination.js'
 import { usePersistedFilter } from '../../composables/usePersistedFilter.js'
-import { mensagens } from '../../stores/mensagens.js'
+import { mensagens } from '../../stores/mensagens.ts'
 import { Doughnut, Bar } from 'vue-chartjs'
 import {
   Chart as ChartJS,

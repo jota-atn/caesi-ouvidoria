@@ -5,7 +5,7 @@ import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
 import Badge from '../../components/Badge.vue'
 import Tag from '../../components/Tag.vue'
-import { mensagens, updateStatus, updateNota, deleteMensagem } from '../../stores/mensagens.js'
+import { mensagens, updateStatus, updateNota, deleteMensagem } from '../../stores/mensagens.ts'
 import { showToast } from '../../stores/toast.ts'
 
 const TIPO_LABEL = {

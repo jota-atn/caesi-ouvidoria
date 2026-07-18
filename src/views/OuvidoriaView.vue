@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
-import { addMensagem, mensagens, addComplemento } from '../stores/mensagens.js'
+import { addMensagem, mensagens, addComplemento } from '../stores/mensagens.ts'
 import { isAdmin } from '../stores/auth.js'
 import { isEmail } from '../utils/validation.js'
 

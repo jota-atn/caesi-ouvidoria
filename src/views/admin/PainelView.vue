@@ -6,7 +6,7 @@ import {
   Chart as ChartJS,
   CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement,
 } from 'chart.js'
-import { mensagens } from '../../stores/mensagens.js'
+import { mensagens } from '../../stores/mensagens.ts'
 import { membros } from '../../stores/equipe.js'
 import { formularios, inscricoes } from '../../stores/formularios.js'
 import { tasks } from '../../stores/tasks.js'
