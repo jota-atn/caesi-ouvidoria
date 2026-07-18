@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import { upsertEventoFormulario, removeEventoByFormulario } from './calendario.js'
+import { upsertEventoFormulario, removeEventoByFormulario } from './calendario.ts'
 
 const KEY_FORMS = 'caesi_formularios_v2'
 const KEY_INSCRICOES = 'caesi_inscricoes_v2'
