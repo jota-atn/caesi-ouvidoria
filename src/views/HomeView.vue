@@ -451,13 +451,12 @@ const posts = [
 }
 
 @media (max-width: 640px) {
-  .explore-item {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
-  }
-  .explore-icon { width: 64px; height: 64px; }
-  .explore-icon :deep(svg) { width: 30px; height: 30px; }
+  .explore-item { align-items: flex-start; gap: 0.8rem; }
+  .explore-icon { width: 46px; height: 46px; }
+  .explore-icon :deep(svg) { width: 22px; height: 22px; }
+  .explore-card { padding: 0.7rem 0.85rem; }
+  .explore-title { font-size: 0.95rem; }
+  .explore-desc { font-size: 0.8rem; }
 }
 
 /* ── Contato ──────────────────────────────────────────────── */

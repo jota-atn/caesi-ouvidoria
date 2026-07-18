@@ -82,4 +82,9 @@
   .footer-inner { flex-direction: column; gap: 1.2rem; }
   /* espaço reservado pra não ficar embaixo do botão flutuante "voltar ao topo" */
   .site-footer { padding-right: 5rem; }
+  .footer-links--nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem 1rem;
+  }
 }

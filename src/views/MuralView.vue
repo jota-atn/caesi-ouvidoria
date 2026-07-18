@@ -124,7 +124,7 @@ function textoPlano(md: string) {
       <BackLink to="/" />
       <div class="page-heading">
         <h2>Mural do <span>CAESI</span></h2>
-        <button v-if="isAdmin" type="button" class="btn btn-outline btn-outline-creme btn-sm" @click="mostrarForm = !mostrarForm">
+        <button v-if="isAdmin" type="button" class="btn btn-amarelo btn-sm" @click="mostrarForm = !mostrarForm">
           {{ mostrarForm ? '— Fechar' : '+ Nova publicação' }}
         </button>
       </div>

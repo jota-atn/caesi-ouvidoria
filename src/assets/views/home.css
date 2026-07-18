@@ -510,6 +510,11 @@
 @media (max-width: 860px) {
   .mapa-layout { grid-template-columns: 1fr; }
 }
+@media (max-width: 640px) {
+  /* pontos de interesse antes do mapa: no celular faz mais sentido escolher
+     o ponto na lista do que caçar um pin pequeno no mapa */
+  .mapa-lista-paper { order: -1; }
+}
 
 .mapa-lista-paper {
   padding: 1.2rem;
@@ -729,23 +734,9 @@
   .step-card  { padding: 1.4rem 1.2rem; }
 
   .cal-home-layout { grid-template-columns: 1fr; }
-  .cal-home-teasers {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 0.75rem;
-    padding-bottom: 0.75rem;
-    width: 100%;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-  .cal-home-teasers::-webkit-scrollbar { display: none; }
-  .evento-teaser {
-    flex: 0 0 78vw;
-    max-width: 280px;
-    scroll-snap-align: start;
-  }
+  /* placeholders só existem pra equilibrar a altura da coluna ao lado da
+     grade do calendário; empilhado no mobile isso é só espaço vazio */
+  .evento-teaser--placeholder { display: none; }
 
   .insta-nav-btn { display: none; }
   .insta-card {

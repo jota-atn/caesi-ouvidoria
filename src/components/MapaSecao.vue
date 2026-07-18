@@ -33,6 +33,7 @@ interface PendingPoint {
 const route = useRoute()
 const mapaEl = ref<HTMLElement | null>(null)
 let mapa: L.Map | null = null
+let resizeObserver: ResizeObserver | null = null
 const mapaMarkers = new Map<number, L.Marker>()
 
 const buscaMapa = ref('')
@@ -166,6 +167,13 @@ onMounted(() => {
     const alvo = estruturas.value.find(e => e.id === estruturaId)
     if (alvo) abrirEstrutura(alvo)
   }
+
+  // O container tem altura definida via aspect-ratio (CSS), que só se resolve
+  // depois do primeiro layout — sem isso o Leaflet mede um tamanho errado e os
+  // tiles ficam desalinhados/vazando do próprio container.
+  requestAnimationFrame(() => mapa?.invalidateSize())
+  resizeObserver = new ResizeObserver(() => mapa?.invalidateSize())
+  resizeObserver.observe(mapaEl.value)
 })
 
 function recentralizar() {
@@ -174,7 +182,10 @@ function recentralizar() {
 
 watch(estruturas, () => renderMapaMarkers())
 
-onBeforeUnmount(() => { mapa?.remove() })
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect()
+  mapa?.remove()
+})
 
 // ── Modal público: fechar com Esc e travar o scroll enquanto estiver aberto ──
 useEscapeKey(() => { fecharModal(); cancelarSelecao() })

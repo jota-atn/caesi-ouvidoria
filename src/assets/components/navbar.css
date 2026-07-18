@@ -210,8 +210,7 @@
 
 /* Elementos só visíveis no desktop */
 .mobile-user-header,
-.mobile-action-link,
-.nav-separator--mobile { display: none; }
+.mobile-action-link { display: none; }
 
 .navbar-desktop-user {
   display: flex;
@@ -244,9 +243,9 @@
   /* Esconde dropdown e sino no mobile */
   .navbar-desktop-user { display: none; }
 
-  /* Separador mobile */
-  .nav-separator--mobile {
-    display: block;
+  /* Separador vira uma linha horizontal fininha, não a barra vertical do desktop */
+  .nav-separator {
+    width: 100%;
     height: 1px;
     background: rgba(255,255,255,0.15);
     margin: 4px 0;

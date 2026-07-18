@@ -18,7 +18,7 @@ import { contatoInfo } from '../stores/equipe.ts'
 
       <div class="footer-group">
         <div class="footer-group-label">Navegação</div>
-        <div class="footer-links">
+        <div class="footer-links footer-links--nav">
           <RouterLink to="/sobre" class="footer-link">Sobre</RouterLink>
           <RouterLink to="/ouvidoria" class="footer-link">Ouvidoria</RouterLink>
           <RouterLink to="/mural" class="footer-link">Mural</RouterLink>

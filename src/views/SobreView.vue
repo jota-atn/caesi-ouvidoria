@@ -50,7 +50,7 @@ import cameraIcon from '../assets/icons/camera.svg?raw'
 import calendarIcon from '../assets/icons/calendar.svg?raw'
 import linkedinIcon from '../assets/icons/linkedin.svg?raw'
 import githubIcon from '../assets/icons/github.svg?raw'
-import graduationCapIcon from '../assets/icons/graduation-cap.svg?raw'
+import lattesIcon from '../assets/icons/lattes.svg?raw'
 
 // ── Modo de edição (admin) ──────────────────────────────────
 const route = useRoute()
@@ -638,7 +638,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
               <div v-if="a.linkedin || a.git || a.lattes" class="membro-card-plataformas">
                 <span v-if="a.linkedin" class="membro-card-dot membro-card-dot--linkedin" title="LinkedIn" v-html="linkedinIcon"></span>
                 <span v-if="a.git" class="membro-card-dot membro-card-dot--github" title="GitHub" v-html="githubIcon"></span>
-                <span v-if="a.lattes" class="membro-card-dot membro-card-dot--lattes" title="Lattes" v-html="graduationCapIcon"></span>
+                <span v-if="a.lattes" class="membro-card-dot membro-card-dot--lattes" title="Lattes" v-html="lattesIcon"></span>
               </div>
             </div>
           </div>
@@ -671,7 +671,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
             <div v-if="membroModal.linkedin || membroModal.git || membroModal.lattes" class="membro-links">
               <a v-if="membroModal.linkedin" :href="membroModal.linkedin" target="_blank" rel="noopener" class="membro-link membro-link--linkedin" title="LinkedIn" aria-label="LinkedIn" v-html="linkedinIcon"></a>
               <a v-if="membroModal.git"      :href="membroModal.git"      target="_blank" rel="noopener" class="membro-link membro-link--github" title="GitHub" aria-label="GitHub" v-html="githubIcon"></a>
-              <a v-if="membroModal.lattes"   :href="membroModal.lattes"   target="_blank" rel="noopener" class="membro-link membro-link--lattes" title="Lattes" aria-label="Lattes" v-html="graduationCapIcon"></a>
+              <a v-if="membroModal.lattes"   :href="membroModal.lattes"   target="_blank" rel="noopener" class="membro-link membro-link--lattes" title="Lattes" aria-label="Lattes" v-html="lattesIcon"></a>
             </div>
           </div>
         </div>
@@ -1259,7 +1259,7 @@ onBeforeUnmount(() => { mapaMini?.remove() })
 .membro-card-dot :deep(svg) { width: 11px; height: 11px; }
 .membro-card-dot--linkedin { color: #0A66C2; border-color: rgba(10,102,194,0.3); background: rgba(10,102,194,0.1); }
 .membro-card-dot--github   { color: #181717; border-color: rgba(24,23,23,0.25); background: rgba(24,23,23,0.08); }
-.membro-card-dot--lattes   { color: var(--roxo-escuro); }
+.membro-card-dot--lattes   { color: #0C2D6B; border-color: rgba(12,45,107,0.3); background: rgba(12,45,107,0.1); }
 
 .membro-desc {
   font-size: 0.78rem;
@@ -1298,7 +1298,8 @@ onBeforeUnmount(() => { mapaMini?.remove() })
 .membro-link--linkedin:hover { background: #0A66C2; color: var(--branco); }
 .membro-link--github { color: #181717; border-color: #181717; }
 .membro-link--github:hover { background: #181717; color: var(--branco); }
-.membro-link--lattes:hover { background: var(--roxo); color: var(--creme); }
+.membro-link--lattes { color: #0C2D6B; border-color: #0C2D6B; }
+.membro-link--lattes:hover { background: #0C2D6B; color: var(--branco); }
 
 .gestao-header {
   display: flex;

@@ -313,7 +313,8 @@
 @media (max-width: 600px) {
   .page-content { padding: 1rem; }
   .paper { padding: 1.2rem; }
-  .page-heading { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .page-heading h2 { font-size: 1.45rem; }
+  .page-heading { align-items: flex-start; gap: 8px 10px; }
+  .page-heading h2 { font-size: 1.3rem; flex: 1; min-width: 0; }
+  .page-heading .btn { padding: 6px 10px; font-size: 0.72rem; flex-shrink: 0; }
   .field-grid { grid-template-columns: 1fr; }
 }

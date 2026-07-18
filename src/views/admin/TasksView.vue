@@ -964,7 +964,7 @@ useEscapeKey(() => {
 /* ── Mobile ──────────────────────────────────────────────── */
 @media (max-width: 860px) {
   .kanban-board { grid-template-columns: 1fr; }
-  .kanban-wrapper { padding: 0 1rem 3rem; }
+  .kanban-wrapper { padding: 1rem 1rem 3rem; }
   .modal-row { flex-direction: column; }
   .membro-item { gap: 0.5rem; }
   .membro-acoes { width: 100%; }
