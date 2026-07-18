@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
@@ -6,9 +6,8 @@ import BackLink from '../../components/BackLink.vue'
 import Badge from '../../components/Badge.vue'
 import Tag from '../../components/Tag.vue'
 import { mensagens, updateStatus, updateNota, deleteMensagem } from '../../stores/mensagens.ts'
-import { showToast } from '../../stores/toast.ts'
 
-const TIPO_LABEL = {
+const TIPO_LABEL: Record<string, string> = {
   disciplina:     'Disciplina',
   professores:    'Professores',
   colegas:        'Colegas de curso',

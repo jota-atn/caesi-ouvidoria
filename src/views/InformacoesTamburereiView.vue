@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { markdownParaHtmlSeguro } from '../utils/markdown.ts'
@@ -16,7 +16,7 @@ const html = computed(() => markdownParaHtmlSeguro(tamburetei.value.descricao))
 const editando = ref(isAdmin.value && route.query.editar === '1')
 const form = ref({ ...tamburetei.value })
 const salvo = ref(false)
-const erros = ref({})
+const erros = ref<{ linkExterno?: boolean }>({})
 
 function iniciarEdicao() {
   form.value = { ...tamburetei.value }
@@ -26,7 +26,7 @@ function iniciarEdicao() {
 
 function salvar() {
   if (!form.value.titulo.trim()) { showToast('Informe o título da página.', 'error'); return }
-  const linkInvalido = form.value.linkExterno.trim() && !isUrl(form.value.linkExterno)
+  const linkInvalido = !!form.value.linkExterno.trim() && !isUrl(form.value.linkExterno)
   erros.value = { linkExterno: linkInvalido }
   if (linkInvalido) return
   saveTamburetei({
