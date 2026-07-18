@@ -1,40 +1,40 @@
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
-import { artefatos, addArtefato, updateArtefato, deleteArtefato } from '../../stores/portal.ts'
+import { artefatos, addArtefato, updateArtefato, deleteArtefato, type Artefato } from '../../stores/portal.ts'
 import { showToast } from '../../stores/toast.ts'
 import paperclipIcon from '../../assets/icons/paperclip.svg?raw'
 
-function formatValor(valor) {
+function formatValor(valor: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
 }
 
 // --------------- Formulário adicionar ---------------
 const mostrarForm = ref(false)
-const fileAddRef  = ref(null)
+const fileAddRef  = ref<HTMLInputElement | null>(null)
 const formAdd = reactive({ tipo: '', descricao: '', valor: '', anexoNome: '' })
 const erros   = reactive({ descricao: '', valor: '' })
 
-function parseValor(str) {
+function parseValor(str: string): { valor: number | null; error: string | null } {
   if (str === '' || str == null) return { valor: null, error: null }
   const num = Number(String(str).replace(',', '.'))
   if (Number.isNaN(num) || num < 0) return { valor: null, error: 'Valor inválido.' }
   return { valor: num, error: null }
 }
 
-function validarDescricao(descricao) {
+function validarDescricao(descricao: string) {
   return descricao.trim().length < 5 ? 'Descrição obrigatória (mín. 5 caracteres).' : ''
 }
 
-function validar(form) {
+function validar(form: { descricao: string; valor: string }) {
   erros.descricao = validarDescricao(form.descricao)
   erros.valor = parseValor(form.valor).error ?? ''
   return !erros.descricao && !erros.valor
 }
 
-function onArquivoAdd(e) {
-  formAdd.anexoNome = e.target.files?.[0]?.name ?? ''
+function onArquivoAdd(e: Event) {
+  formAdd.anexoNome = (e.target as HTMLInputElement).files?.[0]?.name ?? ''
 }
 
 function publicar() {
@@ -58,17 +58,16 @@ function cancelarAdd() {
 }
 
 // --------------- Edição inline ---------------
-const editandoId  = ref(null)
-const fileEditRef = ref(null)
+const editandoId  = ref<number | null>(null)
+const fileEditRef = ref<HTMLInputElement | null>(null)
 const formEdit = reactive({ tipo: '', descricao: '', valor: '', anexoNome: '' })
 const errosEdit = reactive({ descricao: '', valor: '' })
 
 function triggerFileEdit() {
-  const el = Array.isArray(fileEditRef.value) ? fileEditRef.value[0] : fileEditRef.value
-  el?.click()
+  fileEditRef.value?.click()
 }
 
-function abrirEdit(a) {
+function abrirEdit(a: Artefato) {
   editandoId.value = a.id
   confirmarDeleteId.value = null
   errosEdit.descricao = errosEdit.valor = ''
@@ -80,11 +79,11 @@ function abrirEdit(a) {
   })
 }
 
-function onArquivoEdit(e) {
-  formEdit.anexoNome = e.target.files?.[0]?.name ?? ''
+function onArquivoEdit(e: Event) {
+  formEdit.anexoNome = (e.target as HTMLInputElement).files?.[0]?.name ?? ''
 }
 
-function salvarEdit(id) {
+function salvarEdit(id: number) {
   errosEdit.descricao = validarDescricao(formEdit.descricao)
   const { valor, error } = parseValor(formEdit.valor)
   errosEdit.valor = error ?? ''
@@ -102,10 +101,10 @@ function salvarEdit(id) {
 function cancelarEdit() { editandoId.value = null }
 
 // --------------- Exclusão ---------------
-const confirmarDeleteId = ref(null)
-function pedirDelete(id)  { confirmarDeleteId.value = id }
+const confirmarDeleteId = ref<number | null>(null)
+function pedirDelete(id: number)  { confirmarDeleteId.value = id }
 function cancelarDelete() { confirmarDeleteId.value = null }
-function confirmarDelete(id) {
+function confirmarDelete(id: number) {
   deleteArtefato(id)
   confirmarDeleteId.value = null
   showToast('Artefato removido.', 'info')
@@ -167,7 +166,7 @@ const lista = computed(() => {
 
         <div class="field">
           <label class="label">Documento comprobatório <span class="field-hint">(opcional)</span></label>
-          <button type="button" class="btn-foto" @click="fileAddRef.click()">
+          <button type="button" class="btn-foto" @click="fileAddRef?.click()">
             {{ formAdd.anexoNome || '+ Anexar documento' }}
           </button>
           <input ref="fileAddRef" type="file" accept="image/*,.pdf" style="display:none" @change="onArquivoAdd">
