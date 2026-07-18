@@ -7,6 +7,7 @@ import mailIcon     from '../assets/icons/mail.svg?raw'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
+import Lightbox from '../components/Lightbox.vue'
 import { laboratorios } from '../stores/informacoes.ts'
 import { estruturas } from '../stores/mapa.ts'
 
@@ -25,23 +26,11 @@ const todasImagens = computed(() => {
   return [laboratorio.value.imagem, ...(laboratorio.value.imagens ?? [])].filter(Boolean) as string[]
 })
 
-// Lightbox
 const lightboxIdx = ref<number | null>(null)
-function abrirLightbox(i: number) { lightboxIdx.value = i }
-function fecharLightbox() { lightboxIdx.value = null }
-function prevImg() { lightboxIdx.value = (lightboxIdx.value! - 1 + todasImagens.value.length) % todasImagens.value.length }
-function nextImg() { lightboxIdx.value = (lightboxIdx.value! + 1) % todasImagens.value.length }
-
-function onKey(e: KeyboardEvent) {
-  if (lightboxIdx.value === null) return
-  if (e.key === 'Escape')     fecharLightbox()
-  if (e.key === 'ArrowLeft')  prevImg()
-  if (e.key === 'ArrowRight') nextImg()
-}
 </script>
 
 <template>
-  <div class="page" @keydown="onKey" tabindex="-1">
+  <div class="page">
     <div class="deco-star" style="top:200px;right:2%;font-size:1.4rem;opacity:0.25;">✦</div>
     <div class="deco-star" style="top:600px;left:1%;font-size:1rem;opacity:0.18;">✦</div>
 
@@ -75,9 +64,9 @@ function onKey(e: KeyboardEvent) {
           role="button"
           tabindex="0"
           :title="todasImagens.length > 1 ? `Ver galeria (${todasImagens.length} fotos)` : 'Ampliar'"
-          @click="abrirLightbox(0)"
-          @keydown.enter="abrirLightbox(0)"
-          @keydown.space.prevent="abrirLightbox(0)"
+          @click="lightboxIdx = 0"
+          @keydown.enter="lightboxIdx = 0"
+          @keydown.space.prevent="lightboxIdx = 0"
         >
           <img :src="todasImagens[0]" :alt="laboratorio.nome" class="pub-hero-img">
           <div v-if="todasImagens.length > 1" class="pub-hero-label">
@@ -118,9 +107,9 @@ function onKey(e: KeyboardEvent) {
               role="button"
               tabindex="0"
               :aria-label="`Ver foto ${i + 1}`"
-              @click="abrirLightbox(i)"
-              @keydown.enter="abrirLightbox(i)"
-              @keydown.space.prevent="abrirLightbox(i)"
+              @click="lightboxIdx = i"
+              @keydown.enter="lightboxIdx = i"
+              @keydown.space.prevent="lightboxIdx = i"
             >
               <img :src="img" :alt="`Foto ${i + 1}`" class="pub-galeria-img">
               <div v-if="i === 0" class="pub-galeria-capa">capa</div>
@@ -130,18 +119,7 @@ function onKey(e: KeyboardEvent) {
       </div>
     </template>
 
-    <!-- Lightbox -->
-    <Teleport to="body">
-      <div v-if="lightboxIdx !== null" class="lightbox" @click.self="fecharLightbox">
-        <button class="lightbox-close" @click="fecharLightbox">×</button>
-        <button v-if="todasImagens.length > 1" class="lightbox-nav lightbox-nav--prev" @click="prevImg">‹</button>
-        <img :src="todasImagens[lightboxIdx]" :alt="`Foto ${lightboxIdx + 1}`" class="lightbox-img">
-        <button v-if="todasImagens.length > 1" class="lightbox-nav lightbox-nav--next" @click="nextImg">›</button>
-        <div v-if="todasImagens.length > 1" class="lightbox-counter">
-          {{ lightboxIdx + 1 }} / {{ todasImagens.length }}
-        </div>
-      </div>
-    </Teleport>
+    <Lightbox :imagens="todasImagens" :index="lightboxIdx" @update:index="lightboxIdx = $event" />
 
     <SiteFooter />
   </div>
@@ -327,68 +305,6 @@ function onKey(e: KeyboardEvent) {
   padding: 2px 0;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-}
-
-/* ── Lightbox ─────────────────────────────────────── */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.92);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.lightbox-img {
-  max-width: 92vw;
-  max-height: 88vh;
-  object-fit: contain;
-  border-radius: 2px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-}
-
-.lightbox-close {
-  position: absolute;
-  top: 16px;
-  right: 20px;
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 2.4rem;
-  line-height: 1;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.15s;
-}
-.lightbox-close:hover { opacity: 1; }
-
-.lightbox-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,0.1);
-  border: none;
-  color: #fff;
-  font-size: 2.8rem;
-  line-height: 1;
-  padding: 0.3rem 1rem;
-  cursor: pointer;
-  border-radius: 2px;
-  transition: background 0.15s;
-}
-.lightbox-nav:hover    { background: rgba(255,255,255,0.2); }
-.lightbox-nav--prev    { left: 12px; }
-.lightbox-nav--next    { right: 12px; }
-
-.lightbox-counter {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255,255,255,0.6);
-  font-size: 0.82rem;
-  font-family: 'Archivo', sans-serif;
 }
 
 /* ── Empty ────────────────────────────────────────── */

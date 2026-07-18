@@ -8,6 +8,7 @@ import paperclipIcon  from '../assets/icons/paperclip.svg?raw'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
+import Lightbox from '../components/Lightbox.vue'
 import { publicacoes } from '../stores/mural.ts'
 
 marked.use({ breaks: true, gfm: true })
@@ -30,28 +31,11 @@ const tituloPartes = computed(() => {
   return { inicio: titulo.slice(0, i), ultimo: titulo.slice(i + 1) }
 })
 
-// Lightbox
-const lightboxImgs = ref<string[] | null>(null)
-const lightboxIdx  = ref(0)
-
-function abrirLightbox(imgs: string[], i: number) {
-  lightboxImgs.value = imgs
-  lightboxIdx.value  = i
-}
-function fecharLightbox() { lightboxImgs.value = null }
-function prevImg() { lightboxIdx.value = (lightboxIdx.value - 1 + lightboxImgs.value!.length) % lightboxImgs.value!.length }
-function nextImg() { lightboxIdx.value = (lightboxIdx.value + 1) % lightboxImgs.value!.length }
-
-function onKey(e: KeyboardEvent) {
-  if (!lightboxImgs.value) return
-  if (e.key === 'Escape')     fecharLightbox()
-  if (e.key === 'ArrowLeft')  prevImg()
-  if (e.key === 'ArrowRight') nextImg()
-}
+const lightboxIdx = ref<number | null>(null)
 </script>
 
 <template>
-  <div class="page" @keydown="onKey" tabindex="-1">
+  <div class="page">
     <div class="deco-star" style="top:200px;right:2%;font-size:1.4rem;opacity:0.25;">✦</div>
     <div class="deco-star" style="top:600px;left:1%;font-size:1rem;opacity:0.18;">✦</div>
 
@@ -95,9 +79,9 @@ function onKey(e: KeyboardEvent) {
           role="button"
           tabindex="0"
           :title="publicacao.imagens.length > 1 ? `Ver galeria (${publicacao.imagens.length} fotos)` : 'Ampliar'"
-          @click="abrirLightbox(publicacao.imagens, 0)"
-          @keydown.enter="abrirLightbox(publicacao.imagens, 0)"
-          @keydown.space.prevent="abrirLightbox(publicacao.imagens, 0)"
+          @click="lightboxIdx = 0"
+          @keydown.enter="lightboxIdx = 0"
+          @keydown.space.prevent="lightboxIdx = 0"
         >
           <img :src="publicacao.imagens[0]" :alt="publicacao.titulo" class="pub-hero-img">
           <div v-if="publicacao.imagens.length > 1" class="pub-hero-label">
@@ -125,9 +109,9 @@ function onKey(e: KeyboardEvent) {
               role="button"
               tabindex="0"
               :aria-label="`Ver foto ${i + 1}`"
-              @click="abrirLightbox(publicacao.imagens, i)"
-              @keydown.enter="abrirLightbox(publicacao.imagens, i)"
-              @keydown.space.prevent="abrirLightbox(publicacao.imagens, i)"
+              @click="lightboxIdx = i"
+              @keydown.enter="lightboxIdx = i"
+              @keydown.space.prevent="lightboxIdx = i"
             >
               <img :src="img" :alt="`Foto ${i + 1}`" class="pub-galeria-img">
               <div v-if="i === 0" class="pub-galeria-capa">capa</div>
@@ -148,18 +132,7 @@ function onKey(e: KeyboardEvent) {
       </div>
     </template>
 
-    <!-- Lightbox -->
-    <Teleport to="body">
-      <div v-if="lightboxImgs" class="lightbox" @click.self="fecharLightbox">
-        <button class="lightbox-close" @click="fecharLightbox">×</button>
-        <button v-if="lightboxImgs.length > 1" class="lightbox-nav lightbox-nav--prev" @click="prevImg">‹</button>
-        <img :src="lightboxImgs[lightboxIdx]" :alt="`Foto ${lightboxIdx + 1}`" class="lightbox-img">
-        <button v-if="lightboxImgs.length > 1" class="lightbox-nav lightbox-nav--next" @click="nextImg">›</button>
-        <div v-if="lightboxImgs.length > 1" class="lightbox-counter">
-          {{ lightboxIdx + 1 }} / {{ lightboxImgs.length }}
-        </div>
-      </div>
-    </Teleport>
+    <Lightbox v-if="publicacao" :imagens="publicacao.imagens" :index="lightboxIdx" @update:index="lightboxIdx = $event" />
 
     <SiteFooter />
   </div>
@@ -506,68 +479,6 @@ function onKey(e: KeyboardEvent) {
   color: var(--cinza);
 }
 .pub-anexo-icon :deep(svg) { width: 15px; height: 15px; }
-
-/* ── Lightbox ─────────────────────────────────────── */
-.lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.92);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.lightbox-img {
-  max-width: 92vw;
-  max-height: 88vh;
-  object-fit: contain;
-  border-radius: 2px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-}
-
-.lightbox-close {
-  position: absolute;
-  top: 16px;
-  right: 20px;
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 2.4rem;
-  line-height: 1;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.15s;
-}
-.lightbox-close:hover { opacity: 1; }
-
-.lightbox-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,0.1);
-  border: none;
-  color: #fff;
-  font-size: 2.8rem;
-  line-height: 1;
-  padding: 0.3rem 1rem;
-  cursor: pointer;
-  border-radius: 2px;
-  transition: background 0.15s;
-}
-.lightbox-nav:hover    { background: rgba(255,255,255,0.2); }
-.lightbox-nav--prev    { left: 12px; }
-.lightbox-nav--next    { right: 12px; }
-
-.lightbox-counter {
-  position: absolute;
-  bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255,255,255,0.6);
-  font-size: 0.82rem;
-  font-family: 'Archivo', sans-serif;
-}
 
 /* ── Empty ────────────────────────────────────────── */
 .empty-state {
