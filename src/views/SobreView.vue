@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
-import { useEscapeKey } from '../composables/useEscapeKey.js'
+import { useEscapeKey } from '../composables/useEscapeKey.ts'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import iconUrl from 'leaflet/dist/images/marker-icon.png'
@@ -19,10 +19,10 @@ import {
   secoesCustom, addSecao, updateSecao, removeSecao, moverSecao,
 } from '../stores/equipe.ts'
 import { CENTRO_PADRAO } from '../stores/mapa.ts'
-import { markdownParaHtmlSeguro } from '../utils/markdown.js'
+import { markdownParaHtmlSeguro } from '../utils/markdown.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
-import { isEmail, isUrl, isValidImageFile } from '../utils/validation.js'
+import { isEmail, isUrl, isValidImageFile } from '../utils/validation.ts'
 import pencilIcon from '../assets/icons/pencil.svg?raw'
 import xIcon from '../assets/icons/x.svg?raw'
 

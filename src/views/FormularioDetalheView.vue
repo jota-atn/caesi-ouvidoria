@@ -6,7 +6,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import { formularios, inscricoes, addInscricao } from '../stores/formularios.ts'
 import { showToast } from '../stores/toast.ts'
-import { isEmail, isValidImageFile } from '../utils/validation.js'
+import { isEmail, isValidImageFile } from '../utils/validation.ts'
 
 const route  = useRoute()
 const router = useRouter()

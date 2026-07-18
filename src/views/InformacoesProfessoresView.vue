@@ -9,7 +9,7 @@ import { professores, addProfessor, updateProfessor, deleteProfessor } from '../
 import { estruturas } from '../stores/mapa.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
-import { isEmail, isUrl, isValidImageFile } from '../utils/validation.js'
+import { isEmail, isUrl, isValidImageFile } from '../utils/validation.ts'
 
 const route = useRoute()
 const busca = ref(route.query.busca ?? '')

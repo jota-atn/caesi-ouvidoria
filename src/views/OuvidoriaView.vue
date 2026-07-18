@@ -6,7 +6,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import { addMensagem, mensagens, addComplemento } from '../stores/mensagens.ts'
 import { isAdmin } from '../stores/auth.ts'
-import { isEmail } from '../utils/validation.js'
+import { isEmail } from '../utils/validation.ts'
 
 const route = useRoute()
 

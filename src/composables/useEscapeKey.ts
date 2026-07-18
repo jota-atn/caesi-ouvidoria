@@ -1,7 +1,7 @@
 import { onMounted, onUnmounted } from 'vue'
 
-export function useEscapeKey(handler) {
-  function onKeydown(e) {
+export function useEscapeKey(handler: () => void) {
+  function onKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape') handler()
   }
   onMounted(() => document.addEventListener('keydown', onKeydown))

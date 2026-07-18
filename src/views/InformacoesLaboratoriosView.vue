@@ -8,8 +8,8 @@ import { laboratorios, addLaboratorio, updateLaboratorio, deleteLaboratorio } fr
 import { estruturas } from '../stores/mapa.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
-import { useEscapeKey } from '../composables/useEscapeKey.js'
-import { isEmail, isUrl, isValidImageFile } from '../utils/validation.js'
+import { useEscapeKey } from '../composables/useEscapeKey.ts'
+import { isEmail, isUrl, isValidImageFile } from '../utils/validation.ts'
 
 const route = useRoute()
 const busca = ref(route.query.busca ?? '')

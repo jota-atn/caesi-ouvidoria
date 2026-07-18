@@ -4,9 +4,9 @@ import { onBeforeRouteLeave } from 'vue-router'
 import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
 import { formularios, inscricoes, addFormulario } from '../../stores/formularios.ts'
-import { usePersistedFilter } from '../../composables/usePersistedFilter.js'
+import { usePersistedFilter } from '../../composables/usePersistedFilter.ts'
 import { showToast } from '../../stores/toast.ts'
-import { isTodayOrFuture } from '../../utils/validation.js'
+import { isTodayOrFuture } from '../../utils/validation.ts'
 
 const filtro = usePersistedFilter('caesi-admin-forms-filtro', 'todos')
 const busca  = usePersistedFilter('caesi-admin-forms-busca', '')

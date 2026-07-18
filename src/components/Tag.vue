@@ -1,9 +1,9 @@
-<script setup>
-defineProps({
-  tipo: { type: String, required: true },
-})
+<script setup lang="ts">
+defineProps<{
+  tipo: string
+}>()
 
-const classMap = {
+const classMap: Record<string, string> = {
   disciplina:     'tag-disciplina',
   professores:    'tag-professores',
   colegas:        'tag-colegas',
@@ -13,7 +13,7 @@ const classMap = {
   outros:         'tag-outros',
 }
 
-const labelMap = {
+const labelMap: Record<string, string> = {
   disciplina:     'Disciplina',
   professores:    'Professores',
   colegas:        'Colegas de curso',

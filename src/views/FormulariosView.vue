@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import { formularios, inscricoes } from '../stores/formularios.ts'
-import { usePersistedFilter } from '../composables/usePersistedFilter.js'
+import { usePersistedFilter } from '../composables/usePersistedFilter.ts'
 
 const filtro = usePersistedFilter('caesi-forms-filtro', 'todos')
 const busca  = usePersistedFilter('caesi-forms-busca', '')

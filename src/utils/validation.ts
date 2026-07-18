@@ -1,16 +1,16 @@
-export function notBlank(value) {
+export function notBlank(value: unknown): boolean {
   return !!(value ?? '').toString().trim()
 }
 
-export function minLength(value, n) {
+export function minLength(value: unknown, n: number): boolean {
   return (value ?? '').toString().trim().length >= n
 }
 
-export function isEmail(value) {
+export function isEmail(value: unknown): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((value ?? '').toString().trim())
 }
 
-export function isUrl(value) {
+export function isUrl(value: unknown): boolean {
   try {
     new URL((value ?? '').toString().trim())
     return true
@@ -19,16 +19,16 @@ export function isUrl(value) {
   }
 }
 
-export function isPositiveNumber(value) {
+export function isPositiveNumber(value: unknown): boolean {
   const n = Number(value)
   return Number.isFinite(n) && n > 0
 }
 
-export function isValidImageFile(file, maxSizeMB = 8) {
+export function isValidImageFile(file: File, maxSizeMB = 8): boolean {
   return file.type.startsWith('image/') && file.size <= maxSizeMB * 1024 * 1024
 }
 
-export function isTodayOrFuture(dateStr) {
+export function isTodayOrFuture(dateStr: string | null | undefined): boolean {
   if (!dateStr) return true
   const data = new Date(dateStr + 'T23:59:59')
   const hoje = new Date()

@@ -4,8 +4,8 @@ import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import Pagination from '../components/Pagination.vue'
-import { usePagination } from '../composables/usePagination.js'
-import { usePersistedFilter } from '../composables/usePersistedFilter.js'
+import { usePagination } from '../composables/usePagination.ts'
+import { usePersistedFilter } from '../composables/usePersistedFilter.ts'
 import { artefatos } from '../stores/portal.ts'
 
 const busca  = usePersistedFilter('portal-busca', '')

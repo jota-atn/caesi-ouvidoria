@@ -2,7 +2,7 @@
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { isAdmin } from '../stores/auth.ts'
 import { eventos, proximosEventos, addEvento, updateEvento, removeEvento } from '../stores/calendario.ts'
-import { useEscapeKey } from '../composables/useEscapeKey.js'
+import { useEscapeKey } from '../composables/useEscapeKey.ts'
 import { showToast } from '../stores/toast.ts'
 import calendarIcon from '../assets/icons/calendar.svg?raw'
 

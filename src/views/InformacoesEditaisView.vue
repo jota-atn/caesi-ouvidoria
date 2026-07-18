@@ -8,7 +8,7 @@ import paperclipIcon from '../assets/icons/paperclip.svg?raw'
 import { editais, addEdital, updateEdital, deleteEdital } from '../stores/informacoes.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
-import { isTodayOrFuture } from '../utils/validation.js'
+import { isTodayOrFuture } from '../utils/validation.ts'
 
 const route = useRoute()
 const busca = ref(route.query.busca ?? '')

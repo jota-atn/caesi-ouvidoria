@@ -1,11 +1,12 @@
-<script setup>
+<script setup lang="ts">
+import type { Mensagem } from '../stores/mensagens.ts'
 import Badge from './Badge.vue'
 import Tag from './Tag.vue'
 
-defineProps({
-  mensagem: { type: Object, required: true },
-  to: { type: String, required: true },
-})
+defineProps<{
+  mensagem: Mensagem
+  to: string
+}>()
 </script>
 
 <template>

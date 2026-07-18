@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { marked } from 'marked'
-import { markdownParaHtmlSeguro } from '../utils/markdown.js'
+import { markdownParaHtmlSeguro } from '../utils/markdown.ts'
 import cameraIcon     from '../assets/icons/camera.svg?raw'
 import paperclipIcon  from '../assets/icons/paperclip.svg?raw'
 import Navbar from '../components/Navbar.vue'

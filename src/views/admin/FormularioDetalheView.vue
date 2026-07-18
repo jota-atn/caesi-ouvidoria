@@ -5,8 +5,8 @@ import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
 import { formularios, inscricoes, updateStatusComprovante, updateFormulario, deleteFormulario, emitirCertificados, aprovarCancelamento, recusarCancelamento } from '../../stores/formularios.ts'
 import { showToast } from '../../stores/toast.ts'
-import { useEscapeKey } from '../../composables/useEscapeKey.js'
-import { usePagination } from '../../composables/usePagination.js'
+import { useEscapeKey } from '../../composables/useEscapeKey.ts'
+import { usePagination } from '../../composables/usePagination.ts'
 import Pagination from '../../components/Pagination.vue'
 
 const route  = useRoute()

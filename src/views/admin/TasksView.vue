@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
 import { showToast } from '../../stores/toast.ts'
-import { useEscapeKey } from '../../composables/useEscapeKey.js'
+import { useEscapeKey } from '../../composables/useEscapeKey.ts'
 import {
   tasks, criarTask, editarTask, excluirTask, atualizarStatus,
   membros, addMembro, removeMembro,

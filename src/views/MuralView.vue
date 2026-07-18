@@ -5,13 +5,13 @@ import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import Pagination from '../components/Pagination.vue'
-import { usePagination } from '../composables/usePagination.js'
-import { usePersistedFilter } from '../composables/usePersistedFilter.js'
-import { useEscapeKey } from '../composables/useEscapeKey.js'
+import { usePagination } from '../composables/usePagination.ts'
+import { usePersistedFilter } from '../composables/usePersistedFilter.ts'
+import { useEscapeKey } from '../composables/useEscapeKey.ts'
 import { publicacoes, addPublicacao, updatePublicacao, deletePublicacao } from '../stores/mural.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
-import { isValidImageFile } from '../utils/validation.js'
+import { isValidImageFile } from '../utils/validation.ts'
 
 function comprimirImagem(file) {
   return new Promise(resolve => {

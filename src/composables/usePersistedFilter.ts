@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 
-export function usePersistedFilter(key, defaultValue) {
+export function usePersistedFilter(key: string, defaultValue: string) {
   const stored = sessionStorage.getItem(key)
   const value  = ref(stored !== null ? stored : defaultValue)
 

@@ -1,14 +1,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { markdownParaHtmlSeguro } from '../utils/markdown.js'
+import { markdownParaHtmlSeguro } from '../utils/markdown.ts'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import { tamburetei, saveTamburetei } from '../stores/informacoes.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
-import { isUrl } from '../utils/validation.js'
+import { isUrl } from '../utils/validation.ts'
 
 const route = useRoute()
 const html = computed(() => markdownParaHtmlSeguro(tamburetei.value.descricao))

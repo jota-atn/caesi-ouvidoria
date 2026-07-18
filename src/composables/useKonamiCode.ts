@@ -2,10 +2,10 @@ import { onMounted, onUnmounted } from 'vue'
 
 const SEQUENCIA = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']
 
-export function useKonamiCode(onSucesso) {
-  let buffer = []
+export function useKonamiCode(onSucesso: () => void) {
+  let buffer: string[] = []
 
-  function onKeydown(e) {
+  function onKeydown(e: KeyboardEvent) {
     const tecla = e.key.length === 1 ? e.key.toLowerCase() : e.key
     buffer.push(tecla)
     buffer = buffer.slice(-SEQUENCIA.length)

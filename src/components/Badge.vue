@@ -1,7 +1,9 @@
-<script setup>
-defineProps({
-  status: { type: String, required: true }, // 'pendente' | 'atendida'
-})
+<script setup lang="ts">
+import type { StatusMensagem } from '../stores/mensagens.ts'
+
+defineProps<{
+  status: StatusMensagem
+}>()
 </script>
 
 <template>
