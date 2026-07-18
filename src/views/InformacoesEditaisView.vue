@@ -1,18 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import paperclipIcon from '../assets/icons/paperclip.svg?raw'
-import { editais, addEdital, updateEdital, deleteEdital } from '../stores/informacoes.ts'
+import { editais, addEdital, updateEdital, deleteEdital, type Edital } from '../stores/informacoes.ts'
 import { isAdmin } from '../stores/auth.ts'
 import { showToast } from '../stores/toast.ts'
 import { isTodayOrFuture } from '../utils/validation.ts'
 
 const route = useRoute()
-const busca = ref(route.query.busca ?? '')
-const expandidoId = ref(null)
+const busca = ref(String(route.query.busca ?? ''))
+const expandidoId = ref<number | null>(null)
 
 const lista = computed(() => {
   const t = busca.value.toLowerCase().trim()
@@ -21,28 +21,30 @@ const lista = computed(() => {
   return base.filter(e => e.titulo.toLowerCase().includes(t) || e.descricao.toLowerCase().includes(t))
 })
 
-function toggleExpandir(id) {
+function toggleExpandir(id: number) {
   if (editandoId.value !== null) return
   expandidoId.value = expandidoId.value === id ? null : id
 }
 
-function formatData(data) {
+function formatData(data: string | null) {
   if (!data) return ''
   const [ano, mes, dia] = data.split('-')
   return `${dia}/${mes}/${ano}`
 }
 
-function validarTitulo(titulo) {
+function validarTitulo(titulo: string) {
   return titulo.trim().length < 3 ? 'Título obrigatório (mín. 3 caracteres).' : ''
 }
 
 // ── Admin: novo edital ────────────────────────────────────
 const mostrarForm = ref(false)
-const fileAddRef  = ref(null)
+const fileAddRef  = ref<HTMLInputElement | null>(null)
 const formAdd = reactive({ titulo: '', descricao: '', data: '', anexoNome: '' })
 const erros   = reactive({ titulo: '', data: '' })
 
-function onArquivoAdd(e) { formAdd.anexoNome = e.target.files?.[0]?.name ?? '' }
+function onArquivoAdd(e: Event) {
+  formAdd.anexoNome = (e.target as HTMLInputElement).files?.[0]?.name ?? ''
+}
 
 function publicar() {
   erros.titulo = validarTitulo(formAdd.titulo)
@@ -66,25 +68,26 @@ function cancelarAdd() {
 }
 
 // ── Admin: editar/excluir edital ──────────────────────────
-const editandoId  = ref(null)
-const fileEditRef = ref(null)
+const editandoId  = ref<number | null>(null)
+const fileEditRef = ref<HTMLInputElement | null>(null)
 const formEdit  = reactive({ titulo: '', descricao: '', data: '', anexoNome: '' })
 const errosEdit = reactive({ titulo: '' })
 
 function triggerFileEdit() {
-  const el = Array.isArray(fileEditRef.value) ? fileEditRef.value[0] : fileEditRef.value
-  el?.click()
+  fileEditRef.value?.click()
 }
 
-function abrirEdit(e) {
+function abrirEdit(e: Edital) {
   editandoId.value = e.id
   expandidoId.value = null
   errosEdit.titulo = ''
   Object.assign(formEdit, { titulo: e.titulo, descricao: e.descricao, data: e.data ?? '', anexoNome: e.anexo?.nome ?? '' })
 }
-function onArquivoEdit(e) { formEdit.anexoNome = e.target.files?.[0]?.name ?? '' }
+function onArquivoEdit(e: Event) {
+  formEdit.anexoNome = (e.target as HTMLInputElement).files?.[0]?.name ?? ''
+}
 
-function salvarEdit(id) {
+function salvarEdit(id: number) {
   errosEdit.titulo = validarTitulo(formEdit.titulo)
   if (errosEdit.titulo) return
   updateEdital(id, {
@@ -98,7 +101,7 @@ function salvarEdit(id) {
 }
 function cancelarEdit() { editandoId.value = null }
 
-function excluir(e) {
+function excluir(e: Edital) {
   if (!confirm(`Remover o edital "${e.titulo}"?`)) return
   deleteEdital(e.id)
   showToast('Edital removido.', 'info')
@@ -143,7 +146,7 @@ function excluir(e) {
 
         <div class="field">
           <label class="label">Anexo <span class="field-hint">(opcional)</span></label>
-          <button type="button" class="btn-foto" @click="fileAddRef.click()">{{ formAdd.anexoNome || '+ Anexar arquivo' }}</button>
+          <button type="button" class="btn-foto" @click="fileAddRef?.click()">{{ formAdd.anexoNome || '+ Anexar arquivo' }}</button>
           <input ref="fileAddRef" type="file" accept=".pdf,image/*" style="display:none" @change="onArquivoAdd">
         </div>
 

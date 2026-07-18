@@ -1,5 +1,5 @@
-<script setup>
-import { ref, computed } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
 import MsgCard from '../../components/MsgCard.vue'
@@ -19,7 +19,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarEle
 const filtro = usePersistedFilter('caesi-admin-painel-filtro', 'todas')
 const busca  = usePersistedFilter('caesi-admin-painel-busca', '')
 
-const TIPO_LABEL = {
+const TIPO_LABEL: Record<string, string> = {
   disciplina:     'Disciplina',
   professores:    'Professores',
   colegas:        'Colegas de curso',
@@ -47,8 +47,8 @@ const totalAtendida = computed(() => mensagens.value.filter(m => m.status === 'a
 const { page, totalPages, paginated: mensagensPaginadas, next, prev, goTo } = usePagination(mensagensFiltradas, 15)
 
 function exportarCSV() {
-  const cols = ['Protocolo', 'Data', 'Tipo de relato', 'Período', 'Nome', 'E-mail', 'Status', 'Anotação interna', 'Resposta']
-  const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`
+  const cols = ['Protocolo', 'Data', 'Tipo de relato', 'Período', 'Nome', 'E-mail', 'Status', 'Anotação interna']
+  const esc = (v: unknown) => `"${String(v ?? '').replace(/"/g, '""')}"`
   const linhas = mensagens.value.map(m => [
     m.protocolo,
     m.data,
@@ -58,7 +58,6 @@ function exportarCSV() {
     m.email ?? '',
     m.status,
     m.nota ?? '',
-    m.resposta ?? '',
   ].map(esc).join(','))
 
   const csv = [cols.map(esc).join(','), ...linhas].join('\r\n')
@@ -71,7 +70,7 @@ function exportarCSV() {
   URL.revokeObjectURL(url)
 }
 
-const TIPO_COR = {
+const TIPO_COR: Record<string, string> = {
   disciplina:     '#2050A0',
   professores:    '#1A5A50',
   colegas:        '#1A6040',
@@ -82,7 +81,7 @@ const TIPO_COR = {
 }
 
 const donutData = computed(() => {
-  const contagem = {}
+  const contagem: Record<string, number> = {}
   for (const m of mensagens.value) {
     contagem[m.tipo] = (contagem[m.tipo] ?? 0) + 1
   }
@@ -102,12 +101,12 @@ const donutOptions = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { position: 'right', labels: { font: { family: 'Archivo', size: 12 }, padding: 16 } },
+    legend: { position: 'right' as const, labels: { font: { family: 'Archivo', size: 12 }, padding: 16 } },
   },
 }
 
 const barData = computed(() => {
-  const meses = {}
+  const meses: Record<string, number> = {}
   const agora = new Date()
   for (let i = 5; i >= 0; i--) {
     const d = new Date(agora.getFullYear(), agora.getMonth() - i, 1)
