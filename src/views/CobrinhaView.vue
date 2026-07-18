@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BackLink from '../components/BackLink.vue'
@@ -6,6 +6,46 @@ import { showToast } from '../stores/toast.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.ts'
 import { marcarCobrinhaZerada } from '../stores/conquistas.ts'
 import capeloIcon from '../assets/icons/graduation-cap.svg?raw'
+
+interface Posicao { x: number; y: number }
+type NomeDirecao = 'cima' | 'baixo' | 'esquerda' | 'direita'
+
+type TipoInimigo = 'patrulha' | 'rapido' | 'atirador'
+interface Inimigo {
+  id: number
+  tipo: TipoInimigo
+  x: number
+  y: number
+  dx?: number
+  dy?: number
+  cooldownTiro?: number
+}
+
+interface Projetil {
+  id: number
+  x: number
+  y: number
+  dx: number
+  dy: number
+}
+
+type TipoChefe = 'perseguidor' | 'fantasma' | 'agil' | 'pesado'
+interface Chefe {
+  tipo: TipoChefe
+  vidas: number
+  atordoado: number
+  ataqueCooldown: number
+  cooldownBase: number
+  x: number
+  y: number
+  passosPorTick?: number
+  caminho?: Posicao[]
+  indiceCaminho?: number
+  contadorLento?: number
+  buffado?: boolean
+}
+
+type EstadoJogo = 'aguardando' | 'jogando' | 'pausado' | 'fim' | 'vencido' | 'transicao'
 
 const router = useRouter()
 
@@ -15,7 +55,7 @@ const DEBUG_COMECAR_NO_CHEFE = false
 
 const mqDesktop = window.matchMedia('(any-pointer: fine)')
 const ehDesktop = ref(mqDesktop.matches)
-function atualizarEhDesktop(e) { ehDesktop.value = e.matches }
+function atualizarEhDesktop(e: MediaQueryListEvent) { ehDesktop.value = e.matches }
 
 const CHAVE_JA_VIU_BOAS_VINDAS = 'caesi_cobrinha_viu_boas_vindas'
 const modalBoasVindas = ref(localStorage.getItem(CHAVE_JA_VIU_BOAS_VINDAS) !== 'true')
@@ -52,39 +92,39 @@ const CELL = 28
 const COLS = 28
 const ROWS = 18
 
-const VETORES = {
+const VETORES: Record<NomeDirecao, Posicao> = {
   cima:     { x: 0, y: -1 },
   baixo:    { x: 0, y: 1 },
   esquerda: { x: -1, y: 0 },
   direita:  { x: 1, y: 0 },
 }
 
-const TECLA_PARA_DIRECAO = {
+const TECLA_PARA_DIRECAO: Record<string, NomeDirecao> = {
   ArrowUp: 'cima', ArrowDown: 'baixo', ArrowLeft: 'esquerda', ArrowRight: 'direita',
   w: 'cima', s: 'baixo', a: 'esquerda', d: 'direita',
 }
 
-const cobra = ref([])
-const direcao = ref(VETORES.direita)
-let filaDirecoes = []
-let ordemSegurando = [] // nomes das teclas de direção fisicamente pressionadas, da mais antiga pra mais recente
+const cobra = ref<Posicao[]>([])
+const direcao = ref<Posicao>(VETORES.direita)
+let filaDirecoes: Posicao[] = []
+let ordemSegurando: NomeDirecao[] = [] // nomes das teclas de direção fisicamente pressionadas, da mais antiga pra mais recente
 
 const comida = reactive({ x: 0, y: 0, especial: false })
-const obstaculos = ref([])
-const inimigos = ref([])
+const obstaculos = ref<Posicao[]>([])
+const inimigos = ref<Inimigo[]>([])
 let proximoIdInimigo = 1
-const projeteis = ref([])
+const projeteis = ref<Projetil[]>([])
 let proximoIdProjetil = 1
 
 const LIMIARES_CHEFE = [300, 750, 1000]
 
 // chefes 1 e 2 vem sozinhos (encontros solo); o chefe 3 é uma dupla (ver iniciarBatalhaChefe)
-const chefesAtivos = ref([]) // 1 item nos encontros solo, 2 no encontro final
+const chefesAtivos = ref<Chefe[]>([]) // 1 item nos encontros solo, 2 no encontro final
 const chefesDerrotados = ref(0) // conta ENCONTROS completos (0-3), não entidades individuais derrotadas
 const proximoLimiarChefe = ref(LIMIARES_CHEFE[0])
-const TIPOS_CHEFE_SOLO = ['perseguidor', 'fantasma']
-const VIDAS_POR_TIPO = { perseguidor: 3, fantasma: 3, agil: 2, pesado: 3 }
-const NOMES_CHEFE = {
+const TIPOS_CHEFE_SOLO: TipoChefe[] = ['perseguidor', 'fantasma']
+const VIDAS_POR_TIPO: Record<TipoChefe, number> = { perseguidor: 3, fantasma: 3, agil: 2, pesado: 3 }
+const NOMES_CHEFE: Record<TipoChefe, string> = {
   perseguidor: 'O Grande Cubo Vermelho',
   fantasma: 'Sombra Rancorosa da Borda',
   agil: 'Cavaleiro Relâmpago da Ata Perdida',
@@ -111,7 +151,7 @@ const MENSAGENS_GAME_OVER = [
 ]
 
 // sorteia sem repetir a mesma mensagem duas vezes seguidas (cada lista tem seu próprio "último sorteado")
-function criarSorteador(lista) {
+function criarSorteador(lista: string[]) {
   let ultimoIndice = -1
   return () => {
     if (lista.length <= 1) return lista[0]
@@ -129,7 +169,7 @@ const mensagemGameOver = ref(MENSAGENS_GAME_OVER[0])
 
 const score = ref(0)
 const recorde = ref(Number(localStorage.getItem('caesi_cobrinha_recorde') || 0))
-const estado = ref('jogando') // 'jogando' | 'pausado' | 'fim' | 'vencido'
+const estado = ref<EstadoJogo>('jogando')
 
 // recorde atualiza ao vivo (não só no fim de jogo) e avisa uma vez por partida quando é superado
 let avisouNovoRecordeNestaPartida = false
@@ -148,29 +188,29 @@ const faltamProChefe = computed(() => {
   return Math.max(0, proximoLimiarChefe.value - score.value)
 })
 
-let tickId = null
+let tickId: ReturnType<typeof setInterval> | undefined
 let velocidade = 130
 let comidasComidas = 0
 const invulneravelInimigos = ref(0)
 
 // feedback visual rápido (shake + flash) pra dar impacto sem pesar no loop de lógica
-const efeitoTela = ref(null) // null | 'acerto' | 'dano'
-let efeitoTelaTimeout = null
-function dispararEfeitoTela(tipo, duracao) {
+const efeitoTela = ref<'acerto' | 'dano' | null>(null)
+let efeitoTelaTimeout: ReturnType<typeof setTimeout>
+function dispararEfeitoTela(tipo: 'acerto' | 'dano', duracao: number) {
   efeitoTela.value = tipo
   clearTimeout(efeitoTelaTimeout)
   efeitoTelaTimeout = setTimeout(() => { efeitoTela.value = null }, duracao)
 }
 
 const pulsoComer = ref(false)
-let pulsoComerTimeout = null
+let pulsoComerTimeout: ReturnType<typeof setTimeout>
 function dispararPulsoComer() {
   pulsoComer.value = true
   clearTimeout(pulsoComerTimeout)
   pulsoComerTimeout = setTimeout(() => { pulsoComer.value = false }, 150)
 }
 
-function celulaOcupada(x, y) {
+function celulaOcupada(x: number, y: number) {
   if (comida.x === x && comida.y === y) return true
   if (obstaculos.value.some(o => o.x === x && o.y === y)) return true
   if (inimigos.value.some(i => i.x === x && i.y === y)) return true
@@ -181,14 +221,14 @@ function celulaOcupada(x, y) {
 const CENTRO_X = Math.floor(COLS / 2)
 const CENTRO_Y = Math.floor(ROWS / 2)
 
-function pertoDoCentro(x, y) {
+function pertoDoCentro(x: number, y: number) {
   return Math.abs(x - CENTRO_X) <= 4 && Math.abs(y - CENTRO_Y) <= 3
 }
 
 // zona de segurança ao redor da cabeça, mais uma faixa estendida bem à frente
 // na direção em que a cobra está indo — senão spawna algo "na cara" de quem
 // tá indo reto sem dar tempo nenhum de reagir
-function pertoDaCobra(x, y) {
+function pertoDaCobra(x: number, y: number) {
   const cabeca = cobra.value[0]
   if (Math.abs(x - cabeca.x) <= 5 && Math.abs(y - cabeca.y) <= 4) return true
 
@@ -198,7 +238,7 @@ function pertoDaCobra(x, y) {
   return passosAFrente >= 1 && passosAFrente <= 12 && desvioLateral <= 1
 }
 
-function posicaoLivre(evitarCentro = false, evitarCobra = false) {
+function posicaoLivre(evitarCentro = false, evitarCobra = false): Posicao {
   let x, y
   do {
     x = Math.floor(Math.random() * COLS)
@@ -214,8 +254,8 @@ function reposicionarComida() {
   comida.especial = comidasComidas > 0 && comidasComidas % 10 === 0
 }
 
-function gerarObstaculos(qtd, evitarCentro = false, evitarCobra = false) {
-  const novos = []
+function gerarObstaculos(qtd: number, evitarCentro = false, evitarCobra = false) {
+  const novos: Posicao[] = []
   for (let i = 0; i < qtd; i++) {
     const p = posicaoLivre(evitarCentro, evitarCobra)
     novos.push(p)
@@ -226,8 +266,8 @@ function gerarObstaculos(qtd, evitarCentro = false, evitarCobra = false) {
 
 // tipos de inimigo comum liberados conforme os chefes vão caindo:
 // fase 1 (nenhum chefe derrotado) = só patrulha; fase 2 = +rápido; fase 3 = +atirador
-function tiposInimigoDisponiveis() {
-  const tipos = ['patrulha']
+function tiposInimigoDisponiveis(): TipoInimigo[] {
+  const tipos: TipoInimigo[] = ['patrulha']
   if (chefesDerrotados.value >= 1) tipos.push('rapido')
   if (chefesDerrotados.value >= 2) tipos.push('atirador')
   return tipos
@@ -255,7 +295,7 @@ function gerarInimigo(evitarCentro = false, evitarCobra = false) {
   }]
 }
 
-function tentarMover(x, y, dx, dy) {
+function tentarMover(x: number, y: number, dx: number, dy: number) {
   const nx = x + dx
   const ny = y + dy
   if (nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS) return null
@@ -263,12 +303,12 @@ function tentarMover(x, y, dx, dy) {
   return { nx, ny }
 }
 
-function moverPasso(inimigo) {
-  let destino = tentarMover(inimigo.x, inimigo.y, inimigo.dx, inimigo.dy)
+function moverPasso(inimigo: Inimigo) {
+  let destino = tentarMover(inimigo.x, inimigo.y, inimigo.dx!, inimigo.dy!)
   if (!destino) {
-    inimigo.dx *= -1
-    inimigo.dy *= -1
-    destino = tentarMover(inimigo.x, inimigo.y, inimigo.dx, inimigo.dy)
+    inimigo.dx! *= -1
+    inimigo.dy! *= -1
+    destino = tentarMover(inimigo.x, inimigo.y, inimigo.dx!, inimigo.dy!)
   }
   if (destino) {
     inimigo.x = destino.nx
@@ -276,7 +316,7 @@ function moverPasso(inimigo) {
   }
 }
 
-function atirar(inimigo) {
+function atirar(inimigo: Inimigo | Chefe) {
   const cabeca = cobra.value[0]
   const dx = cabeca.x - inimigo.x
   const dy = cabeca.y - inimigo.y
@@ -287,10 +327,10 @@ function atirar(inimigo) {
   projeteis.value = [...projeteis.value, { id: proximoIdProjetil++, x: inimigo.x, y: inimigo.y, dx: dirX, dy: dirY }]
 }
 
-function moverInimigo(inimigo) {
+function moverInimigo(inimigo: Inimigo) {
   if (inimigo.tipo === 'atirador') {
-    inimigo.cooldownTiro -= 1
-    if (inimigo.cooldownTiro <= 0) {
+    inimigo.cooldownTiro! -= 1
+    if (inimigo.cooldownTiro! <= 0) {
       atirar(inimigo)
       inimigo.cooldownTiro = 5
     }
@@ -301,10 +341,10 @@ function moverInimigo(inimigo) {
 }
 
 // ── Chefes (a cada X pontos, mapa limpo + miniboss) ────────
-function gerarCaminhoPerimetro() {
+function gerarCaminhoPerimetro(): Posicao[] {
   const minX = 1, maxX = COLS - 3
   const minY = 1, maxY = ROWS - 3
-  const caminho = []
+  const caminho: Posicao[] = []
   for (let x = minX; x <= maxX; x++) caminho.push({ x, y: minY })
   for (let y = minY + 1; y <= maxY; y++) caminho.push({ x: maxX, y })
   for (let x = maxX - 1; x >= minX; x--) caminho.push({ x, y: maxY })
@@ -314,7 +354,7 @@ function gerarCaminhoPerimetro() {
 
 const ATAQUE_CHEFE_COOLDOWN = 9
 
-function criarChefe(tipo) {
+function criarChefe(tipo: TipoChefe): Chefe {
   const base = { tipo, vidas: VIDAS_POR_TIPO[tipo], atordoado: 0, ataqueCooldown: ATAQUE_CHEFE_COOLDOWN, cooldownBase: ATAQUE_CHEFE_COOLDOWN }
   if (tipo === 'perseguidor' || tipo === 'agil') {
     // agil é a variante rápida (chefe final): mesma perseguição, 2 passos por tick
@@ -327,30 +367,30 @@ function criarChefe(tipo) {
   return { ...base, x: inicio.x, y: inicio.y, caminho, indiceCaminho, contadorLento: 0 }
 }
 
-function empurrarChefe(chefe) {
+function empurrarChefe(chefe: Chefe) {
   const distancia = 5
   chefe.x = Math.min(Math.max(chefe.x + direcao.value.x * distancia, 0), COLS - 2)
   chefe.y = Math.min(Math.max(chefe.y + direcao.value.y * distancia, 0), ROWS - 2)
 }
 
 // buff de "poder transferido": quando um dos dois chefes do encontro final morre primeiro, o outro fica mais forte
-function aplicarBuffChefe(chefe) {
+function aplicarBuffChefe(chefe: Chefe) {
   chefe.buffado = true
   chefe.cooldownBase = Math.max(4, chefe.cooldownBase - 3)
   if (chefe.passosPorTick) chefe.passosPorTick += 1
 }
 
 // só o corpo conta como obstáculo pro chefe (a cabeça precisa continuar alcançável, é o alvo)
-function corpoOcupaCelula(x, y) {
+function corpoOcupaCelula(x: number, y: number) {
   return cobra.value.some((seg, idx) => idx > 0 && seg.x === x && seg.y === y)
 }
 
-function chefeColidiriaComCorpo(x, y) {
+function chefeColidiriaComCorpo(x: number, y: number) {
   return corpoOcupaCelula(x, y) || corpoOcupaCelula(x + 1, y) || corpoOcupaCelula(x, y + 1) || corpoOcupaCelula(x + 1, y + 1)
 }
 
 // no encontro final os dois chefes não podem se sobrepor
-function chefeColidiriaComOutroChefe(chefeAtual, x, y) {
+function chefeColidiriaComOutroChefe(chefeAtual: Chefe, x: number, y: number) {
   const candidatas = [{ x, y }, { x: x + 1, y }, { x, y: y + 1 }, { x: x + 1, y: y + 1 }]
   return chefesAtivos.value.some(outro => {
     if (outro === chefeAtual) return false
@@ -358,12 +398,12 @@ function chefeColidiriaComOutroChefe(chefeAtual, x, y) {
   })
 }
 
-function moverChefePasso(chefe) {
+function moverChefePasso(chefe: Chefe) {
   if (chefe.tipo === 'perseguidor' || chefe.tipo === 'agil') {
     const cabeca = cobra.value[0]
     const dx = cabeca.x - chefe.x
     const dy = cabeca.y - chefe.y
-    const candidatos = []
+    const candidatos: Posicao[] = []
     const passoX = { x: Math.min(Math.max(chefe.x + (dx > 0 ? 1 : -1), 0), COLS - 2), y: chefe.y }
     const passoY = { x: chefe.x, y: Math.min(Math.max(chefe.y + (dy > 0 ? 1 : -1), 0), ROWS - 2) }
     if (Math.abs(dx) > Math.abs(dy) && dx !== 0) {
@@ -381,8 +421,8 @@ function moverChefePasso(chefe) {
       chefe.y = livre.y
     } // senão, fica parado esse tick — o caminho tá bloqueado
   } else {
-    const proximoIndice = (chefe.indiceCaminho + 1) % chefe.caminho.length
-    const passo = chefe.caminho[proximoIndice]
+    const proximoIndice = (chefe.indiceCaminho! + 1) % chefe.caminho!.length
+    const passo = chefe.caminho![proximoIndice]
     if (!chefeColidiriaComCorpo(passo.x, passo.y) && !chefeColidiriaComOutroChefe(chefe, passo.x, passo.y)) {
       chefe.indiceCaminho = proximoIndice
       chefe.x = passo.x
@@ -391,11 +431,11 @@ function moverChefePasso(chefe) {
   }
 }
 
-function moverChefe(chefe) {
+function moverChefe(chefe: Chefe) {
   if (chefe.tipo === 'pesado') {
     // pesado anda só a cada 2 ticks — a menos que tenha herdado o poder do outro chefe (buffado)
-    chefe.contadorLento += 1
-    if (!chefe.buffado && chefe.contadorLento % 2 !== 0) return
+    chefe.contadorLento! += 1
+    if (!chefe.buffado && chefe.contadorLento! % 2 !== 0) return
     moverChefePasso(chefe)
     return
   }
@@ -403,7 +443,7 @@ function moverChefe(chefe) {
   for (let i = 0; i < passos; i++) moverChefePasso(chefe)
 }
 
-function atirarChefe(chefe) {
+function atirarChefe(chefe: Chefe) {
   atirar(chefe)
   if (chefe.tipo !== 'pesado') return
   // pesado varre uma segunda direção perpendicular, pra cobrir mais área do que um tiro só
@@ -416,7 +456,7 @@ function atirarChefe(chefe) {
   projeteis.value = [...projeteis.value, { id: proximoIdProjetil++, x: chefe.x, y: chefe.y, dx: dirX, dy: dirY }]
 }
 
-function celulasChefe(chefe) {
+function celulasChefe(chefe: Chefe): Posicao[] {
   return [
     { x: chefe.x, y: chefe.y },
     { x: chefe.x + 1, y: chefe.y },
@@ -430,7 +470,7 @@ const ALCANCE_SEGURO_ATAQUE = 3
 // jogador tá na mesma linha/coluna que o chefe, na direção em que está andando, e perto —
 // ou seja, indo pro bote de verdade. Só nesse caso o chefe segura o tiro; se o jogador só
 // tá passando perto (linha/coluna diferente), o chefe continua atirando normalmente.
-function chefeNaMiraDeAtaque(chefe) {
+function chefeNaMiraDeAtaque(chefe: Chefe) {
   const cabeca = cobra.value[0]
   const dir = direcao.value
   return celulasChefe(chefe).some(c => {
@@ -458,7 +498,7 @@ function iniciarBatalhaChefe() {
 // ── Transição pra boss fight: cobra encolhe, tela fecha em círculo (iris wipe), troca o cenário, reabre ──
 const TAMANHO_COBRA_CHEFE = 3
 const TRANSICAO_DURACAO = 400
-const transicaoFase = ref(null) // null | 'fechando' | 'abrindo'
+const transicaoFase = ref<'fechando' | 'abrindo' | null>(null)
 const transicaoCentro = reactive({ x: 50, y: 50 })
 let tamanhoAntesDoChefe = TAMANHO_COBRA_CHEFE
 let crescimentoPendente = 0 // segmentos que a cobra ainda precisa recuperar depois da luta
@@ -469,7 +509,7 @@ function centroDaCabecaPercentual() {
   return { x: ((cabeca.x + 0.5) / COLS) * 100, y: ((cabeca.y + 0.5) / ROWS) * 100 }
 }
 
-function encolherCobraAnimado(alvo, aoTerminar) {
+function encolherCobraAnimado(alvo: number, aoTerminar: () => void) {
   const excedente = cobra.value.length - alvo
   if (excedente <= 0) { aoTerminar(); return }
   const intervalo = Math.max(18, Math.min(55, 700 / excedente))
@@ -570,7 +610,7 @@ function tick() {
   if (invulneravelInimigos.value > 0) invulneravelInimigos.value -= 1
 
   if (filaDirecoes.length) {
-    direcao.value = filaDirecoes.shift()
+    direcao.value = filaDirecoes.shift()!
   } else if (ordemSegurando.length) {
     const seguraVetor = VETORES[ordemSegurando[ordemSegurando.length - 1]]
     const ehReversao = seguraVetor.x === -direcao.value.x && seguraVetor.y === -direcao.value.y
@@ -709,7 +749,7 @@ function tick() {
   }
 }
 
-function onKeydown(e) {
+function onKeydown(e: KeyboardEvent) {
   if (modalBoasVindas.value || modalConfirmarSaida.value) return
   // "vencido" tem 3 destinos diferentes (continuar/reiniciar/sair) — sem atalho de teclado pra não resetar sem querer
   if (estado.value === 'fim' && (e.key === 'Enter' || e.key === 'r' || e.key === 'R')) { reiniciar(); return }
@@ -743,7 +783,7 @@ function onKeydown(e) {
   filaDirecoes.push(nova)
 }
 
-function onKeyup(e) {
+function onKeyup(e: KeyboardEvent) {
   const teclaNormalizada = e.key.length === 1 ? e.key.toLowerCase() : e.key
   const nomeDirecao = TECLA_PARA_DIRECAO[teclaNormalizada]
   if (!nomeDirecao) return
