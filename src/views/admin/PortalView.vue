@@ -3,7 +3,7 @@ import { ref, reactive, computed } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
 import { artefatos, addArtefato, updateArtefato, deleteArtefato } from '../../stores/portal.js'
-import { showToast } from '../../stores/toast.js'
+import { showToast } from '../../stores/toast.ts'
 import paperclipIcon from '../../assets/icons/paperclip.svg?raw'
 
 function formatValor(valor) {

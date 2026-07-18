@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import BackLink from '../components/BackLink.vue'
 import { formularios, inscricoes, addInscricao } from '../stores/formularios.js'
-import { showToast } from '../stores/toast.js'
+import { showToast } from '../stores/toast.ts'
 import { isEmail, isValidImageFile } from '../utils/validation.js'
 
 const route  = useRoute()

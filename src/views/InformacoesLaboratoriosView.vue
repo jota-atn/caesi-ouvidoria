@@ -7,7 +7,7 @@ import BackLink from '../components/BackLink.vue'
 import { laboratorios, addLaboratorio, updateLaboratorio, deleteLaboratorio } from '../stores/informacoes.js'
 import { estruturas } from '../stores/mapa.js'
 import { isAdmin } from '../stores/auth.js'
-import { showToast } from '../stores/toast.js'
+import { showToast } from '../stores/toast.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.js'
 import { isEmail, isUrl, isValidImageFile } from '../utils/validation.js'
 

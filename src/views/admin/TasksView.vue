@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
-import { showToast } from '../../stores/toast.js'
+import { showToast } from '../../stores/toast.ts'
 import { useEscapeKey } from '../../composables/useEscapeKey.js'
 import {
   tasks, criarTask, editarTask, excluirTask, atualizarStatus,

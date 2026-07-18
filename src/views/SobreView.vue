@@ -21,7 +21,7 @@ import {
 import { CENTRO_PADRAO } from '../stores/mapa.js'
 import { markdownParaHtmlSeguro } from '../utils/markdown.js'
 import { isAdmin } from '../stores/auth.js'
-import { showToast } from '../stores/toast.js'
+import { showToast } from '../stores/toast.ts'
 import { isEmail, isUrl, isValidImageFile } from '../utils/validation.js'
 import pencilIcon from '../assets/icons/pencil.svg?raw'
 import xIcon from '../assets/icons/x.svg?raw'

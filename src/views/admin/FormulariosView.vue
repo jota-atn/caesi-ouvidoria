@@ -5,7 +5,7 @@ import Navbar from '../../components/Navbar.vue'
 import BackLink from '../../components/BackLink.vue'
 import { formularios, inscricoes, addFormulario } from '../../stores/formularios.js'
 import { usePersistedFilter } from '../../composables/usePersistedFilter.js'
-import { showToast } from '../../stores/toast.js'
+import { showToast } from '../../stores/toast.ts'
 import { isTodayOrFuture } from '../../utils/validation.js'
 
 const filtro = usePersistedFilter('caesi-admin-forms-filtro', 'todos')

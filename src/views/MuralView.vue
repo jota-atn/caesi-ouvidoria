@@ -10,7 +10,7 @@ import { usePersistedFilter } from '../composables/usePersistedFilter.js'
 import { useEscapeKey } from '../composables/useEscapeKey.js'
 import { publicacoes, addPublicacao, updatePublicacao, deletePublicacao } from '../stores/mural.ts'
 import { isAdmin } from '../stores/auth.js'
-import { showToast } from '../stores/toast.js'
+import { showToast } from '../stores/toast.ts'
 import { isValidImageFile } from '../utils/validation.js'
 
 function comprimirImagem(file) {

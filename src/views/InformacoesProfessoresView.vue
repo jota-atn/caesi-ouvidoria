@@ -8,7 +8,7 @@ import mapPinIcon from '../assets/icons/map-pin.svg?raw'
 import { professores, addProfessor, updateProfessor, deleteProfessor } from '../stores/informacoes.js'
 import { estruturas } from '../stores/mapa.js'
 import { isAdmin } from '../stores/auth.js'
-import { showToast } from '../stores/toast.js'
+import { showToast } from '../stores/toast.ts'
 import { isEmail, isUrl, isValidImageFile } from '../utils/validation.js'
 
 const route = useRoute()

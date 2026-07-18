@@ -2,7 +2,7 @@
 import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BackLink from '../components/BackLink.vue'
-import { showToast } from '../stores/toast.js'
+import { showToast } from '../stores/toast.ts'
 import { useEscapeKey } from '../composables/useEscapeKey.js'
 import { marcarCobrinhaZerada } from '../stores/conquistas.js'
 import capeloIcon from '../assets/icons/graduation-cap.svg?raw'

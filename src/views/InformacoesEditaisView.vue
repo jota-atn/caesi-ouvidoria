@@ -7,7 +7,7 @@ import BackLink from '../components/BackLink.vue'
 import paperclipIcon from '../assets/icons/paperclip.svg?raw'
 import { editais, addEdital, updateEdital, deleteEdital } from '../stores/informacoes.js'
 import { isAdmin } from '../stores/auth.js'
-import { showToast } from '../stores/toast.js'
+import { showToast } from '../stores/toast.ts'
 import { isTodayOrFuture } from '../utils/validation.js'
 
 const route = useRoute()

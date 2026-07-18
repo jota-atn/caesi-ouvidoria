@@ -3,7 +3,7 @@ import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { isAdmin } from '../stores/auth.js'
 import { eventos, proximosEventos, addEvento, updateEvento, removeEvento } from '../stores/calendario.js'
 import { useEscapeKey } from '../composables/useEscapeKey.js'
-import { showToast } from '../stores/toast.js'
+import { showToast } from '../stores/toast.ts'
 import calendarIcon from '../assets/icons/calendar.svg?raw'
 
 const MESES_ABREV = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
