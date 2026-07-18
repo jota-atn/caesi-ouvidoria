@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import Navbar from '../../components/Navbar.vue'
 import { Bar, Doughnut } from 'vue-chartjs'
@@ -35,7 +35,7 @@ const formsEncerrados = computed(() => formularios.value.filter(f => f.status ==
 const compPendentes   = computed(() => inscricoes.value.filter(i => i.comprovante?.status === 'pendente').length)
 const cancelamentosPendentes = computed(() => inscricoes.value.filter(i => i.cancelamento?.solicitado).length)
 
-function formatValorCompacto(valor) {
+function formatValorCompacto(valor: number) {
   if (valor >= 1_000_000) return `R$ ${(valor / 1_000_000).toFixed(1).replace('.', ',')}M`
   if (valor >= 10_000)    return `R$ ${(valor / 1_000).toFixed(1).replace('.', ',')}k`
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
@@ -52,23 +52,23 @@ const receitaTotal = computed(() => {
     .filter(f => f.pago)
     .reduce((soma, f) => {
       const confirmadas = inscricoes.value.filter(
-        i => i.formularioId === f.id && ['validado', 'arquivado'].includes(i.comprovante?.status)
+        i => i.formularioId === f.id && (['validado', 'arquivado'] as const).includes(i.comprovante?.status as 'validado' | 'arquivado')
       )
       return soma + confirmadas.reduce((s, i) => {
         const qtd = f.tipo === 'venda' ? (Number(i.respostas?.__quantidade) || 1) : 1
-        return s + f.valor * qtd
+        return s + (f.valor ?? 0) * qtd
       }, 0)
     }, 0)
 })
 
-function chaveDoMes(timestamp) {
+function chaveDoMes(timestamp: number) {
   const d = new Date(timestamp)
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
 }
 
 function buildMesesLabels() {
   const agora = new Date()
-  const meses = {}
+  const meses: Record<string, number> = {}
   for (let i = 5; i >= 0; i--) {
     const d = new Date(agora.getFullYear(), agora.getMonth() - i, 1)
     meses[`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`] = 0
@@ -76,12 +76,12 @@ function buildMesesLabels() {
   return meses
 }
 
-function mesToLabel(chave) {
+function mesToLabel(chave: string) {
   const [ano, mes] = chave.split('-')
   return new Date(Number(ano), Number(mes) - 1).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' })
 }
 
-function calcTendencia(lista, getTimestamp) {
+function calcTendencia<T>(lista: T[], getTimestamp: (x: T) => number) {
   const agora = new Date()
   const atual   = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}`
   const prev    = new Date(agora.getFullYear(), agora.getMonth() - 1, 1)
@@ -149,7 +149,7 @@ const donutOptions = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: { position: 'bottom', labels: { font: { family: 'Archivo', size: 11 }, padding: 10 } },
+    legend: { position: 'bottom' as const, labels: { font: { family: 'Archivo', size: 11 }, padding: 10 } },
   },
 }
 
