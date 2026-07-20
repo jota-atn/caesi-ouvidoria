@@ -23,7 +23,7 @@
 
 .btn-amarelo {
   background: var(--amarelo);
-  color: var(--preto);
+  color: var(--roxo-escuro);
   box-shadow: 3px 3px 0 var(--roxo-escuro);
 }
 .btn-amarelo:hover { box-shadow: 5px 5px 0 var(--roxo-escuro); transform: translate(-2px,-2px); }
